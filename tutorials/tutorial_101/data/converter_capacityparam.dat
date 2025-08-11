@@ -1,0 +1,4 @@
+                              unitsBuild  unitsLowerLimit  unitsUpperLimit  noExpansion
+R1_data . 2030 . CCGT                NaN              0.0            100.0          NaN
+R1_data . 2030 . PV                  NaN              0.0             80.0          NaN
+R1_data . 2030 . WindOnshore         NaN              0.0            120.0          NaN

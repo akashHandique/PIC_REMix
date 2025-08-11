@@ -1,0 +1,12 @@
+names no
+rerun no
+lpmethod 4
+threads 8
+barorder 3
+scaind 0
+predual -1
+barepcomp 1e-6
+solutiontype 2
+epgap 1e-3
+iis 0
+quality 1

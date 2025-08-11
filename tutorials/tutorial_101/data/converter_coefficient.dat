@@ -1,0 +1,6 @@
+                                      coefficient  constant  minLoad  maxLoad  delay
+CCGT . 2030 . Powergen . CH4               -1.587       NaN      NaN      NaN    NaN
+CCGT . 2030 . Powergen . CO2                0.320       NaN      NaN      NaN    NaN
+CCGT . 2030 . Powergen . Elec               1.000       NaN      NaN      NaN    NaN
+PV . 2030 . Powergen . Elec                 1.000       NaN      NaN      NaN    NaN
+WindOnshore . 2030 . Powergen . Elec        1.000       NaN      NaN      NaN    NaN

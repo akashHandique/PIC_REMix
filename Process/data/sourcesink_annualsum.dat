@@ -1,0 +1,9 @@
+                                       fixed  lower  upper
+R1_data . 2030 . Emission . CO2          NaN   -inf    NaN
+R1_data . 2030 . FuelImport . Biomass    NaN    0.0  211.0
+R2_data . 2030 . Emission . CO2          NaN   -inf    NaN
+R2_data . 2030 . FuelImport . Biomass    NaN    0.0  511.0
+R3_data . 2030 . Emission . CO2          NaN   -inf    NaN
+R3_data . 2030 . FuelImport . Biomass    NaN    0.0  211.0
+R4_data . 2030 . Emission . CO2          NaN   -inf    NaN
+R4_data . 2030 . FuelImport . Biomass    NaN    0.0  511.0

@@ -1,0 +1,3 @@
+                                   fixed  lower  upper
+R1_data . 2030 . Emission . CO2      NaN   -inf    NaN
+R1_data . 2030 . FuelImport . CH4    NaN    0.0    inf
