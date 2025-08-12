@@ -1,5 +1,15 @@
-                                                  perFlow  perPeak
-FuelCost . R1_data . 2030 . FuelImport . Biomass    0.032      NaN
-FuelCost . R2_data . 2030 . FuelImport . Biomass    0.032      NaN
-FuelCost . R3_data . 2030 . FuelImport . Biomass    0.032      NaN
-FuelCost . R4_data . 2030 . FuelImport . Biomass    0.032      NaN
+                                                   perFlow  perPeak
+FuelCost . CI_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . FJ_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . FSM_data . 2030 . FuelImport . Biomass    0.032      NaN
+FuelCost . KB_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . MI_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . NE_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . NU_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . PNG_data . 2030 . FuelImport . Biomass    0.032      NaN
+FuelCost . PU_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . SA_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . SI_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . TA_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . TU_data . 2030 . FuelImport . Biomass     0.032      NaN
+FuelCost . VU_data . 2030 . FuelImport . Biomass     0.032      NaN

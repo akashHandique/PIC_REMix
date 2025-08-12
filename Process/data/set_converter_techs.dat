@@ -1,8 +1,11 @@
 BG_N
 Battery
+Geothermal_B
+Hydro_B
 PV_B
 PV_N
 Wave_N
+WindOffshore_B
 WindOffshore_N
 WindOnshore_B
 WindOnshore_N

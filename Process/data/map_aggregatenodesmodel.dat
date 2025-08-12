@@ -1,5 +1,15 @@
-                    
-R1_data . R1_model  
-R2_data . R2_model  
-R3_data . R3_model  
-R4_data . R4_model  
+                      
+CI_data . CI_model    
+FJ_data . FJ_model    
+FSM_data . FSM_model  
+KB_data . KB_model    
+MI_data . MI_model    
+NE_data . NE_model    
+NU_data . NU_model    
+PNG_data . PNG_model  
+PU_data . PU_model    
+SA_data . SA_model    
+SI_data . SI_model    
+TA_data . TA_model    
+TU_data . TU_model    
+VU_data . VU_model    
