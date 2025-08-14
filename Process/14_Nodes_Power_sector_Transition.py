@@ -264,12 +264,13 @@ accounting_perIndicator
 # Define tech groups
 # Define tech groups with lifetime and availability
 tech_specs = {
+    "BG_B": {"lifeTime": 25, "activityUpperLimit": 1}, 
     "BG_N": {"lifeTime": 25, "activityUpperLimit": 1},  # No feed-in
     "PV_B": {"lifeTime": 25, "activityUpperLimit": 0},  # Feed-in
-    "WindOnshore_B": {"lifeTime": 20, "activityUpperLimit": 0},
-    "PV_N": {"lifeTime": 30, "activityUpperLimit": 0},
+    "WindOnshore_B": {"lifeTime": 25, "activityUpperLimit": 0},
+    "PV_N": {"lifeTime": 25, "activityUpperLimit": 0},
     "WindOnshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "Wave_N": {"lifeTime": 15, "activityUpperLimit": 0},
+    "Wave_N": {"lifeTime": 25, "activityUpperLimit": 0},
     "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
     "Hydro_B": {"lifeTime": 25, "activityUpperLimit": 0},
     "Geothermal_B": {"lifeTime": 25, "activityUpperLimit": 0},
@@ -298,45 +299,39 @@ converter_techParam
 capacity_limits = {
     "CI_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0052, 0.0052),
         "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "WindOffshore_N": (0, 1)
-
+        "WindOnshore_N": (0, 1)
     },
     "FJ_data": {
+        "BG_B": (0.0580, 0.0580),
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0090, 0.0090),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1),
         "WindOffshore_N": (0, 1),
-        "Hydro_B": (0, 1)
+        "Hydro_B": (0.0625, 0.0625)# hydro adjusted
     },
     "FSM_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0028, 0.0028),
+        "WindOnshore_B": (0.0009, 0.0009),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (0.000225, 0.000225)# hydro adjusted
     },
     "KB_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0030, 0.0030),
         "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "WindOnshore_N": (0, 1)
     },
     "MI_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0017, 0.0017),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1),
@@ -344,64 +339,59 @@ capacity_limits = {
     },
     "NU_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0028, 0.0028),
         "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "WindOnshore_N": (0, 1)
     },
     "NE_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0010, 0.0011),
         "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "WindOnshore_N": (0, 1)
     },
     "PU_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "PV_B": (0.0032, 0.0032),
+        "PV_N": (0, 10),
+        "WindOnshore_N": (0, 10),
+        "WindOffshore_N": (0, 10)
     },
     "PNG_data": {
-        "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_B": (0, 1),
-        "Hydro_B": (0, 1),
-        "Geothermal_B": (0, 1)
+        "BG_B": (0.0182, 0.0182),
+        "BG_N": (0, 10),
+        "PV_B": (0.0031, 0.0031),
+        "PV_N": (0, 10),
+        "WindOnshore_N": (0, 10),
+        "Wave_N": (0, 10),
+        "WindOffshore_B": (0, 10),
+        "Hydro_B": (0.115, 0.115),# hydro adjusted
+        "Geothermal_B": (0.011, 0.011)#Geothermal adjusted (.22 CF)
     },
     "SA_data": {
+        "BG_B": (0.0011, 0.0011),
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0138, 0.0138),
+        "WindOnshore_B": (0.0005, 0.0005),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (.0063, .0063)# hydro adjusted
     },
     "SI_data": {
+        "BG_B": (0.0008, 0.0008),
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0023, 0.0023),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (.00018, .00018)# hydro adjusted
     },
     "TA_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0071, 0.0071),
+        "WindOnshore_B": (0.00151, 0.00151),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1),
@@ -409,21 +399,20 @@ capacity_limits = {
     },
     "TU_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0029, 0.0029),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "Wave_N": (0, 1)
     },
     "VU_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0044, 0.0044),
+        "WindOnshore_B": (0.0032, 0.0032),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (.00054, .00054)# hydro adjusted
     }
 }
 
@@ -464,18 +453,21 @@ converter_capacityParam
 converter_coefficient = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
-            ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
+            ["BG_B", "BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
             m.set.yearssel,
             ["Powergen"],
             ["Biomass", "Elec", "CO2"],
         ]
     )
 )
-converter_coefficient.loc[idx["BG_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
-converter_coefficient.loc[idx["BG_N", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
-converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.2 #kt co2
 
+converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 0.1  # GWh_el
+converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -0.285  # GWh_ch
+converter_coefficient.loc[idx["BG_B", :, :, "CO2"], "coefficient"] = 0.02
 
+converter_coefficient.loc[idx["BG_N", :, :, "Elec"], "coefficient"] = .1  # GWh_el
+converter_coefficient.loc[idx["BG_N", :, :, "Biomass"], "coefficient"] = -.285  # GWh_ch
+converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.02 #kt co2
 
 converter_coefficient.loc[idx["PV_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 
@@ -556,11 +548,27 @@ accounting_converterUnits = pd.DataFrame(
             ["Invest", "OMFix"],
             ["global"],
             ["horizon"],
-            ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
+            ["BG_B","BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
             m.set.yearssel,
         ]
     )
 ).sort_index()
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "BG_B", "2030"], "perUnitBuild"
+] = 0  # Mio EUR per unit
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "BG_B", "2030"], "useAnnuity"
+] = 1  # binary yes/no
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "BG_B", "2030"], "amorTime"
+] = 25  # years
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "BG_B", "2030"], "interest"
+] = 0.06  # percent/100
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "BG_B", "2030"], "perUnitTotal"
+] = 78
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "BG_N", "2030"], "perUnitBuild"
@@ -676,23 +684,23 @@ accounting_converterUnits.loc[
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Hydro_B", "2030"], "perUnitBuild"
-] = 474
+] = 0
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Hydro_B", "2030"], "useAnnuity"
 ] = 1
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Hydro_B", "2030"], "amorTime"
-] = 25
+] = 50
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Hydro_B", "2030"], "interest"
 ] = 0.06
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "Hydro_B", "2030"], "perUnitTotal"
-] = 75
+] = 168 * 2.22 ## to balance our reduction of capacity by 55%, capacity *.45
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "perUnitBuild"
-] = 474
+] = 0
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "useAnnuity"
 ] = 1
@@ -704,7 +712,7 @@ accounting_converterUnits.loc[
 ] = 0.06
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "Geothermal_B", "2030"], "perUnitTotal"
-] = 75
+] = 118 * 4.54
 accounting_converterUnits = accounting_converterUnits.fillna(0)
 
 m.parameter.add(accounting_converterUnits, "accounting_converterunits")
@@ -789,7 +797,8 @@ sourcesink_config
 
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
-biomass_limits = [211, 511,211, 511, 511,511,511,511,511,511,511,511,511,511]  # GW or other units for R1_data, R2_data
+biomass_limits = [12, 2380,168, 221, 22,4,5,11330,11330,295,1507,211,9,671]
+
 lower_limit = 0  # same for all in this example
 
 sourcesink_annualSum = pd.DataFrame(
@@ -1094,7 +1103,7 @@ storage_reservoirParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
 storage_reservoirParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
-    1000  # units
+    10000000  # units
 )
 storage_reservoirParam = storage_reservoirParam.dropna()
 
@@ -1129,7 +1138,7 @@ m.write(fileformat="dat")
 # That's it. We have successfully added a lithium-ion battery as storage
 # technology to our model. We can now start a GAMS optimization run (part b).
 m.run(
-    resultfile="PIC_trial_2",
+    resultfile="PIC_trial_3",
     lo=3,
     postcalc=1,
     roundts=1,)

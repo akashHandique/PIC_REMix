@@ -1,44 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Aug 11 12:41:23 2025
 
-@author: ajh287
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Aug  8 13:23:33 2025
-
-@author: ajh287
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug  7 10:39:14 2025
-
-@author: ajh287
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug  7 08:58:58 2025
-
-@author: ajh287
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Aug  4 10:19:21 2025
-
-@author: ajh287
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Aug  1 11:50:35 2025
-
-@author: ajh287
-"""
 
 # %% [markdown]
 # (tutorial_101_label)=
@@ -128,7 +88,7 @@ m.datadir = "./data"
 # time profiles that are loaded here.
 # %%
 # load input data
-profiles = pd.read_csv("../_input/profiless.csv", index_col=0)
+profiles = pd.read_csv("../_input/profilessss.csv", index_col=0)
 # %% [markdown]
 # ### Defining the model scope
 #
@@ -168,10 +128,20 @@ profiles = pd.read_csv("../_input/profiless.csv", index_col=0)
 # DataFrame for aggregation from data to model regions
 df = pd.DataFrame(
     [
-        ["R1_data", "R1_model", 1],
-        ["R2_data", "R2_model", 1],  # not strictly necessary for tutorial 1 and 2
-        ["R3_data", "R3_model", 1],  # not strictly necessary for tutorial 1 and 2
-        ["R4_data", "R4_model", 1],  # not strictly necessary for tutorial 1 and 2
+        ["CI_data", "CI_model", 1],
+        ["FJ_data", "FJ_model", 1],  # not strictly necessary for tutorial 1 and 2
+        ["FSM_data", "FSM_model", 1],  # not strictly necessary for tutorial 1 and 2
+        ["KB_data", "KB_model", 1],
+        ["MI_data", "MI_model", 1],
+        ["NU_data", "NU_model", 1],
+        ["NE_data", "NE_model", 1],
+        ["PU_data", "PU_model", 1],
+        ["PNG_data", "PNG_model", 1],
+        ["SA_data", "SA_model", 1],
+        ["SI_data", "SI_model", 1],
+        ["TA_data", "TA_model", 1],
+        ["TU_data", "TU_model", 1],
+        ["VU_data", "VU_model", 1],# not strictly necessary for tutorial 1 and 2
     ]
 )
 df.columns = ["nodesData", "nodesModel", "aggregate"]
@@ -301,6 +271,8 @@ tech_specs = {
     "WindOnshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
     "Wave_N": {"lifeTime": 15, "activityUpperLimit": 0},
     "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
+    "Hydro_B": {"lifeTime": 25, "activityUpperLimit": 0},
+    "Geothermal_B": {"lifeTime": 25, "activityUpperLimit": 0},
 }
 
 # Create DataFrame
@@ -324,15 +296,59 @@ converter_techParam
 # Example user inputs for each node and tech
 # Keys: node -> tech -> (lower_limit, upper_limit) in GW
 capacity_limits = {
-    "R1_data": {
+    "CI_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0051, 0.0052),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1)
+
+    },
+    "FJ_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0089, 0.0090),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
+        "Wave_N": (0, 1),
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (0.138, 0.139)
+    },
+    "FSM_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0027, 0.0028),
+        "WindOnshore_B": (0.00089, 0.0009),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1),
+        "Wave_N": (0, 1),
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (0.00049, 0.0005)
+    },
+    "KB_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0029, 0.0030),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1)
+    },
+    "MI_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0016, 0.0017),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1),
+        "Wave_N": (0, 1),
         "WindOffshore_N": (0, 1)
     },
-    "R2_data": {
+    "NU_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0027, 0.0028),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1)
+    },
+    "NE_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0010, 0.0011),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1)
+    },
+    "PU_data": {
         "BG_N": (0, 1),
         "PV_B": (0.0070, 0.0071),
         "WindOnshore_B": (0.00150, 0.00151),
@@ -341,7 +357,37 @@ capacity_limits = {
         "Wave_N": (0, 1),
         "WindOffshore_N": (0, 1)
     },
-    "R3_data": {
+    "PNG_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0070, 0.0071),
+        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1),
+        "Wave_N": (0, 1),
+        "WindOffshore_B": (0, 1),
+        "Hydro_B": (0, 1),
+        "Geothermal_B": (0, 1)
+    },
+    "SA_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0130, 0.0138),
+        "WindOnshore_B": (0.00040, 0.0005),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1),
+        "Wave_N": (0, 1),
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (.013, .014)
+    },
+    "SI_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0021, 0.0023),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1),
+        "Wave_N": (0, 1),
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (.00039, .0004)
+    },
+    "TA_data": {
         "BG_N": (0, 1),
         "PV_B": (0.0070, 0.0071),
         "WindOnshore_B": (0.00150, 0.00151),
@@ -350,14 +396,22 @@ capacity_limits = {
         "Wave_N": (0, 1),
         "WindOffshore_N": (0, 1)
     },
-    "R4_data": {
+    "TU_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0070, 0.0071),
-        "WindOnshore_B": (0.00150, 0.00151),
+        "PV_B": (0.0028, 0.0029),
+        "PV_N": (0, 1),
+        "WindOnshore_N": (0, 1),
+        "Wave_N": (0, 1)
+    },
+    "VU_data": {
+        "BG_N": (0, 1),
+        "PV_B": (0.0043, 0.0044),
+        "WindOnshore_B": (0.0031, 0.0032),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1)
+        "WindOffshore_N": (0, 1),
+        "Hydro_B": (.0011, .0012)
     }
 }
 
@@ -398,7 +452,7 @@ converter_capacityParam
 converter_coefficient = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
-            ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N"],
+            ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
             m.set.yearssel,
             ["Powergen"],
             ["Biomass", "Elec", "CO2"],
@@ -421,6 +475,9 @@ converter_coefficient.loc[idx["WindOnshore_N", :, :, "Elec"], "coefficient"] = 1
 
 converter_coefficient.loc[idx["Wave_N", :, :, "Elec"], "coefficient"] = 1  
 converter_coefficient.loc[idx["WindOffshore_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+
+converter_coefficient.loc[idx["Hydro_B", :, :, "Elec"], "coefficient"] = 1 
+converter_coefficient.loc[idx["Geothermal_B", :, :, "Elec"], "coefficient"] = 1 
 converter_coefficient = converter_coefficient.dropna(how="all")
 
 m.parameter.add(converter_coefficient, "converter_coefficient")
@@ -445,11 +502,11 @@ converter_coefficient
 
 
 # load the profiles DataFrame, select its PV and WindOnshore columns
-for data_node in ["R1_data", "R2_data", "R3_data", "R4_data"]:
+for data_node in ["CI_data","FJ_data","FSM_data", "KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"]:
     
     region_code = data_node.split("_")[0]  # "R1" or "R2"
     
-    techs = ["PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N"]
+    techs = ["PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "Hydro_B", "Geothermal_B"]
     techs_region = [f"{t}_{region_code}" for t in techs]  # add R1 or R2 suffix
 
     # Select, convert MW→GW, transpose
@@ -487,7 +544,7 @@ accounting_converterUnits = pd.DataFrame(
             ["Invest", "OMFix"],
             ["global"],
             ["horizon"],
-            ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N"],
+            ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
             m.set.yearssel,
         ]
     )
@@ -604,6 +661,38 @@ accounting_converterUnits.loc[
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "WindOffshore_N", "2030"], "perUnitTotal"
 ] = 75
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Hydro_B", "2030"], "perUnitBuild"
+] = 474
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Hydro_B", "2030"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Hydro_B", "2030"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Hydro_B", "2030"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "Hydro_B", "2030"], "perUnitTotal"
+] = 75
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "perUnitBuild"
+] = 474
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "Geothermal_B", "2030"], "perUnitTotal"
+] = 75
 accounting_converterUnits = accounting_converterUnits.fillna(0)
 
 m.parameter.add(accounting_converterUnits, "accounting_converterunits")
@@ -623,15 +712,16 @@ accounting_converterUnits
 # that this profile needs to be matched exactly on an hour-by-hour level.
 
 # %%
+
 # "sourcesink_profile"
-demand_R4_R2_CH = profiles[["demand_R1", "demand_R2","demand_R3", "demand_R4"]]
+demand_R4_R2_CH = profiles[["demand_CI", "demand_FJ","demand_FSM", "demand_KB", "demand_MI","demand_NU","demand_NE","demand_PU","demand_PNG","demand_SA","demand_SI","demand_TA","demand_TU","demand_VU"]]
 
 demand_R4_R2_CH = demand_R4_R2_CH.div(1e3).mul(-1)
 # transpose DataFrame for needed format
 demand_R4_R2_CH = demand_R4_R2_CH.T
 
 demand_R4_R2_CH = demand_R4_R2_CH.rename(
-    index={"demand_R1": "R1_data", "demand_R2": "R2_data", "demand_R3": "R3_data", "demand_R4": "R4_data" }
+    index={"demand_CI": "CI_data", "demand_FJ": "FJ_data", "demand_FSM": "FSM_data", "demand_KB": "KB_data", "demand_MI": "MI_data","demand_NU": "NU_data","demand_NE": "NE_data","demand_PU": "PU_data","demand_PNG": "PNG_data","demand_SA": "SA_data","demand_SI": "SI_data","demand_TA": "TA_data","demand_TU": "TU_data","demand_VU": "VU_data"}
 )
 
 # add columns and set them as index
@@ -659,7 +749,7 @@ sourcesink_config = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Elec"]]
     )
 )
-sourcesink_config.loc[idx[["R1_data","R2_data","R3_data","R4_data" ], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
 sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
@@ -687,7 +777,7 @@ sourcesink_config
 
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
-biomass_limits = [211, 511,211, 511]  # GW or other units for R1_data, R2_data
+biomass_limits = [211, 511,211, 511, 511,511,511,511,511,511,511,511,511,511]  # GW or other units for R1_data, R2_data
 lower_limit = 0  # same for all in this example
 
 sourcesink_annualSum = pd.DataFrame(
@@ -711,8 +801,8 @@ sourcesink_config = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["Biomass"]]
     )
 )
-sourcesink_config.loc[idx[["R1_data","R2_data", "R3_data","R4_data"], :, :, :], "usesUpperSum"] = 1
-sourcesink_config.loc[idx[["R1_data","R2_data", "R3_data","R4_data"], :, :, :], "usesLowerProfile"] = 1
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesUpperSum"] = 1
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesLowerProfile"] = 1
 sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
@@ -721,7 +811,7 @@ sourcesink_config
 # "accounting_sourcesinkFlow"
 # setting a cost for methane imports
 # User inputs perFlow prices for Biomass for each node
-biomass_prices = [0.032, 0.032, 0.032, 0.032,]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+biomass_prices = [0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032,0.032, 0.032]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -755,7 +845,7 @@ sourcesink_annualSum = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["Emission"], ["CO2"]]
     )
 )
-sourcesink_annualSum.loc[idx[["R1_data","R2_data","R3_data","R4_data"],  :, :, :], "lower"] = -np.inf
+sourcesink_annualSum.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"],  :, :, :], "lower"] = -np.inf
 sourcesink_annualSum = sourcesink_annualSum.dropna()
 
 m.parameter.add(sourcesink_annualSum, "sourcesink_annualsum")
@@ -767,8 +857,8 @@ sourcesink_config = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["Emission"], ["CO2"]]
     )
 )
-sourcesink_config.loc[idx[["R1_data","R2_data", "R3_data","R4_data"], :, :, :], "usesLowerSum"] = 1
-sourcesink_config.loc[idx[["R1_data","R2_data", "R3_data","R4_data"], :, :, :], "usesUpperProfile"] = 1
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesLowerSum"] = 1
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesUpperProfile"] = 1
 sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
@@ -870,7 +960,7 @@ converter_techParam
 converter_capacityParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
-converter_capacityParam.loc[idx[["R1_data","R2_data", "R3_data","R4_data"], :, "Battery"], "unitsUpperLimit"] = (
+converter_capacityParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
   0.010  # GW_el Converter upper limit
 )
 converter_capacityParam = converter_capacityParam.dropna()
@@ -991,8 +1081,8 @@ storage_sizeParam
 storage_reservoirParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
-storage_reservoirParam.loc[idx[["R1_data","R2_data","R3_data","R4_data"], :, "Battery"], "unitsUpperLimit"] = (
-    1000  # units
+storage_reservoirParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
+    100000  # units
 )
 storage_reservoirParam = storage_reservoirParam.dropna()
 
@@ -1027,7 +1117,7 @@ m.write(fileformat="dat")
 # That's it. We have successfully added a lithium-ion battery as storage
 # technology to our model. We can now start a GAMS optimization run (part b).
 m.run(
-    resultfile="Tonga_trial_2",
+    resultfile="PIC_trial_2",
     lo=3,
     postcalc=1,
     roundts=1,)
