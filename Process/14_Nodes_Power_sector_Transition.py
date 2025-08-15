@@ -351,7 +351,7 @@ capacity_limits = {
     },
     "PU_data": {
         "BG_N": (0, 1),
-        "PV_B": (0.0032, 0.0032),
+        "PV_B": (0.0030, 0.0032),
         "PV_N": (0, 10),
         "WindOnshore_N": (0, 10),
         "WindOffshore_N": (0, 10)
@@ -797,7 +797,8 @@ sourcesink_config
 
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
-biomass_limits = [12, 2380,168, 221, 22,4,5,11330,11330,295,1507,211,9,671]
+#biomass_limits = [12, 2380,168, 221, 22,4,5,1,11330,295,1507,211,9,671]
+biomass_limits = [11330, 11330,11330, 11330, 11330,11330,11330,11330,11330,11330,11330,11330,91133,11330]
 
 lower_limit = 0  # same for all in this example
 
@@ -982,7 +983,7 @@ converter_capacityParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
 converter_capacityParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
-  0.010  # GW_el Converter upper limit
+  1000  # GW_el Converter upper limit #.0.010
 )
 converter_capacityParam = converter_capacityParam.dropna()
 
@@ -1038,7 +1039,7 @@ accounting_converterUnits = pd.DataFrame(
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Battery", "2030"], "perUnitBuild"
-] = 0  # million EUR / unit
+] = 50  # million EUR / unit
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Battery", "2030"], "useAnnuity"
 ] = 1  # binary yes/no
@@ -1050,7 +1051,7 @@ accounting_converterUnits.loc[
 ] = 0.06  # percent/100
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "Battery", "2030"], "perUnitTotal"
-] = 0  # million EUR per unit and year
+] = 1.25  # million EUR per unit and year
 accounting_converterUnits = accounting_converterUnits.fillna(0)
 
 m.parameter.add(accounting_converterUnits, "accounting_converterunits")
@@ -1119,7 +1120,7 @@ accounting_storageUnits = pd.DataFrame(
 )
 
 accounting_storageUnits.loc[idx["Invest", :, :, :, :], "perUnitBuild"] = (
-    0.150
+    0.100
 )  # Since our storage unit can store 8 GWh we need to scale the million EUR/GWh value with 8
 accounting_storageUnits.loc[idx["Invest", :, :, :, :], "useAnnuity"] = 1
 accounting_storageUnits.loc[idx["Invest", :, :, :, :], "amorTime"] = 20
