@@ -416,6 +416,7 @@ capacity_limits = {
     }
 }
 
+
 # Build DataFrame index
 all_techs = list({tech for node in capacity_limits for tech in capacity_limits[node]})
 converter_capacityParam = pd.DataFrame(
@@ -453,21 +454,20 @@ converter_capacityParam
 converter_coefficient = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
-            ["BG_B", "BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
+            ["BG_N", "BG_B", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
             m.set.yearssel,
             ["Powergen"],
             ["Biomass", "Elec", "CO2"],
         ]
     )
 )
+converter_coefficient.loc[idx["BG_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+converter_coefficient.loc[idx["BG_N", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
+converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.2 #kt co2
 
-converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 0.1  # GWh_el
-converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -0.285  # GWh_ch
+converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
 converter_coefficient.loc[idx["BG_B", :, :, "CO2"], "coefficient"] = 0.02
-
-converter_coefficient.loc[idx["BG_N", :, :, "Elec"], "coefficient"] = .1  # GWh_el
-converter_coefficient.loc[idx["BG_N", :, :, "Biomass"], "coefficient"] = -.285  # GWh_ch
-converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.02 #kt co2
 
 converter_coefficient.loc[idx["PV_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 
@@ -797,9 +797,7 @@ sourcesink_config
 
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
-#biomass_limits = [12, 2380,168, 221, 22,4,5,1,11330,295,1507,211,9,671]
-biomass_limits = [11330, 11330,11330, 11330, 11330,11330,11330,11330,11330,11330,11330,11330,91133,11330]
-
+biomass_limits = [12, 2380,168, 221, 22,4,5,1,11330,295,1507,211,9,671]  # GW or other units for R1_data, R2_data
 lower_limit = 0  # same for all in this example
 
 sourcesink_annualSum = pd.DataFrame(
@@ -983,7 +981,7 @@ converter_capacityParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
 converter_capacityParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
-  1000  # GW_el Converter upper limit #.0.010
+  1000  # GW_el Converter upper limit
 )
 converter_capacityParam = converter_capacityParam.dropna()
 
@@ -1051,7 +1049,7 @@ accounting_converterUnits.loc[
 ] = 0.06  # percent/100
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "Battery", "2030"], "perUnitTotal"
-] = 1.25  # million EUR per unit and year
+] = 1.5  # million EUR per unit and year
 accounting_converterUnits = accounting_converterUnits.fillna(0)
 
 m.parameter.add(accounting_converterUnits, "accounting_converterunits")
@@ -1104,7 +1102,7 @@ storage_reservoirParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
 storage_reservoirParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
-    10000000  # units
+    100000  # units
 )
 storage_reservoirParam = storage_reservoirParam.dropna()
 
