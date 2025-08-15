@@ -3,7 +3,7 @@ BG_B . 2030 . Powergen . Biomass               -2.85       NaN      NaN      NaN
 BG_B . 2030 . Powergen . CO2                    0.02       NaN      NaN      NaN    NaN
 BG_B . 2030 . Powergen . Elec                   1.00       NaN      NaN      NaN    NaN
 BG_N . 2030 . Powergen . Biomass               -2.85       NaN      NaN      NaN    NaN
-BG_N . 2030 . Powergen . CO2                    0.20       NaN      NaN      NaN    NaN
+BG_N . 2030 . Powergen . CO2                    0.02       NaN      NaN      NaN    NaN
 BG_N . 2030 . Powergen . Elec                   1.00       NaN      NaN      NaN    NaN
 Battery . 2030 . Charge . Elec                 -1.00       NaN      NaN      NaN    NaN
 Battery . 2030 . Charge . Elec_LiIon            0.95       NaN      NaN      NaN    NaN

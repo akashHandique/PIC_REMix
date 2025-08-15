@@ -463,7 +463,7 @@ converter_coefficient = pd.DataFrame(
 )
 converter_coefficient.loc[idx["BG_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 converter_coefficient.loc[idx["BG_N", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
-converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.2 #kt co2
+converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.02 #kt co2
 
 converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
@@ -690,7 +690,7 @@ accounting_converterUnits.loc[
 ] = 1
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Hydro_B", "2030"], "amorTime"
-] = 50
+] = 25
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Hydro_B", "2030"], "interest"
 ] = 0.06
@@ -891,14 +891,7 @@ sourcesink_config
 # beginning or the `data/` directory by default. Writing to `*.csv` files will
 # work similarly.
 
-# %%
-# write all files to the datadir
-m.write(fileformat="dat")
-# %% [markdown]
-# We have finished building our REMix data model now. In part b of this
-# tutorial, we are looking into how we can execute it.
-m.write(fileformat="dat")
-# running GAMS from Python script
+
 
 #########################################
 # %% [markdown]

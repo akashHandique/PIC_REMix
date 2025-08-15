@@ -1,4 +1,4 @@
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 11:47:56 Page 1
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -39,7 +39,7 @@ INCLUDE    C:\Local\framework\remix\framework\model\source\metadata.gms
 INCLUDE    C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\metadata
   73  remix_version "0.13.0"
   74  gams_version "43.3.0"
-  75  timestamp "08/15/25 11:47:56"
+  75  timestamp "08/15/25 13:38:01"
   76  framework_path "C:\Local\framework\remix\framework\model\source"
   77   
   78  framework_hash c4d562dc434502ae346f255d5b29b268f7db540c
@@ -48,7 +48,7 @@ INCLUDE    C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\metada
   81   
   82  project_path "C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\data"
   83   
-  84  project_hash "2732d134feb8024b84e4c06c3842c1a34910eeb6"
+  84  project_hash "54f00bcdf612769a468f4d96f635c2c0678bfac3"
   85   
   86  project_branch "main"
   87   
@@ -7258,7 +7258,7 @@ INCLUDE    C:\Local\framework\remix\framework\model\source\postcalc\writegdx.gms
 9596      diagnostics
 9597      ;
 9600   
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 11:47:56 Page 2
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -7270,7 +7270,7 @@ Include File Summary
      3       22 INCLUDE        1      22  .C:\Local\framework\remix\framework\model\source\metadata.gms
      4       36 CALL           3      27  .printf "remix_version \"0.13.0\"\n" > C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
      5       37 CALL           3      28  .printf "gams_version \"43.3.0\"\n" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
-     6       38 CALL           3      29  .printf "timestamp \"08/15/25 11:47:56\"\n" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
+     6       38 CALL           3      29  .printf "timestamp \"08/15/25 13:38:01\"\n" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
      7       41 CALL           3      32  .printf "framework_path " >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
      8       42 CALL           3      33  .cd C:\Local\framework\remix\framework\model\source && cd| sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
      9       43 CALL           3      34  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
@@ -7498,8 +7498,8 @@ Include File Summary
    231     9535 INCLUDE       28      99  ..C:\Local\framework\remix\framework\model\source\postcalc\writegdx.gms
 
 
-COMPILATION TIME     =        4.875 SECONDS     29 MB  43.3.0 9e10b068 WEX-WEI
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 11:47:56 Page 3
+COMPILATION TIME     =        5.532 SECONDS     29 MB  43.3.0 9e10b068 WEX-WEI
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Range Statistics    SOLVE remix Using MIP From line 8323
 
@@ -7510,7 +7510,7 @@ RHS       [min, max] : [ 1.800E-04, 1.000E+05] - Zero values observed as well
 Bound     [min, max] : [        NA,        NA] - Zero values observed as well
 Matrix    [min, max] : [ 3.200E-04, 5.357E+02]
 
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 11:47:56 Page 4
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 4
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE remix Using MIP From line 8323
 
@@ -7525,13 +7525,13 @@ BLOCKS OF VARIABLES          37     SINGLE VARIABLES    2,246,973
 NON ZERO ELEMENTS     6,039,974
 
 
-GENERATION TIME      =       10.375 SECONDS  1,416 MB  43.3.0 9e10b068 WEX-WEI
+GENERATION TIME      =       13.172 SECONDS  1,416 MB  43.3.0 9e10b068 WEX-WEI
 
 
-EXECUTION TIME       =       18.141 SECONDS  1,416 MB  43.3.0 9e10b068 WEX-WEI
+EXECUTION TIME       =       22.890 SECONDS  1,416 MB  43.3.0 9e10b068 WEX-WEI
                L O O P S         optiframeToCalc of1
 
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 11:47:56 Page 5
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 5
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE remix Using MIP From line 8323
 
@@ -7546,7 +7546,7 @@ Solution Report     SOLVE remix Using MIP From line 8323
 **** MODEL STATUS      1 Optimal
 **** OBJECTIVE VALUE              722.5663
 
- RESOURCE USAGE, LIMIT         90.218   1209600.000
+ RESOURCE USAGE, LIMIT        103.594   1209600.000
  ITERATION COUNT, LIMIT       156    2147483647
 --- GAMS/CPLEX licensed for continuous and discrete problems.
 
@@ -7573,7 +7573,7 @@ Finished reading from "C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process
 
 
 --- LP status (1): optimal.
---- Cplex Time: 89.19sec (det. 84598.29 ticks)
+--- Cplex Time: 102.44sec (det. 84598.29 ticks)
 
 
 Optimal solution found
@@ -7598,7 +7598,7 @@ comp. slackness viol.       3.543e-06   5.189e-03
 **** REPORT SUMMARY :        0     NONOPT
                              0 INFEASIBLE
                              0  UNBOUNDED
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 11:47:56 Page 6
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 6
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -7609,7 +7609,7 @@ props
 opt C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\cplex.opt
 
 
-EXECUTION TIME       =       14.062 SECONDS  1,233 MB  43.3.0 9e10b068 WEX-WEI
+EXECUTION TIME       =       18.375 SECONDS  1,233 MB  43.3.0 9e10b068 WEX-WEI
 
 
 USER: Medium MUD - 10 User License                   S220920|0002AO-GEN

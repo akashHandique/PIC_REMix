@@ -463,10 +463,10 @@ converter_coefficient = pd.DataFrame(
 )
 converter_coefficient.loc[idx["BG_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 converter_coefficient.loc[idx["BG_N", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
-converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.2 #kt co2
+converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.02 #kt co2
 
-converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 0.1  # GWh_el
-converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -0.285  # GWh_ch
+converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
 converter_coefficient.loc[idx["BG_B", :, :, "CO2"], "coefficient"] = 0.02
 
 converter_coefficient.loc[idx["PV_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
