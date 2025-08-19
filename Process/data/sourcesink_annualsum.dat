@@ -10,13 +10,13 @@ KB_data . 2030 . FuelImport . Biomass     NaN    0.0    221.0
 MI_data . 2030 . Emission . CO2           NaN   -inf      NaN
 MI_data . 2030 . FuelImport . Biomass     NaN    0.0     22.0
 NE_data . 2030 . Emission . CO2           NaN   -inf      NaN
-NE_data . 2030 . FuelImport . Biomass     NaN    0.0      4.0
+NE_data . 2030 . FuelImport . Biomass     NaN    0.0      5.0
 NU_data . 2030 . Emission . CO2           NaN   -inf      NaN
-NU_data . 2030 . FuelImport . Biomass     NaN    0.0      5.0
+NU_data . 2030 . FuelImport . Biomass     NaN    0.0      4.0
 PNG_data . 2030 . Emission . CO2          NaN   -inf      NaN
-PNG_data . 2030 . FuelImport . Biomass    NaN    0.0      1.0
+PNG_data . 2030 . FuelImport . Biomass    NaN    0.0  11330.0
 PU_data . 2030 . Emission . CO2           NaN   -inf      NaN
-PU_data . 2030 . FuelImport . Biomass     NaN    0.0  11330.0
+PU_data . 2030 . FuelImport . Biomass     NaN    0.0      1.0
 SA_data . 2030 . Emission . CO2           NaN   -inf      NaN
 SA_data . 2030 . FuelImport . Biomass     NaN    0.0    295.0
 SI_data . 2030 . Emission . CO2           NaN   -inf      NaN

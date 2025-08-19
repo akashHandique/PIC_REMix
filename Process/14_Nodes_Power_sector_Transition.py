@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Aug 18 16:05:12 2025
+
+@author: ajh287
+"""
+
 
 
 # %% [markdown]
@@ -358,15 +365,15 @@ capacity_limits = {
     },
     "PNG_data": {
         "BG_B": (0.0182, 0.0182),
-        "BG_N": (0, 10),
+        "BG_N": (0, 1),
         "PV_B": (0.0031, 0.0031),
+        "Hydro_B": (0.115, 0.115),
+        "Geothermal_B": (0.011, 0.011),
         "PV_N": (0, 10),
-        "WindOnshore_N": (0, 10),
-        "Wave_N": (0, 10),
-        "WindOffshore_B": (0, 10),
-        "Hydro_B": (0.115, 0.115),# hydro adjusted
-        "Geothermal_B": (0.011, 0.011)#Geothermal adjusted (.22 CF)
-    },
+        "WindOnshore_N": (0, 3),
+        "Wave_N": (0, 3),
+        "WindOffshore_B": (0, 3)
+        },
     "SA_data": {
         "BG_B": (0.0011, 0.0011),
         "BG_N": (0, 1),
@@ -797,7 +804,8 @@ sourcesink_config
 
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
-biomass_limits = [12, 2380,168, 221, 22,4,5,1,11330,295,1507,211,9,671]  # GW or other units for R1_data, R2_data
+#biomass_limits = [12, 2380, 168, 221, 22,4,5,1, 11330, 295, 1507, 211, 9, 671]
+biomass_limits = [12, 2380, 168, 221, 22,5,4,11330, 1, 295, 1507, 211, 9, 671]  # GW or other units for R1_data, R2_data
 lower_limit = 0  # same for all in this example
 
 sourcesink_annualSum = pd.DataFrame(
@@ -831,7 +839,7 @@ sourcesink_config
 # "accounting_sourcesinkFlow"
 # setting a cost for methane imports
 # User inputs perFlow prices for Biomass for each node
-biomass_prices = [0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032,0.032, 0.032]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+biomass_prices = [0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032,0.032, 0.032]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -974,7 +982,7 @@ converter_capacityParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
 converter_capacityParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
-  1000  # GW_el Converter upper limit
+  300  # GW_el Converter upper limit
 )
 converter_capacityParam = converter_capacityParam.dropna()
 
@@ -1078,7 +1086,7 @@ storage_techParam
 storage_sizeParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([["Battery"], m.set.yearssel, ["Elec_LiIon"]])
 )
-storage_sizeParam.loc[idx["Battery", :, "Elec_LiIon"], "size"] = 0.001  # GWh_ch/unit
+storage_sizeParam.loc[idx["Battery", :, "Elec_LiIon"], "size"] = 1 # GWh_ch/unit
 storage_sizeParam = storage_sizeParam.dropna()
 
 m.parameter.add(storage_sizeParam, "storage_sizeparam")
@@ -1095,7 +1103,7 @@ storage_reservoirParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
 storage_reservoirParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
-    100000  # units
+    1000  # units
 )
 storage_reservoirParam = storage_reservoirParam.dropna()
 
@@ -1111,13 +1119,13 @@ accounting_storageUnits = pd.DataFrame(
 )
 
 accounting_storageUnits.loc[idx["Invest", :, :, :, :], "perUnitBuild"] = (
-    0.100
+    100
 )  # Since our storage unit can store 8 GWh we need to scale the million EUR/GWh value with 8
 accounting_storageUnits.loc[idx["Invest", :, :, :, :], "useAnnuity"] = 1
 accounting_storageUnits.loc[idx["Invest", :, :, :, :], "amorTime"] = 20
 accounting_storageUnits.loc[idx["Invest", :, :, :, :], "interest"] = 0.06
 accounting_storageUnits.loc[idx["OMFix", :, :, :, :], "perUnitTotal"] = (
-  0.005
+  5
 )
 accounting_storageUnits = accounting_storageUnits.fillna(0)
 

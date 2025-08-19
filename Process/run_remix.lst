@@ -1,4 +1,4 @@
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 1
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/19/25 10:30:18 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -39,7 +39,7 @@ INCLUDE    C:\Local\framework\remix\framework\model\source\metadata.gms
 INCLUDE    C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\metadata
   73  remix_version "0.13.0"
   74  gams_version "43.3.0"
-  75  timestamp "08/15/25 13:38:01"
+  75  timestamp "08/19/25 10:30:18"
   76  framework_path "C:\Local\framework\remix\framework\model\source"
   77   
   78  framework_hash c4d562dc434502ae346f255d5b29b268f7db540c
@@ -48,7 +48,7 @@ INCLUDE    C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\metada
   81   
   82  project_path "C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\data"
   83   
-  84  project_hash "54f00bcdf612769a468f4d96f635c2c0678bfac3"
+  84  project_hash "532f943ccdc7e8a0514a8b469c2e365b2c7a1ac6"
   85   
   86  project_branch "main"
   87   
@@ -7258,7 +7258,7 @@ INCLUDE    C:\Local\framework\remix\framework\model\source\postcalc\writegdx.gms
 9596      diagnostics
 9597      ;
 9600   
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 2
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/19/25 10:30:18 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -7270,7 +7270,7 @@ Include File Summary
      3       22 INCLUDE        1      22  .C:\Local\framework\remix\framework\model\source\metadata.gms
      4       36 CALL           3      27  .printf "remix_version \"0.13.0\"\n" > C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
      5       37 CALL           3      28  .printf "gams_version \"43.3.0\"\n" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
-     6       38 CALL           3      29  .printf "timestamp \"08/15/25 13:38:01\"\n" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
+     6       38 CALL           3      29  .printf "timestamp \"08/19/25 10:30:18\"\n" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
      7       41 CALL           3      32  .printf "framework_path " >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
      8       42 CALL           3      33  .cd C:\Local\framework\remix\framework\model\source && cd| sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
      9       43 CALL           3      34  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\225a\\metadata
@@ -7498,19 +7498,19 @@ Include File Summary
    231     9535 INCLUDE       28      99  ..C:\Local\framework\remix\framework\model\source\postcalc\writegdx.gms
 
 
-COMPILATION TIME     =        5.532 SECONDS     29 MB  43.3.0 9e10b068 WEX-WEI
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 3
+COMPILATION TIME     =        5.500 SECONDS     29 MB  43.3.0 9e10b068 WEX-WEI
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/19/25 10:30:18 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Range Statistics    SOLVE remix Using MIP From line 8323
 
 
 RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
 
-RHS       [min, max] : [ 1.800E-04, 1.000E+05] - Zero values observed as well
+RHS       [min, max] : [ 1.800E-04, 1.133E+04] - Zero values observed as well
 Bound     [min, max] : [        NA,        NA] - Zero values observed as well
 Matrix    [min, max] : [ 3.200E-04, 5.357E+02]
 
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 4
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/19/25 10:30:18 Page 4
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE remix Using MIP From line 8323
 
@@ -7525,13 +7525,13 @@ BLOCKS OF VARIABLES          37     SINGLE VARIABLES    2,246,973
 NON ZERO ELEMENTS     6,039,974
 
 
-GENERATION TIME      =       13.172 SECONDS  1,416 MB  43.3.0 9e10b068 WEX-WEI
+GENERATION TIME      =       11.719 SECONDS  1,416 MB  43.3.0 9e10b068 WEX-WEI
 
 
-EXECUTION TIME       =       22.890 SECONDS  1,416 MB  43.3.0 9e10b068 WEX-WEI
+EXECUTION TIME       =       20.797 SECONDS  1,416 MB  43.3.0 9e10b068 WEX-WEI
                L O O P S         optiframeToCalc of1
 
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 5
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/19/25 10:30:18 Page 5
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE remix Using MIP From line 8323
 
@@ -7544,10 +7544,10 @@ Solution Report     SOLVE remix Using MIP From line 8323
 
 **** SOLVER STATUS     1 Normal Completion
 **** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE              722.5663
+**** OBJECTIVE VALUE              526.6437
 
- RESOURCE USAGE, LIMIT        103.594   1209600.000
- ITERATION COUNT, LIMIT       156    2147483647
+ RESOURCE USAGE, LIMIT         88.516   1209600.000
+ ITERATION COUNT, LIMIT       134    2147483647
 --- GAMS/CPLEX licensed for continuous and discrete problems.
 
 Reading parameter(s) from "C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\cplex.opt"
@@ -7573,24 +7573,24 @@ Finished reading from "C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process
 
 
 --- LP status (1): optimal.
---- Cplex Time: 102.44sec (det. 84598.29 ticks)
+--- Cplex Time: 87.47sec (det. 76917.84 ticks)
 
 
 Optimal solution found
-Objective:          722.566262
+Objective:          526.643666
 
 Solution Quality Statistics:
                                    unscaled                scaled
                                max         sum         max         sum
-primal infeasibility        6.494e-06   8.293e-05   6.494e-06   8.293e-05
-dual infeasibility          2.380e-08   5.135e-04   2.380e-08   5.135e-04
-primal residual             7.276e-12   6.338e-11   7.276e-12   6.338e-11
-dual residual               2.408e-08   1.912e-02   2.408e-08   1.912e-02
-primal solution vector      2.172e+04   2.666e+05   2.172e+04   2.666e+05
-dual solution vector        9.881e+02   1.339e+05   9.881e+02   1.339e+05
-slacks                      1.000e+05   1.525e+06   1.000e+05   1.525e+06
-reduced costs               1.181e+01   2.108e+05   1.181e+01   2.108e+05
-comp. slackness viol.       3.543e-06   5.189e-03
+primal infeasibility        6.713e-06   7.757e-06   6.713e-06   7.757e-06
+dual infeasibility          7.569e-09   5.108e-04   7.569e-09   5.108e-04
+primal residual             1.276e-11   1.897e-11   1.276e-11   1.897e-11
+dual residual               3.372e-08   6.060e-03   3.372e-08   6.060e-03
+primal solution vector      6.371e+00   1.063e+05   6.371e+00   1.063e+05
+dual solution vector        3.322e+02   1.039e+05   3.322e+02   1.039e+05
+slacks                      9.740e+03   8.327e+04   9.740e+03   8.327e+04
+reduced costs               7.826e+00   4.786e+04   7.826e+00   4.786e+04
+comp. slackness viol.       1.988e-07   3.483e-04
 
 
 
@@ -7598,7 +7598,7 @@ comp. slackness viol.       3.543e-06   5.189e-03
 **** REPORT SUMMARY :        0     NONOPT
                              0 INFEASIBLE
                              0  UNBOUNDED
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/15/25 13:38:01 Page 6
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 08/19/25 10:30:18 Page 6
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -7609,7 +7609,7 @@ props
 opt C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\cplex.opt
 
 
-EXECUTION TIME       =       18.375 SECONDS  1,233 MB  43.3.0 9e10b068 WEX-WEI
+EXECUTION TIME       =       15.937 SECONDS  1,234 MB  43.3.0 9e10b068 WEX-WEI
 
 
 USER: Medium MUD - 10 User License                   S220920|0002AO-GEN

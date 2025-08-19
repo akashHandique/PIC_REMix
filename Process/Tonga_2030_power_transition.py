@@ -107,7 +107,7 @@ m.datadir = "./data"
 # time profiles that are loaded here.
 # %%
 # load input data
-profiles = pd.read_csv("../_input/profiles.csv", index_col=0)
+profiles = pd.read_csv("../_input/profilesss.csv", index_col=0)
 # %% [markdown]
 # ### Defining the model scope
 #
@@ -147,7 +147,7 @@ profiles = pd.read_csv("../_input/profiles.csv", index_col=0)
 # DataFrame for aggregation from data to model regions
 df = pd.DataFrame(
     [
-        ["R1_data", "R1_model", 1],
+        ["PNG_data", "PNG_model", 1],
         ["R2_data", "R2_model", 1],  # not strictly necessary for tutorial 1 and 2
         ["R3_data", "R3_model", 1],  # not strictly necessary for tutorial 1 and 2
         ["R4_data", "R4_model", 1],  # not strictly necessary for tutorial 1 and 2
@@ -270,85 +270,90 @@ accounting_perIndicator
 # %%
 # "converter_techParam"
 # setting technology parameters
-converter_techParam = pd.DataFrame(
-    index=pd.MultiIndex.from_product([["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N"], m.set.yearssel])
-)
 
-converter_techParam.loc[idx["BG_N"], "lifeTime"] = 25  # years
-converter_techParam.loc[idx["BG_N"], "activityUpperLimit"] = (
-    1  # availability of technology
-)
-converter_techParam.loc[idx["PV_B"], "lifeTime"] = 25  # years
-converter_techParam.loc[idx["PV_B"], "activityUpperLimit"] = (
-    0  # this value will be replaced later on with the normalized feed-in profile
-)
-
-converter_techParam.loc[idx["WindOnshore_B"], "lifeTime"] = 25
-converter_techParam.loc[idx["WindOnshore_B"], "activityUpperLimit"] = (
-    0  # this value will be replaced later on with the normalized feed-in profile
-)
-
-converter_techParam.loc[idx["PV_N"], "lifeTime"] = 25  # years
-converter_techParam.loc[idx["PV_N"], "activityUpperLimit"] = (
-    0  # this value will be replaced later on with the normalized feed-in profile
-)
-
-converter_techParam.loc[idx["WindOnshore_N"], "lifeTime"] = 25
-converter_techParam.loc[idx["WindOnshore_N"], "activityUpperLimit"] = (
-    0  # this value will be replaced later on with the normalized feed-in profile
-)
-converter_techParam.loc[idx["Wave_N"], "lifeTime"] = 25
-converter_techParam.loc[idx["Wave_N"], "activityUpperLimit"] = (
-    0  # this value will be replaced later on with the normalized feed-in profile
-)
-converter_techParam.loc[idx["WindOffshore_N"], "lifeTime"] = 25
-converter_techParam.loc[idx["WindOffshore_N"], "activityUpperLimit"] = (
-    0  # this value will be replaced later on with the normalized feed-in profile
-)
-
-m.parameter.add(converter_techParam, "converter_techparam")
-converter_techParam
+# %% [markdown]
+# Since we now introduced a conversion unit that runs on variable renewable
+# energy, we need to limit the profile for the activity on the potential
+# feed-in.
+# We can do this in a similar way to adding the electrical demand profile.
+#
+# The values in the `profiles.csv` are given in mega watt (MW) of electrical
+# feed-in.
+# We need to normalize them to values between 0 and 1.
+# This normalized profile describes the maximum activity per unit of power plant.
+#
+# Example: 10 PV units with 1 GW rated capacity each (as specified by the
+# activity parameter) with an activity profile of 0.24 in hour 11 could produce
+# up to 10 * 1 GWh/h * 0.24 = 2.4 GWh/h.
 # %%
 # "converter_capacityParam"
 # defining upper and/or lower limits for converter technologies
+tech_specs = {
+    "BG_B": {"lifeTime": 25, "activityUpperLimit": 1}, 
+    "BG_N": {"lifeTime": 25, "activityUpperLimit": 1},  # No feed-in
+    "PV_B": {"lifeTime": 25, "activityUpperLimit": 0},  # Feed-in
+    "WindOnshore_B": {"lifeTime": 25, "activityUpperLimit": 0},
+    "PV_N": {"lifeTime": 25, "activityUpperLimit": 0},
+    "WindOnshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
+    "Wave_N": {"lifeTime": 25, "activityUpperLimit": 0},
+    "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
+    "Hydro_B": {"lifeTime": 25, "activityUpperLimit": 0},
+    "Geothermal_B": {"lifeTime": 25, "activityUpperLimit": 0},
+}
+
+# Create DataFrame
+converter_techParam = pd.DataFrame(
+    index=pd.MultiIndex.from_product([list(tech_specs.keys()), m.set.yearssel])
+)
+
+# Assign values from dictionary
+for tech, specs in tech_specs.items():
+    converter_techParam.loc[idx[tech], "lifeTime"] = specs["lifeTime"]
+    converter_techParam.loc[idx[tech], "activityUpperLimit"] = specs["activityUpperLimit"]
+
+# Add to model
+m.parameter.add(converter_techParam, "converter_techparam")
+converter_techParam
+
+
+# %%
+# "converter_capacityParam"
+# defining upper and/or lower limits for converter technologies
+# Example user inputs for each node and tech
+# Keys: node -> tech -> (lower_limit, upper_limit) in GW
+capacity_limits = {
+    "PNG_data": {
+        "BG_B": (0.0182, 0.0182),
+        "BG_N": (0, 1),
+        "PV_B": (0.0031, 0.0031),
+        "Hydro_B": (0.115, 0.115),# hydro adjusted
+        "Geothermal_B": (0.011, 0.011),
+        "PV_N": (0, 2),
+        "WindOnshore_N": (0, 2),
+        "Wave_N": (0, 2),
+        "WindOffshore_B": (0, 2)
+        } 
+    }
+
+
+
+# Build DataFrame index
+all_techs = list({tech for node in capacity_limits for tech in capacity_limits[node]})
 converter_capacityParam = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N"]]
-    )
+    index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, all_techs])
 )
-converter_capacityParam.loc[idx["R1_data", :, "BG_N"], "unitsUpperLimit"] = 0.0051  # GW_el # 0.167
-converter_capacityParam.loc[idx["R1_data", :, "BG_N"], "unitsLowerLimit"] = 0.005
-converter_capacityParam.loc[idx["R1_data", :, "PV_B"], "unitsUpperLimit"] = 0.0071  # GW_el # 0.167
-converter_capacityParam.loc[idx["R1_data", :, "PV_B"], "unitsLowerLimit"] = 0.0070   # GW_el # 0.0165
-converter_capacityParam.loc[idx["R1_data", :, "WindOnshore_B"], "unitsUpperLimit"] = 0.00151  # GW_el
-converter_capacityParam.loc[idx["R1_data", :, "WindOnshore_B"], "unitsLowerLimit"] = 0.00150  # GW_el
-converter_capacityParam.loc[idx["R1_data", :, "PV_N"], "unitsUpperLimit"] = (
-    .0051  # GW_el
-)
-converter_capacityParam.loc[idx["R1_data", :, "PV_N"], "unitsLowerLimit"] = (
-    0.005  # GW_el
-)
-converter_capacityParam.loc[idx["R1_data", :, "WindOnshore_N"], "unitsUpperLimit"] = (
-   0.00451  # GW_el
-)
-converter_capacityParam.loc[idx["R1_data", :, "WindOnshore_N"], "unitsLowerLimit"] = (
-    0.0045  # GW_el
-)
-converter_capacityParam.loc[idx["R1_data", :, "Wave_N"], "unitsUpperLimit"] = (
-  0.011  # GW_el
-)
-converter_capacityParam.loc[idx["R1_data", :, "Wave_N"], "unitsLowerLimit"] = (
-    0.010  # GW_el
-)
-converter_capacityParam.loc[idx["R1_data", :, "WindOffshore_N"], "unitsUpperLimit"] = (
-  1  # GW_el
-)
-converter_capacityParam.loc[idx["R1_data", :, "WindOffshore_N"], "unitsLowerLimit"] = (
-    0  # GW_el
-)
+
+# Fill from user input
+for node, techs in capacity_limits.items():
+    for tech, (lower, upper) in techs.items():
+        converter_capacityParam.loc[idx[node, :, tech], "unitsLowerLimit"] = lower
+        converter_capacityParam.loc[idx[node, :, tech], "unitsUpperLimit"] = upper
+# Drop empty rows
 converter_capacityParam = converter_capacityParam.dropna(how="all")
 
+# Add to model
 m.parameter.add(converter_capacityParam, "converter_capacityparam")
+
 converter_capacityParam
 # %% [markdown]
 # Activities in REMix are the conversion processes a technology can perform.
@@ -361,26 +366,23 @@ converter_capacityParam
 # by setting a value of 1, which is arbitrary in this case, however, since the
 # actual potential for wind and solar energy is modeled as "activityProfile"
 # below, which overwrites this value.
-
-# %%
-# "converter_coefficient"
 converter_coefficient = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
-            ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N"],
+            ["BG_N", "BG_B", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
             m.set.yearssel,
             ["Powergen"],
             ["Biomass", "Elec", "CO2"],
         ]
     )
 )
-
-
 converter_coefficient.loc[idx["BG_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 converter_coefficient.loc[idx["BG_N", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
-converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.2 #kt co2
+converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.02 #kt co2
 
-
+converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
+converter_coefficient.loc[idx["BG_B", :, :, "CO2"], "coefficient"] = 0.02
 
 converter_coefficient.loc[idx["PV_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 
@@ -392,10 +394,16 @@ converter_coefficient.loc[idx["WindOnshore_N", :, :, "Elec"], "coefficient"] = 1
 
 converter_coefficient.loc[idx["Wave_N", :, :, "Elec"], "coefficient"] = 1  
 converter_coefficient.loc[idx["WindOffshore_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+
+converter_coefficient.loc[idx["Hydro_B", :, :, "Elec"], "coefficient"] = 1 
+converter_coefficient.loc[idx["Geothermal_B", :, :, "Elec"], "coefficient"] = 1 
 converter_coefficient = converter_coefficient.dropna(how="all")
 
 m.parameter.add(converter_coefficient, "converter_coefficient")
 converter_coefficient
+# %%
+# "converter_coefficient"
+
 # %% [markdown]
 # Since we now introduced a conversion unit that runs on variable renewable
 # energy, we need to limit the profile for the activity on the potential
@@ -414,7 +422,7 @@ converter_coefficient
 # %%
 # "converter_activityProfile"
 # load the profiles DataFrame, select its PV and WindOnshore columns
-converter_activityProfile = profiles[["PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N"]]
+converter_activityProfile = profiles[["PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "Hydro_B", "Geothermal_B"]]
 
 # convert from MW to GW
 converter_activityProfile = converter_activityProfile.div(1e3).T
@@ -425,7 +433,7 @@ converter_activityProfile = converter_activityProfile.div(
 converter_activityProfile.index.names = ["techs"]
 
 # add columns and set them as index
-converter_activityProfile["region"] = "R1_data"
+converter_activityProfile["region"] = "PNG_data"
 converter_activityProfile["years"] = "2030"
 converter_activityProfile["type"] = "upper"
 converter_activityProfile = converter_activityProfile.reset_index().set_index(
@@ -443,11 +451,27 @@ accounting_converterUnits = pd.DataFrame(
             ["Invest", "OMFix"],
             ["global"],
             ["horizon"],
-            ["BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N"],
+            ["BG_B","BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B"],
             m.set.yearssel,
         ]
     )
 ).sort_index()
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "BG_B", "2030"], "perUnitBuild"
+] = 0  # Mio EUR per unit
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "BG_B", "2030"], "useAnnuity"
+] = 1  # binary yes/no
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "BG_B", "2030"], "amorTime"
+] = 25  # years
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "BG_B", "2030"], "interest"
+] = 0.06  # percent/100
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "BG_B", "2030"], "perUnitTotal"
+] = 78
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "BG_N", "2030"], "perUnitBuild"
@@ -463,7 +487,7 @@ accounting_converterUnits.loc[
 ] = 0.06  # percent/100
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "BG_N", "2030"], "perUnitTotal"
-] = 400.0  # Mio EUR per unit
+] = 78  # Mio EUR per unit
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "PV_B", "2030"], "perUnitBuild"
@@ -560,6 +584,38 @@ accounting_converterUnits.loc[
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "WindOffshore_N", "2030"], "perUnitTotal"
 ] = 75
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Hydro_B", "2030"], "perUnitBuild"
+] = 0
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Hydro_B", "2030"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Hydro_B", "2030"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Hydro_B", "2030"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "Hydro_B", "2030"], "perUnitTotal"
+] = 168 * 2.22 ## to balance our reduction of capacity by 55%, capacity *.45
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "perUnitBuild"
+] = 0
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "Geothermal_B", "2030"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "Geothermal_B", "2030"], "perUnitTotal"
+] = 118 * 4.54
 accounting_converterUnits = accounting_converterUnits.fillna(0)
 
 m.parameter.add(accounting_converterUnits, "accounting_converterunits")
@@ -581,7 +637,7 @@ accounting_converterUnits
 # %%
 # "sourcesink_profile"
 # load the profiles DataFrame, select the demand column
-sourcesink_profile = profiles[["demand_R1"]]
+sourcesink_profile = profiles[["demand_PNG"]]
 
 # divide by 1000 to convert to GW, multiply with -1 because this is the
 # REMix convention for accounting for sinks/demand
@@ -590,7 +646,7 @@ sourcesink_profile = sourcesink_profile.div(1e3).mul(-1)
 sourcesink_profile = sourcesink_profile.T
 
 # add columns and set them as index
-sourcesink_profile["nodesData"] = "R1_data"
+sourcesink_profile["nodesData"] = "PNG_data"
 sourcesink_profile["years"] = "2030"
 sourcesink_profile["techs"] = "Demand"
 sourcesink_profile["commodity"] = "Elec"
@@ -613,7 +669,7 @@ sourcesink_config = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Elec"]]
     )
 )
-sourcesink_config.loc[idx["R1_data", :, :, :], "usesFixedProfile"] = 1
+sourcesink_config.loc[idx["PNG_data", :, :, :], "usesFixedProfile"] = 1
 sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
@@ -645,8 +701,8 @@ sourcesink_annualSum = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["Biomass"]]
     )
 )
-sourcesink_annualSum.loc[idx["R1_data", :, :, :], "upper"] = 211
-sourcesink_annualSum.loc[idx["R1_data", :, :, :], "lower"] = 0
+sourcesink_annualSum.loc[idx["PNG_data", :, :, :], "upper"] = 11330
+sourcesink_annualSum.loc[idx["PNG_data", :, :, :], "lower"] = 0
 sourcesink_annualSum = sourcesink_annualSum.dropna()
 
 m.parameter.add(sourcesink_annualSum, "sourcesink_annualsum")
@@ -658,8 +714,8 @@ sourcesink_config = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["Biomass"]]
     )
 )
-sourcesink_config.loc[idx["R1_data", :, :, :], "usesUpperSum"] = 1
-sourcesink_config.loc[idx["R1_data", :, :, :], "usesLowerProfile"] = 1
+sourcesink_config.loc[idx["PNG_data", :, :, :], "usesUpperSum"] = 1
+sourcesink_config.loc[idx["PNG_data", :, :, :], "usesLowerProfile"] = 1
 sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
@@ -695,7 +751,7 @@ sourcesink_annualSum = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["Emission"], ["CO2"]]
     )
 )
-sourcesink_annualSum.loc[idx["R1_data", :, :, :], "lower"] = -np.inf
+sourcesink_annualSum.loc[idx["PNG_data", :, :, :], "lower"] = -np.inf
 sourcesink_annualSum = sourcesink_annualSum.dropna()
 
 m.parameter.add(sourcesink_annualSum, "sourcesink_annualsum")
@@ -707,8 +763,8 @@ sourcesink_config = pd.DataFrame(
         [m.set.nodesdata, m.set.yearssel, ["Emission"], ["CO2"]]
     )
 )
-sourcesink_config.loc[idx["R1_data", :, :, :], "usesLowerSum"] = 1
-sourcesink_config.loc[idx["R1_data", :, :, :], "usesUpperProfile"] = 1
+sourcesink_config.loc[idx["PNG_data", :, :, :], "usesLowerSum"] = 1
+sourcesink_config.loc[idx["PNG_data", :, :, :], "usesUpperProfile"] = 1
 sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
@@ -810,7 +866,7 @@ converter_techParam
 converter_capacityParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
-converter_capacityParam.loc[idx["R1_data", :, "Battery"], "unitsUpperLimit"] = (
+converter_capacityParam.loc[idx["PNG_data", :, "Battery"], "unitsUpperLimit"] = (
     299  # GW_el
 )
 converter_capacityParam = converter_capacityParam.dropna()
@@ -931,8 +987,8 @@ storage_sizeParam
 storage_reservoirParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
 )
-storage_reservoirParam.loc[idx["R1_data", :, "Battery"], "unitsUpperLimit"] = (
-    100  # units
+storage_reservoirParam.loc[idx["PNG_data", :, "Battery"], "unitsUpperLimit"] = (
+    1000  # units
 )
 storage_reservoirParam = storage_reservoirParam.dropna()
 
