@@ -95,7 +95,7 @@ m.datadir = "./data"
 # time profiles that are loaded here.
 # %%
 # load input data
-profiles = pd.read_csv("../_input/profilessss.csv", index_col=0)
+profiles = pd.read_csv("../_input/profilessss - Copy.csv", index_col=0)
 # %% [markdown]
 # ### Defining the model scope
 #
@@ -271,8 +271,8 @@ accounting_perIndicator
 # Define tech groups
 # Define tech groups with lifetime and availability
 tech_specs = {
-    "BG_B": {"lifeTime": 25, "activityUpperLimit": 1}, 
-    "BG_N": {"lifeTime": 25, "activityUpperLimit": 1},  # No feed-in
+    "BG_B": {"lifeTime": 25, "activityUpperLimit": 0}, 
+    "BG_N": {"lifeTime": 25, "activityUpperLimit": 0},  # No feed-in
     "PV_B": {"lifeTime": 25, "activityUpperLimit": 0},  # Feed-in
     "WindOnshore_B": {"lifeTime": 25, "activityUpperLimit": 0},
     "PV_N": {"lifeTime": 25, "activityUpperLimit": 0},
@@ -303,16 +303,17 @@ converter_techParam
 # defining upper and/or lower limits for converter technologies
 # Example user inputs for each node and tech
 # Keys: node -> tech -> (lower_limit, upper_limit) in GW
+#biomass_limits = [12, 2380, 168, 221, 22,5,4,11330, 1, 295, 1507, 211, 9, 671] 
 capacity_limits = {
     "CI_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.011),
         "PV_B": (0.0052, 0.0052),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1)
     },
     "FJ_data": {
         "BG_B": (0.0580, 0.0580),
-        "BG_N": (0, 1),
+        "BG_N": (0, 2.28),
         "PV_B": (0.0090, 0.0090),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
@@ -321,7 +322,7 @@ capacity_limits = {
         "Hydro_B": (0.0625, 0.0625)# hydro adjusted
     },
     "FSM_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.160),
         "PV_B": (0.0028, 0.0028),
         "WindOnshore_B": (0.0009, 0.0009),
         "PV_N": (0, 1),
@@ -331,13 +332,13 @@ capacity_limits = {
         "Hydro_B": (0.000225, 0.000225)# hydro adjusted
     },
     "KB_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.211),
         "PV_B": (0.0030, 0.0030),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1)
     },
     "MI_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.02),
         "PV_B": (0.0017, 0.0017),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
@@ -345,19 +346,19 @@ capacity_limits = {
         "WindOffshore_N": (0, 1)
     },
     "NU_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.0038),
         "PV_B": (0.0028, 0.0028),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1)
     },
     "NE_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.0047),
         "PV_B": (0.0010, 0.0011),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1)
     },
     "PU_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.0009),
         "PV_B": (0.0030, 0.0032),
         "PV_N": (0, 10),
         "WindOnshore_N": (0, 10),
@@ -365,7 +366,7 @@ capacity_limits = {
     },
     "PNG_data": {
         "BG_B": (0.0182, 0.0182),
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.452),
         "PV_B": (0.0031, 0.0031),
         "Hydro_B": (0.115, 0.115),
         "Geothermal_B": (0.011, 0.011),
@@ -376,7 +377,7 @@ capacity_limits = {
         },
     "SA_data": {
         "BG_B": (0.0011, 0.0011),
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.28),
         "PV_B": (0.0138, 0.0138),
         "WindOnshore_B": (0.0005, 0.0005),
         "PV_N": (0, 1),
@@ -387,7 +388,7 @@ capacity_limits = {
     },
     "SI_data": {
         "BG_B": (0.0008, 0.0008),
-        "BG_N": (0, 1),
+        "BG_N": (0, 1.44),
         "PV_B": (0.0023, 0.0023),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
@@ -396,7 +397,7 @@ capacity_limits = {
         "Hydro_B": (.00018, .00018)# hydro adjusted
     },
     "TA_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.20),
         "PV_B": (0.0071, 0.0071),
         "WindOnshore_B": (0.00151, 0.00151),
         "PV_N": (0, 1),
@@ -405,14 +406,14 @@ capacity_limits = {
         "WindOffshore_N": (0, 1)
     },
     "TU_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, 0.0084),
         "PV_B": (0.0029, 0.0029),
         "PV_N": (0, 1),
         "WindOnshore_N": (0, 1),
         "Wave_N": (0, 1)
     },
     "VU_data": {
-        "BG_N": (0, 1),
+        "BG_N": (0, .062),
         "PV_B": (0.0044, 0.0044),
         "WindOnshore_B": (0.0032, 0.0032),
         "PV_N": (0, 1),
@@ -517,7 +518,7 @@ for data_node in ["CI_data","FJ_data","FSM_data", "KB_data","MI_data","NU_data",
     
     region_code = data_node.split("_")[0]  # "R1" or "R2"
     
-    techs = ["PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "Hydro_B", "Geothermal_B"]
+    techs = ["BG_B","BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "Hydro_B", "Geothermal_B"]
     techs_region = [f"{t}_{region_code}" for t in techs]  # add R1 or R2 suffix
 
     # Select, convert MW→GW, transpose
@@ -805,7 +806,9 @@ sourcesink_config
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
 #biomass_limits = [12, 2380, 168, 221, 22,4,5,1, 11330, 295, 1507, 211, 9, 671]
-biomass_limits = [12, 2380, 168, 221, 22,5,4,11330, 1, 295, 1507, 211, 9, 671]  # GW or other units for R1_data, R2_data
+biomass_limits = [12, 2380, 168, 221, 22,5,4,11330, 1, 295, 1507, 211, 9, 671] 
+#Dictionary####dic - pd df 
+# GW or other units for R1_data, R2_data
 lower_limit = 0  # same for all in this example
 
 sourcesink_annualSum = pd.DataFrame(

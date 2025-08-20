@@ -1138,7 +1138,7 @@ m.write(fileformat="dat")
 # That's it. We have successfully added a lithium-ion battery as storage
 # technology to our model. We can now start a GAMS optimization run (part b).
 m.run(
-    resultfile="PIC_trial_3",
+    resultfile="PIC_trial_4",
     lo=3,
     postcalc=1,
     roundts=1,)
