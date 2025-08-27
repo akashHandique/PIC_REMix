@@ -3,9 +3,12 @@ BG_B
 BG_N
 Battery
 Bus
+DW_Electric_converter
+DW_LPG_converter
 Geothermal_B
 HDV
 Hydro_B
+Industry
 LDV
 MDV
 Marine
@@ -17,3 +20,4 @@ WindOffshore_B
 WindOffshore_N
 WindOnshore_B
 WindOnshore_N
+cook

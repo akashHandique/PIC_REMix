@@ -1,10 +1,15 @@
 Biomass
 CO2
+DHW_Elec
+DHW_LPG
 Diesel
 Elec
 Elec_LiIon
 Gasoline
+Heat_cooking
+Heat_industry
 JetA1
+LPG
 MDO
 T_Aviation
 T_Bus
