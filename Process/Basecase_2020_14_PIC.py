@@ -109,7 +109,7 @@ m.datadir = "./data"
 # time profiles that are loaded here.
 # %%
 # load input data
-profiles = pd.read_csv("../_input/Main.csv", index_col=0)
+profiles = pd.read_csv("../_input/Basecase_2020_14_PIC.csv", index_col=0)
 # %% [markdown]
 # ### Defining the model scope
 #
@@ -285,14 +285,11 @@ accounting_perIndicator
 # Define tech groups
 # Define tech groups with lifetime and availability
 tech_specs = {
-    "BG_B": {"lifeTime": 25, "activityUpperLimit": 0}, 
-    "BG_N": {"lifeTime": 25, "activityUpperLimit": 0},  # No feed-in
+    "DG": {"lifeTime": 25, "activityUpperLimit": 1},
+    "NG_plant": {"lifeTime": 25, "activityUpperLimit": 1},
+    "BG_B": {"lifeTime": 25, "activityUpperLimit": 0},   # No feed-in
     "PV_B": {"lifeTime": 25, "activityUpperLimit": 0},  # Feed-in
     "WindOnshore_B": {"lifeTime": 25, "activityUpperLimit": 0},
-    "PV_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "WindOnshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "Wave_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
     "Hydro_B": {"lifeTime": 25, "activityUpperLimit": 0},
     "Geothermal_B": {"lifeTime": 25, "activityUpperLimit": 0},
     "MDV": {"lifeTime": 25, "activityUpperLimit": 1},
@@ -306,6 +303,7 @@ tech_specs = {
     "Industry": {"lifeTime": 25, "activityUpperLimit": 1},
     "DW_LPG_converter": {"lifeTime": 25, "activityUpperLimit": 1},
     "DW_Electric_converter": {"lifeTime": 25, "activityUpperLimit": 1}
+
 }
 
 # Create DataFrame
@@ -331,10 +329,8 @@ converter_techParam
 #biomass_limits = [12, 2380, 168, 221, 22,5,4,11330, 1, 295, 1507, 211, 9, 671] 
 capacity_limits = {
     "CI_data": {
-        "BG_N": (0, 0.011),
+        "DG": (0.018, 0.018),
         "PV_B": (0.0052, 0.0052),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -346,17 +342,11 @@ capacity_limits = {
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
         "DW_Electric_converter": (0, 1000)
-        
-        
     },
     "FJ_data": {
+        "DG": (0.172, 0.172),
         "BG_B": (0.0580, 0.0580),
-        "BG_N": (0, 2.28),
         "PV_B": (0.0090, 0.0090),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1),
         "Hydro_B": (0.0625, 0.0625),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
@@ -371,13 +361,9 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)# hydro adjusted
     },
     "FSM_data": {
-        "BG_N": (0, 0.160),
+        "DG": (0.0388, 0.0388),
         "PV_B": (0.0028, 0.0028),
         "WindOnshore_B": (0.0009, 0.0009),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1),
         "Hydro_B": (0.000225, 0.000225),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
@@ -392,10 +378,8 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)# hydro adjusted
     },
     "KB_data": {
-        "BG_N": (0, 0.211),
+        "DG": (0.0066, 0.0066),
         "PV_B": (0.0030, 0.0030),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -409,12 +393,8 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)
     },
     "MI_data": {
-        "BG_N": (0, 0.02),
+        "DG": (0.0287, 0.0287),
         "PV_B": (0.0017, 0.0017),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -428,10 +408,8 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)
     },
     "NU_data": {
-        "BG_N": (0, 0.0038),
+        "DG": (0.0245, 0.0245),
         "PV_B": (0.0028, 0.0028),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -445,10 +423,8 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)
     },
     "NE_data": {
-        "BG_N": (0, 0.0047),
+        "DG": (0.0021, 0.0021),
         "PV_B": (0.0010, 0.0011),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -462,11 +438,8 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)
     },
     "PU_data": {
-        "BG_N": (0, 0.0009),
+        "DG": (0.0303, 0.0303),
         "PV_B": (0.0030, 0.0032),
-        "PV_N": (0, 10),
-        "WindOnshore_N": (0, 10),
-        "WindOffshore_N": (0, 10),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -480,15 +453,12 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)
     },
     "PNG_data": {
+        "DG": (0.280, .300),
+        "NG_plant": (0.082, 0.082),
         "BG_B": (0.0182, 0.0182),
-        "BG_N": (0, 0.452),
         "PV_B": (0.0031, 0.0031),
         "Hydro_B": (0.115, 0.115),
         "Geothermal_B": (0.011, 0.011),
-        "PV_N": (0, 10),
-        "WindOnshore_N": (0, 3),
-        "Wave_N": (0, 3),
-        "WindOffshore_B": (0, 3),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -502,14 +472,10 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)
         },
     "SA_data": {
+        "DG": (0.0315, 0.0315),
         "BG_B": (0.0011, 0.0011),
-        "BG_N": (0, 0.28),
         "PV_B": (0.0138, 0.0138),
         "WindOnshore_B": (0.0005, 0.0005),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1),
         "Hydro_B": (.0063, .0063),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
@@ -524,13 +490,9 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)# hydro adjusted
     },
     "SI_data": {
+        "DG": (0.0527, 0.0527),
         "BG_B": (0.0008, 0.0008),
-        "BG_N": (0, 1.44),
         "PV_B": (0.0023, 0.0023),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1),
         "Hydro_B": (.00018, .00018),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
@@ -545,13 +507,9 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)# hydro adjusted
     },
     "TA_data": {
-        "BG_N": (0, 0.20),
+        "DG": (0.0167, 0.0167),
         "PV_B": (0.0071, 0.0071),
         "WindOnshore_B": (0.00151, 0.00151),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -565,11 +523,8 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)
     },
     "TU_data": {
-        "BG_N": (0, 0.0084),
+        "DG": (0.003, 0.003),
         "PV_B": (0.0029, 0.0029),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
         "LDV": (0, 1000),
@@ -583,13 +538,9 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000)
     },
     "VU_data": {
-        "BG_N": (0, .062),
+        "DG": (0.0232, 0.0232),
         "PV_B": (0.0044, 0.0044),
         "WindOnshore_B": (0.0032, 0.0032),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0, 1),
-        "Wave_N": (0, 1),
-        "WindOffshore_N": (0, 1),
         "Hydro_B": (.00054, .00054),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
@@ -643,16 +594,31 @@ converter_capacityParam
 converter_coefficient = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
-            ["BG_N", "BG_B", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B","MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine","cook", "Industry", "DW_LPG_converter", "DW_Electric_converter"],
+            ["DG", "BG_B", "PV_B", "WindOnshore_B", "Hydro_B", "Geothermal_B","MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine","cook", "Industry", "DW_LPG_converter", "DW_Electric_converter", "NG_plant"],
             m.set.yearssel,
             ["Powergen"],
-            ["Biomass", "Elec", "CO2", "Diesel", "Gasoline", "JetA1", "MDO", "T_MDV", "T_HDV","T_LDV","T_Bus","T_Two_wheel","T_Aviation","T_Marine", "Heat_cooking", "Heat_industry", "LPG", "DHW_LPG", "DHW_Elec"],
+            ["Biomass", "Elec", "CO2", "Diesel", "Gasoline", "JetA1", "MDO", "T_MDV", "T_HDV","T_LDV","T_Bus","T_Two_wheel","T_Aviation","T_Marine", "Heat_cooking", "Heat_industry", "LPG", "DHW_LPG", "DHW_Elec", "NG"],
         ]
     )
 )
-converter_coefficient.loc[idx["BG_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
-converter_coefficient.loc[idx["BG_N", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
-converter_coefficient.loc[idx["BG_N", :, :, "CO2"], "coefficient"] = 0.02 #kt co2
+converter_coefficient.loc[idx["DG", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+converter_coefficient.loc[idx["DG", :, :, "Diesel"], "coefficient"] = -2.85  # GWh_ch
+converter_coefficient.loc[idx["DG", :, :, "CO2"], "coefficient"] = 0.02
+
+converter_coefficient.loc[idx["NG_plant", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+converter_coefficient.loc[idx["NG_plant", :, :, "NG"], "coefficient"] = -2  # GWh_ch
+converter_coefficient.loc[idx["NG_plant", :, :, "CO2"], "coefficient"] = 0.02
+
+converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
+converter_coefficient.loc[idx["BG_B", :, :, "CO2"], "coefficient"] = 0.02
+
+converter_coefficient.loc[idx["PV_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+
+converter_coefficient.loc[idx["WindOnshore_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
+
+converter_coefficient.loc[idx["Hydro_B", :, :, "Elec"], "coefficient"] = 1 
+converter_coefficient.loc[idx["Geothermal_B", :, :, "Elec"], "coefficient"] = 1 
 
 converter_coefficient.loc[idx["cook",:,:,"Heat_cooking"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["cook",:, :, "Biomass"], "coefficient"] = -1
@@ -669,24 +635,6 @@ converter_coefficient.loc[idx["DW_LPG_converter",:, :, "CO2"], "coefficient"] = 
 converter_coefficient.loc[idx["DW_Electric_converter",:,:,"DHW_Elec"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["DW_Electric_converter",:, :, "Elec"], "coefficient"] = -1.17
 converter_coefficient.loc[idx["DW_Electric_converter",:, :, "CO2"], "coefficient"] = 0.02
-
-converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
-converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
-converter_coefficient.loc[idx["BG_B", :, :, "CO2"], "coefficient"] = 0.02
-
-converter_coefficient.loc[idx["PV_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
-
-converter_coefficient.loc[idx["WindOnshore_B", :, :, "Elec"], "coefficient"] = 1
-
-converter_coefficient.loc[idx["PV_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
-
-converter_coefficient.loc[idx["WindOnshore_N", :, :, "Elec"], "coefficient"] = 1
-
-converter_coefficient.loc[idx["Wave_N", :, :, "Elec"], "coefficient"] = 1  
-converter_coefficient.loc[idx["WindOffshore_N", :, :, "Elec"], "coefficient"] = 1  # GWh_el
-
-converter_coefficient.loc[idx["Hydro_B", :, :, "Elec"], "coefficient"] = 1 
-converter_coefficient.loc[idx["Geothermal_B", :, :, "Elec"], "coefficient"] = 1 
 
 
 converter_coefficient.loc[idx["MDV", :, :, "T_MDV"], "coefficient"] = 1  # GWh_el # GWh_ch
@@ -705,9 +653,9 @@ converter_coefficient.loc[idx["Bus",:, :, "T_Bus"], "coefficient"] = 1  # GWh_el
 converter_coefficient.loc[idx["Bus",:,:,"Diesel"], "coefficient"] = -1
 converter_coefficient.loc[idx["Bus",:,:,"CO2"], "coefficient"] = 0.02
 
-converter_coefficient.loc[idx["Bus",:, :, "T_Two_wheel"], "coefficient"] = 1  # GWh_el # GWh_ch
-converter_coefficient.loc[idx["Bus",:,:,"Gasoline"], "coefficient"] = -1
-converter_coefficient.loc[idx["Bus",:,:,"CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["Two_wheel",:, :, "T_Two_wheel"], "coefficient"] = 1  # GWh_el # GWh_ch
+converter_coefficient.loc[idx["Two_wheel",:,:,"Gasoline"], "coefficient"] = -1
+converter_coefficient.loc[idx["Two_wheel",:,:,"CO2"], "coefficient"] = 0.02
 
 converter_coefficient.loc[idx["Aviation",:,:,"T_Aviation"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["Aviation",:, :, "JetA1"], "coefficient"] = -1
@@ -742,11 +690,12 @@ converter_coefficient
 
 
 # load the profiles DataFrame, select its PV and WindOnshore columns
+# load the profiles DataFrame, select its PV and WindOnshore columns
 for data_node in ["CI_data","FJ_data","FSM_data", "KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"]:
     
     region_code = data_node.split("_")[0]  # "R1" or "R2"
     
-    techs = ["BG_B","BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "Hydro_B", "Geothermal_B"]
+    techs = ["PV_B", "WindOnshore_B", "Hydro_B", "Geothermal_B", "BG_B"]
     techs_region = [f"{t}_{region_code}" for t in techs]  # add R1 or R2 suffix
 
     # Select, convert MW→GW, transpose
@@ -784,11 +733,43 @@ accounting_converterUnits = pd.DataFrame(
             ["Invest", "OMFix"],
             ["global"],
             ["horizon"],
-            ["BG_B","BG_N", "PV_B", "WindOnshore_B", "PV_N", "WindOnshore_N", "Wave_N","WindOffshore_N", "Hydro_B", "Geothermal_B", "MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine", "cook", "Industry", "DW_LPG_converter", "DW_Electric_converter"],
+            ["DG", "BG_B", "PV_B", "WindOnshore_B", "Hydro_B", "Geothermal_B", "MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine", "cook", "Industry", "DW_LPG_converter", "DW_Electric_converter"],
             m.set.yearssel,
         ]
     )
 ).sort_index()
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "DG", "2030"], "perUnitBuild"
+] = 400  # Mio EUR per unit
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "DG", "2030"], "useAnnuity"
+] = 1  # binary yes/no
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "DG", "2030"], "amorTime"
+] = 2  # years
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "DG", "2030"], "interest"
+] = 0.06  # percent/100
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "DG", "2030"], "perUnitTotal"
+] = 160
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "NG_plant", "2030"], "perUnitBuild"
+] = 0  # Mio EUR per unit
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "NG_plant", "2030"], "useAnnuity"
+] = 1  # binary yes/no
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "NG_plant", "2030"], "amorTime"
+] = 2  # years
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "NG_plant", "2030"], "interest"
+] = 0.06  # percent/100
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "NG_plant", "2030"], "perUnitTotal"
+] = 87.6
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "BG_B", "2030"], "perUnitBuild"
@@ -806,21 +787,6 @@ accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "BG_B", "2030"], "perUnitTotal"
 ] = 78
 
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "BG_N", "2030"], "perUnitBuild"
-] = 2600.0  # Mio EUR per unit
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "BG_N", "2030"], "useAnnuity"
-] = 1  # binary yes/no
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "BG_N", "2030"], "amorTime"
-] = 25  # years
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "BG_N", "2030"], "interest"
-] = 0.06  # percent/100
-accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "BG_N", "2030"], "perUnitTotal"
-] = 78  # Mio EUR per unit
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "PV_B", "2030"], "perUnitBuild"
@@ -854,69 +820,7 @@ accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "WindOnshore_B", "2030"], "perUnitTotal"
 ] = 22
 
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "PV_N", "2030"], "perUnitBuild"
-] = 331
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "PV_N", "2030"], "useAnnuity"
-] = 1
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "PV_N", "2030"], "amorTime"
-] = 25
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "PV_N", "2030"], "interest"
-] = 0.06
-accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "PV_N", "2030"], "perUnitTotal"
-] = 7
 
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "WindOnshore_N", "2030"], "perUnitBuild"
-] = 1080
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "WindOnshore_N", "2030"], "useAnnuity"
-] = 1
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "WindOnshore_N", "2030"], "amorTime"
-] = 25
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "WindOnshore_N", "2030"], "interest"
-] = 0.06
-accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "WindOnshore_N", "2030"], "perUnitTotal"
-] = 30
-
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "Wave_N", "2030"], "perUnitBuild"
-] = 3030
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "Wave_N", "2030"], "useAnnuity"
-] = 1
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "Wave_N", "2030"], "amorTime"
-] = 25
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "Wave_N", "2030"], "interest"
-] = 0.06
-accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "Wave_N", "2030"], "perUnitTotal"
-] = 83
-
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "WindOffshore_N", "2030"], "perUnitBuild"
-] = 2474
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "WindOffshore_N", "2030"], "useAnnuity"
-] = 1
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "WindOffshore_N", "2030"], "amorTime"
-] = 25
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "WindOffshore_N", "2030"], "interest"
-] = 0.06
-accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "WindOffshore_N", "2030"], "perUnitTotal"
-] = 75
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Hydro_B", "2030"], "perUnitBuild"
@@ -1684,6 +1588,26 @@ for node, limit in zip(m.set.nodesdata, biomass_limits):
 sourcesink_annualSum = sourcesink_annualSum.dropna()
 
 m.parameter.add(sourcesink_annualSum, "sourcesink_annualsum")
+###############################################################
+
+NG_limits = [1000000, 1000000, 1000000, 1000000, 1000000,1000000,100000,1000000, 1000000,1000000, 1000000, 1000000,1000000, 1000000] 
+#Dictionary####dic - pd df 
+# GW or other units for R1_data, R2_data
+lower_limit = 0  # same for all in this example
+
+sourcesink_annualSum = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["NG"]]
+    )
+)
+
+for node, limit in zip(m.set.nodesdata, NG_limits):
+    sourcesink_annualSum.loc[idx[node, :, :, :], "upper"] = limit
+    sourcesink_annualSum.loc[idx[node, :, :, :], "lower"] = lower_limit
+
+sourcesink_annualSum = sourcesink_annualSum.dropna()
+
+m.parameter.add(sourcesink_annualSum, "sourcesink_annualsum")
 ###########################################################
 Diesel_limits = [1000000, 1000000, 1000000, 1000000, 1000000,1000000,100000,1000000, 1000000,1000000, 1000000, 1000000,1000000, 1000000] 
 #Dictionary####dic - pd df 
@@ -1792,6 +1716,18 @@ sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
+################################################################################
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["NG"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesUpperSum"] = 1
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesLowerProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
 #################################################################################
 sourcesink_config = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -1872,7 +1808,22 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 ########################################################################
-Diesel_prices = [0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032,0.032, 0.032]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+NG_prices = [0.027, 0.027, 0.027, 0.027,0.027, 0.027, 0.027, 0.027, 0.027, 0.027, 0.027, 0.027,0.027, 0.027]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+
+accounting_sourcesinkFlow = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [["FuelCost"], m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["NG"]]
+    )
+)
+
+for node, price in zip(m.set.nodesdata, NG_prices):
+    accounting_sourcesinkFlow.loc[idx["FuelCost", node, :, :, :], "perFlow"] = price
+
+accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
+
+m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
+########################################################################
+Diesel_prices = [0.095, 0.095, 0.095, 0.095,0.095, 0.095, 0.095, 0.095, 0.095, 0.095, 0.095, 0.095,0.095, 0.095]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -1887,7 +1838,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 ########################################################################
-Diesel_prices = [0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032,0.032, 0.032]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+LPG_prices = [0.260, 0.260, 0.260, 0.260,0.260, 0.260, 0.260, 0.260, 0.260, 0.260, 0.260, 0.260,0.260, 0.260] # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -1895,14 +1846,14 @@ accounting_sourcesinkFlow = pd.DataFrame(
     )
 )
 
-for node, price in zip(m.set.nodesdata, Diesel_prices):
+for node, price in zip(m.set.nodesdata, LPG_prices):
     accounting_sourcesinkFlow.loc[idx["FuelCost", node, :, :, :], "perFlow"] = price
 
 accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 #########################################################################
-Gasoline_prices = [0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032,0.032, 0.032]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+Gasoline_prices = [0.105, 0.105, 0.105, 0.105,0.105, 0.105, 0.105, 0.105, 0.105, 0.105, 0.105, 0.105,0.105, 0.105]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -1917,7 +1868,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 #########################################################################
-JetA1_prices = [0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032,0.032, 0.032]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+JetA1_prices = [0.05, 0.05, 0.05, 0.05,0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,0.05, 0.05]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -1932,7 +1883,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 #########################################################################
-MDO_prices = [0.032, 0.032, 0.032, 0.032,0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.032,0.032, 0.032]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+MDO_prices = [0.045, 0.045, 0.045, 0.045,0.045, 0.045, 0.045, 0.045, 0.045, 0.045, 0.045, 0.045,0.045, 0.045]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -1991,38 +1942,6 @@ sourcesink_config
 # beginning or the `data/` directory by default. Writing to `*.csv` files will
 # work similarly.
 
-
-
-#########################################
-# %% [markdown]
-# (tutorial_102_label)=
-#
-# # Tutorial 102 - Storage technologies
-#
-# <div style="text-align: center;">
-#
-# ![Model overview for tutorial 102](../../img/REMix_tutorial102.svg "Model overview for tutorial 102")
-#
-# Model overview of tutorial 102
-#
-# </div>
-#
-# ## Part a: setting up the model
-#
-# In this tutorial we have a closer look at **storage technologies**.
-# In the first tutorial we had renewable energies in the system and checked two
-# weeks with the highest and lowest renewable generation.
-# The feed-in from renewable energies was mainly limited by the feed-in
-# profiles.
-# As a next step, in this tutorial we include technologies to store the
-# electrical energy from the volatile renewable sources and thus add a
-# flexibility.
-#
-# As mentioned during tutorial_101, we will use it as a base model here by
-# reading its files into an Instance object `m` and adding a storage technology
-# to it.
-
-# %%
 # importing dependencies
 from remix.framework import Instance
 import pandas as pd
@@ -2060,26 +1979,7 @@ import pathlib as pt
 
 # %%
 # "converter_techParam"
-converter_techParam = pd.DataFrame(
-    index=pd.MultiIndex.from_product([["Battery"], m.set.yearssel])
-)
-converter_techParam.loc[idx["Battery", :], "lifeTime"] = 20
-converter_techParam.loc[idx["Battery", :], "activityUpperLimit"] = 1
 
-m.parameter.add(converter_techParam, "converter_techparam")
-converter_techParam
-# %%
-# "converter_capacityParam"
-converter_capacityParam = pd.DataFrame(
-    index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
-)
-converter_capacityParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
-  300  # GW_el Converter upper limit
-)
-converter_capacityParam = converter_capacityParam.dropna()
-
-m.parameter.add(converter_capacityParam, "converter_capacityparam")
-converter_capacityParam
 # %% [markdown]
 # In contrast to the previous modeling of converter units for conventional power plants, we now need to define a
 # reversible activity. In this example, we can both charge and discharge our lithium-ion battery with the same power
@@ -2098,55 +1998,7 @@ converter_capacityParam
 
 # %%
 # "converter_coefficient"
-converter_coefficient = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [["Battery"], m.set.yearssel, ["Charge", "Discharge"], ["Elec", "Elec_LiIon"]]
-    )
-)
 
-converter_coefficient.loc[
-    idx["Battery", :, "Charge", "Elec"], "coefficient"
-] = -1  # GW_el
-converter_coefficient.loc[idx["Battery", :, "Charge", "Elec_LiIon"], "coefficient"] = (
-    0.95  # GW_el in LiIon
-)
-converter_coefficient.loc[idx["Battery", :, "Discharge", "Elec"], "coefficient"] = (
-    1  # GW_el
-)
-converter_coefficient.loc[
-    idx["Battery", :, "Discharge", "Elec_LiIon"], "coefficient"
-] = -1.05  # GW_el in LiIon
-converter_coefficient = converter_coefficient.dropna(how="all")
-
-m.parameter.add(converter_coefficient, "converter_coefficient")
-converter_coefficient
-# %%
-# "accounting_converterUnits"
-accounting_converterUnits = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["Battery"], m.set.yearssel]
-    )
-)
-
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "Battery", "2030"], "perUnitBuild"
-] = 50  # million EUR / unit
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "Battery", "2030"], "useAnnuity"
-] = 1  # binary yes/no
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "Battery", "2030"], "amorTime"
-] = 25  # years
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "Battery", "2030"], "interest"
-] = 0.06  # percent/100
-accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "Battery", "2030"], "perUnitTotal"
-] = 1.5  # million EUR per unit and year
-accounting_converterUnits = accounting_converterUnits.fillna(0)
-
-m.parameter.add(accounting_converterUnits, "accounting_converterunits")
-accounting_converterUnits
 # %% [markdown]
 # #### The storage reservoir
 #
@@ -2159,30 +2011,7 @@ accounting_converterUnits
 # easier to represent them as the same technology.
 
 # %%
-# "storage_techParam"
-storage_techParam = pd.DataFrame(
-    index=pd.MultiIndex.from_product([["Battery"], m.set.yearssel])
-)
-storage_techParam.loc[idx["Battery", :], "lifeTime"] = 20
-storage_techParam.loc[idx["Battery", :], "levelUpperLimit"] = 1
 
-m.parameter.add(storage_techParam, "storage_techparam")
-storage_techParam
-# %% [markdown]
-# For the storage size, we need to associate a commodity (here "Elec_LiIon") and
-# a rated capacity for every storage reservoir unit.
-
-# %%
-# "storage_sizeParam"
-# size of each storage unit
-storage_sizeParam = pd.DataFrame(
-    index=pd.MultiIndex.from_product([["Battery"], m.set.yearssel, ["Elec_LiIon"]])
-)
-storage_sizeParam.loc[idx["Battery", :, "Elec_LiIon"], "size"] = 1 # GWh_ch/unit
-storage_sizeParam = storage_sizeParam.dropna()
-
-m.parameter.add(storage_sizeParam, "storage_sizeparam")
-storage_sizeParam
 # %% [markdown]
 # Now we can set the storage reservoir upper limit to 30 units for a specific
 # model region, therefore the model can build up to 240 GWh_ch of storage
@@ -2191,46 +2020,51 @@ storage_sizeParam
 # %%
 # "storage_reservoirParam"
 # installed storage reservoir units
-storage_reservoirParam = pd.DataFrame(
-    index=pd.MultiIndex.from_product([m.set.nodesdata, m.set.yearssel, ["Battery"]])
-)
-storage_reservoirParam.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, "Battery"], "unitsUpperLimit"] = (
-    1000  # units
-)
-storage_reservoirParam = storage_reservoirParam.dropna()
 
-m.parameter.add(storage_reservoirParam, "storage_reservoirparam")
-storage_reservoirParam
-# %%
-# "accounting_storageUnits"
-# accounting for costs of storage
-accounting_storageUnits = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["Battery"], m.set.yearssel]
-    )
-)
-
-accounting_storageUnits.loc[idx["Invest", :, :, :, :], "perUnitBuild"] = (
-    100
-)  # Since our storage unit can store 8 GWh we need to scale the million EUR/GWh value with 8
-accounting_storageUnits.loc[idx["Invest", :, :, :, :], "useAnnuity"] = 1
-accounting_storageUnits.loc[idx["Invest", :, :, :, :], "amorTime"] = 20
-accounting_storageUnits.loc[idx["Invest", :, :, :, :], "interest"] = 0.06
-accounting_storageUnits.loc[idx["OMFix", :, :, :, :], "perUnitTotal"] = (
-  5
-)
-accounting_storageUnits = accounting_storageUnits.fillna(0)
-
-m.parameter.add(accounting_storageUnits, "accounting_storageunits")
-accounting_storageUnits
 # %%
 # write all files to `data/` directory
 m.write(fileformat="dat")
 # %% [markdown]
 # That's it. We have successfully added a lithium-ion battery as storage
 # technology to our model. We can now start a GAMS optimization run (part b).
+
+
+#########################################
+# %% [markdown]
+# (tutorial_102_label)=
+#
+# # Tutorial 102 - Storage technologies
+#
+# <div style="text-align: center;">
+#
+# ![Model overview for tutorial 102](../../img/REMix_tutorial102.svg "Model overview for tutorial 102")
+#
+# Model overview of tutorial 102
+#
+# </div>
+#
+# ## Part a: setting up the model
+#
+# In this tutorial we have a closer look at **storage technologies**.
+# In the first tutorial we had renewable energies in the system and checked two
+# weeks with the highest and lowest renewable generation.
+# The feed-in from renewable energies was mainly limited by the feed-in
+# profiles.
+# As a next step, in this tutorial we include technologies to store the
+# electrical energy from the volatile renewable sources and thus add a
+# flexibility.
+#
+# As mentioned during tutorial_101, we will use it as a base model here by
+# reading its files into an Instance object `m` and adding a storage technology
+# to it.
+
+# %%
+
+# %% [markdown]
+# That's it. We have successfully added a lithium-ion battery as storage
+# technology to our model. We can now start a GAMS optimization run (part b).
 m.run(
-    resultfile="PIC_energysystem_existing",
+    resultfile="PIC_Basecase_2020",
     lo=3,
     postcalc=1,
     roundts=1,) 

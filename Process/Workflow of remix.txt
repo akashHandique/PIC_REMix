@@ -1,0 +1,104 @@
+Demand side: 
+8760 demand profiles in energy (GWh) for elec,heat, and transport.
+source (commodity) - converter - sink (commodity)
+if sink component is divided into many other sink commodities, profile needs to be developed. Especially relevant for transport sector. (driving elec, h2, e fuels, fossil fuels)
+Think of it as a primary, secondary electricity.
+------------------------------------------------
+Consider an island, start simple and extend multiple sectors and energy conversion technologies, start with #Tonga
+------------------------------------------------------------------------------------------------------------------
+Supply side:
+Brownfield
+RE potentials
+---------------
+model is not responding to lifetime changes 
+I changed the solar abd wind resources and changes are reflected.
+what is ccgt c02 commodity build?
+------------------------------------------------------------------------------------
+Important::::
+Initial run is going well. WIth capacity values in GW and power demand in kw - MW.
+Keeping the units same, power in KW and converters in MW also works. HURRAY!!!
+succesfully loaded th existing generations by adjusting lower values for the converters
+Tonga costs is coming out to be 0.301 and if lifetime of these converters are accounted, i can hit my homer LCOE values.
+Solved: lifetime is overriden by amortime periods. everything is resolved.
+_________________________________________________________________________
+Next task: Replicate Tonga's 2030 transition
+- add all the generation and storage techs
+´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´´
+Adding storage...succesful after 1.5 hours
+For battery, Converter and reservoir techno-economic parameters are set separately: be mindful of the unit. 
+In 'TONGA_BC_w_battery' has tonga 2020 + CCGt (DG) is limited to (0-7.7 GW) + battery is included. Done!!
+I divided the cost (100 (reservoir)+50 (converters)).
+Understand the linkage with dummy commodity and their coefficients
+-------------------------------------------------------------------
+Adding offshore tech (wave and offshore wind)
+- adding CF profile or profiles in MW produces same result
+wave and offshore WT is integrated. but while testing model seems to not take offshore wind after reducing its costs, however wave is accounted for. 
+Now its done, both the techs are inserted. But OnM are not correctly represented, just for workflow validation for the time being.
+Tonga_BC_W_battery_wave_OFWT: contains the integrated workflow for battery and offshore wind
+-------------------------------------------------------------------------------------------------------------------------------------
+Adding Biomass + hydro + geothermal
+------------------------------------
+Adding biomass...Done! easy. Here it is modelled like CCGT, you can add a yearly import limit or use feed in profile (constant).
+Although coefficiencts and costs are not matched with real like BG
+--------------------------------------------------------------------
+Hydro and geothermal should be easiest as i successfully modelled wave and offshore wind, same workflow with different profiles
+---------------------------------------------------------------------------------------------------------------------------------------------------
+With this i can model the power sectors of all the 14 PICs -----------------------------Done!!!!!!!!!! Can compare with Homer results--------------Done---but brownfield inclusion needs to be verified--------------done
+Understand new demand addition (transportation and heat)----
+Found a flow in EV CC discharging coefficients-----
+-------------------------------------------------------
+Adding another demand....Done!
+Here, BG is built for both elec and Heat commodity. This raises Qs: which one is total and so on...solved.  
+Interesting: Biomass prioritizes heat demand fulfillment as it is the only source for that demand 
+Therefore, BG build for elec is enough to produce heat fully with that speciic amount of feedstocks.
+if heating coeeff is less than elec commodity, model becomes infeasible with only BG being the source for heat.
+The reason: it only uses BG to produce heat and in the process elec is also generates. But with low eff, it has to overbuild and generate high costs electricity to fulfill heat. (my reasonings)  (another perspective: it is not producing extra heat, only necessary amount)
+
+Update: ANother simulation with heat becomes feasible with heating coeff being less than elec. and model produces more electricity than required. Nearly 2x to satisfy heating demand. (!!!!!)
+---------------------------------------------------------
+Check brownfield compatability...Done! Easily by adding more techs and removing CAPEx brownfield system is replicated in REMix
+Check multi segement demand for a commodity...done
+------------------------------------------------------------------------------------
+verify results with Homer + model sector-coupled base cases for the islands 
+------------------------------------------------------------------------------------
+Tonga_2030_transition is replicated!!! Done
+Costs are kind of same if i force the battery converter and storage capacity to Homer's results
+With REMix own simulations, costs comes out to be lower than Homer. "Tonga_2030_power_transition_FH.py
+Mainly battery difference is huge, 10 MW converter, 65 MWh storage reservoir. 
+Rducing BG values are homer results also would result in reaistic output. Battery costs is also divided in REmix between converter and reservoir which has different capacity built
+---------------------------------------------------------------------------------
+"Replicate all the islands and validate the results, while updating the costs with BG onM costs or how about having 14 nodes for the islands but not linked (a combined code)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+A code for 2 nodes in succcessful.. next... having diffeent profiles for each node... Done!!! check if biomass and limitation of techs can be varied based on two nodes...almost done!!!
+In the updated code "Trial_non_linked_14_nodes_p2.py", I can adjust inidivual parameters for two nodes by separating the lines that combines two nodes and assign a value. the keyword global assigns values globally to all the nodes. substituting global to node_data would do the job (guess!!!)
+Automate the workflow to include 14 islands..Done, code is ready to test for 14 islands E transition (Automate_all_PICs.py). Have to input hydro and geothermal. (I TESTED BY OMMITING ONE TECH FROM A NODE AND IT WORKS; NOW JUST HAVE TO ADD HYDRO AND GEOTHERMAL PROFILES).
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------git setup-----------------------------------------------------------------------------------------
+Lets integrate all the 14 nodes and model the power transition...BE MINDFUL OF HYDRO AND GEO cf. THE MODEL WILL RUN THEM AT FULL CAPACITY AT ALL TIMES. Insert reflective costs. Done.. reduced capacity and increased OnM by same order of magnitude
+Dummy run for all PIC... Done!! and now update the real inputs....Pending!!!.. ongoing..error found...especially with PNG..fixing...fixed...continueing with homer inputs.....Done...
+Both min and max values canb be same...execute..Done!!
+------------------------------------------------------------------------------------
+Lifetime of hydro and geothermal...check its sensitivity for scaling....no considerable change.
+Is model already omit cost of min capacity value??..check..no that is not the workflow.. if u add lower value and capex per build, the model run its costs. 
+Not sure about biomass co2 emission coefficient
+Biomass upper potential update crashed the system feasibility,test it one by one...Palau has a issue with 1 GWh biomass limit.. issue is battery operational limit (have to standardize carefully))....pending..
+Power rating (KW), energy cvontent (KWh), C=kW/KWh.. 
+smaller C is, more prone to long term storage. 1/.1C = 10 Hours.
+Does it make sense to limit biomass?....
+LCOE are lower in REmix, battery and biomass flexibility, coeff. might be the asnwer here...explore...
+is the nas same with separet islands
+PNG BG is not being utilized...in a single node it is working...and interestingly changing biomass limits in previous island makes all the difference (Palau)..what!!! PNG and PU data are swapped..why. their order in the model also suggest this... resolved
+Try biomass fixed profile....pending...i coiuld model it like RE tech but the feedstock price addition could be a issue\add monthly or daily cap some other way...something is happening..understand the process...found the workflow.. upper limit set and constant activity profiling...done!!  
+execute biomass limitations for all islands and update homer costs with biomass plant depreciation and compare the final values....Done!!
+Homer is not limiting the hourly values for biomass, my best guess it is doing for daily cap. so i am also enforcing daily cap on remix...Done!!!.. "14 nodes power sector transition biomass cap"
+Move on to 2020 base case for complete energy sector...heat and Transport...
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Adding Transport demand-------------------------------------------------------
+Prototype with all demand includd works....yayyyy!!!! "PIC_Existing_EnergySector_Simulation.py". demand is standard in MW. 
+Model the existing 2020 system...pending!!! and integrate heating demand (same logic as transportation) (diff is the assigment of specific conversion based on fuels).
+Heating is not added for the competing use of biomass... explore..it works after chenging the scale of the demand for heat...explore!!doNE
+When diff converter demand elec to produce a commodity, does the model ass the elec to the demand based on the profile of the produced commodity??.. most probably yes, as results between 2 configurations differ.
+wORKFLOW for sector integration...DONE!!!
+Model the energy systems for 2020.
+For PNG, in the existing energy systems, Capacity use is exhausted and DG requirement is excess 20 MW... is it cy elec requirement from heat?
+Existing energy systems..nearly there...update heating and transport demand...
+

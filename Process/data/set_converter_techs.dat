@@ -1,8 +1,7 @@
 Aviation
 BG_B
-BG_N
-Battery
 Bus
+DG
 DW_Electric_converter
 DW_LPG_converter
 Geothermal_B
@@ -12,12 +11,8 @@ Industry
 LDV
 MDV
 Marine
+NG_plant
 PV_B
-PV_N
 Two_wheel
-Wave_N
-WindOffshore_B
-WindOffshore_N
 WindOnshore_B
-WindOnshore_N
 cook
