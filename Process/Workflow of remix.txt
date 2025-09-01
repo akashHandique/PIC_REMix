@@ -100,5 +100,10 @@ When diff converter demand elec to produce a commodity, does the model ass the e
 wORKFLOW for sector integration...DONE!!!
 Model the energy systems for 2020.
 For PNG, in the existing energy systems, Capacity use is exhausted and DG requirement is excess 20 MW... is it cy elec requirement from heat?
-Existing energy systems..nearly there...update heating and transport demand...
+Existing energy systems..nearly there...update heating and transport demand...and double check the coeff. of the converters to elec and co2 both. 
+Heating done.. transportation marine t-km HFO to be added..for smaller islands, heating demand can be too much.. need adjustment.../additional elec demand from DW can render the model infeasible..as capacities are fixed.
+With Kiribati, DG Capacities needed to scale up by .1 MW (Minor modifications, no considerable impact on the costs).
+Still marine (freight is to be added)....
+Problem: for PNG, elec and biomass both are limited, should i assign a different pile of resources? and for elec, capacities aree to be scaled considerably..biomass increase is minute, 11300-12100 GWh. but diesel increment is from (280 MW -  345 MW)...thats all.. everything else runs smooth.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

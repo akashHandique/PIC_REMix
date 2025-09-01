@@ -7,6 +7,8 @@ Invest . global . horizon . DW_Electric_converter . 2030           0.0          
 Invest . global . horizon . DW_LPG_converter . 2030                0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . Geothermal_B . 2030                    0.0           NaN          0.00         1.0      25.0      0.06
 Invest . global . horizon . HDV . 2030                             0.0           NaN          0.00         0.0       0.0      0.00
+Invest . global . horizon . HFO . 2030                             0.0           NaN          0.00         0.0       0.0      0.00
+Invest . global . horizon . HFOO . 2030                            0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . Hydro_B . 2030                         0.0           NaN          0.00         1.0      25.0      0.06
 Invest . global . horizon . Industry . 2030                        0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . LDV . 2030                             0.0           NaN          0.00         0.0       0.0      0.00
@@ -25,6 +27,8 @@ OMFix . global . horizon . DW_Electric_converter . 2030            0.0          
 OMFix . global . horizon . DW_LPG_converter . 2030                 0.0           NaN          0.00         0.0       0.0      0.00
 OMFix . global . horizon . Geothermal_B . 2030                     0.0           NaN        535.72         0.0       0.0      0.00
 OMFix . global . horizon . HDV . 2030                              0.0           NaN          0.00         0.0       0.0      0.00
+OMFix . global . horizon . HFO . 2030                              0.0           NaN          0.00         0.0       0.0      0.00
+OMFix . global . horizon . HFOO . 2030                             0.0           NaN          0.00         0.0       0.0      0.00
 OMFix . global . horizon . Hydro_B . 2030                          0.0           NaN        372.96         0.0       0.0      0.00
 OMFix . global . horizon . Industry . 2030                         0.0           NaN          0.00         0.0       0.0      0.00
 OMFix . global . horizon . LDV . 2030                              0.0           NaN          0.00         0.0       0.0      0.00

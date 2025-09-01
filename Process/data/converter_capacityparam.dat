@@ -5,6 +5,7 @@ CI_data . 2030 . DG                             NaN         0.018000         0.0
 CI_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 CI_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 CI_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+CI_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 CI_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 CI_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
 CI_data . 2030 . MDV                            NaN         0.000000      1000.000000          NaN
@@ -19,6 +20,7 @@ FJ_data . 2030 . DG                             NaN         0.172000         0.1
 FJ_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 FJ_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 FJ_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+FJ_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 FJ_data . 2030 . Hydro_B                        NaN         0.062500         0.062500          NaN
 FJ_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 FJ_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
@@ -33,6 +35,7 @@ FSM_data . 2030 . DG                            NaN         0.038800         0.0
 FSM_data . 2030 . DW_Electric_converter         NaN         0.000000      1000.000000          NaN
 FSM_data . 2030 . DW_LPG_converter              NaN         0.000000      1000.000000          NaN
 FSM_data . 2030 . HDV                           NaN         0.000000      1000.000000          NaN
+FSM_data . 2030 . HFO                           NaN         0.000000      1000.000000          NaN
 FSM_data . 2030 . Hydro_B                       NaN         0.000225         0.000225          NaN
 FSM_data . 2030 . Industry                      NaN         0.000000      1000.000000          NaN
 FSM_data . 2030 . LDV                           NaN         0.000000      1000.000000          NaN
@@ -44,10 +47,11 @@ FSM_data . 2030 . WindOnshore_B                 NaN         0.000900         0.0
 FSM_data . 2030 . cook                          NaN         0.000000      1000.000000          NaN
 KB_data . 2030 . Aviation                       NaN         0.000000      1000.000000          NaN
 KB_data . 2030 . Bus                            NaN         0.000000      1000.000000          NaN
-KB_data . 2030 . DG                             NaN         0.006600         0.006600          NaN
+KB_data . 2030 . DG                             NaN         0.006600         0.006700          NaN
 KB_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 KB_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 KB_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+KB_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 KB_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 KB_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
 KB_data . 2030 . MDV                            NaN         0.000000      1000.000000          NaN
@@ -61,6 +65,7 @@ MI_data . 2030 . DG                             NaN         0.028700         0.0
 MI_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 MI_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 MI_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+MI_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 MI_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 MI_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
 MI_data . 2030 . MDV                            NaN         0.000000      1000.000000          NaN
@@ -74,6 +79,7 @@ NE_data . 2030 . DG                             NaN         0.002100         0.0
 NE_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 NE_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 NE_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+NE_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 NE_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 NE_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
 NE_data . 2030 . MDV                            NaN         0.000000      1000.000000          NaN
@@ -87,6 +93,7 @@ NU_data . 2030 . DG                             NaN         0.024500         0.0
 NU_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 NU_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 NU_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+NU_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 NU_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 NU_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
 NU_data . 2030 . MDV                            NaN         0.000000      1000.000000          NaN
@@ -97,11 +104,12 @@ NU_data . 2030 . cook                           NaN         0.000000      1000.0
 PNG_data . 2030 . Aviation                      NaN         0.000000      1000.000000          NaN
 PNG_data . 2030 . BG_B                          NaN         0.018200         0.018200          NaN
 PNG_data . 2030 . Bus                           NaN         0.000000      1000.000000          NaN
-PNG_data . 2030 . DG                            NaN         0.280000         0.300000          NaN
+PNG_data . 2030 . DG                            NaN         0.280000         0.350000          NaN
 PNG_data . 2030 . DW_Electric_converter         NaN         0.000000      1000.000000          NaN
 PNG_data . 2030 . DW_LPG_converter              NaN         0.000000      1000.000000          NaN
 PNG_data . 2030 . Geothermal_B                  NaN         0.011000         0.011000          NaN
 PNG_data . 2030 . HDV                           NaN         0.000000      1000.000000          NaN
+PNG_data . 2030 . HFO                           NaN         0.000000      1000.000000          NaN
 PNG_data . 2030 . Hydro_B                       NaN         0.115000         0.115000          NaN
 PNG_data . 2030 . Industry                      NaN         0.000000      1000.000000          NaN
 PNG_data . 2030 . LDV                           NaN         0.000000      1000.000000          NaN
@@ -117,6 +125,7 @@ PU_data . 2030 . DG                             NaN         0.030300         0.0
 PU_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 PU_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 PU_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+PU_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 PU_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 PU_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
 PU_data . 2030 . MDV                            NaN         0.000000      1000.000000          NaN
@@ -131,6 +140,7 @@ SA_data . 2030 . DG                             NaN         0.031500         0.0
 SA_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 SA_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 SA_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+SA_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 SA_data . 2030 . Hydro_B                        NaN         0.006300         0.006300          NaN
 SA_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 SA_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
@@ -147,6 +157,7 @@ SI_data . 2030 . DG                             NaN         0.052700         0.0
 SI_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 SI_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 SI_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+SI_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 SI_data . 2030 . Hydro_B                        NaN         0.000180         0.000180          NaN
 SI_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 SI_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
@@ -161,6 +172,7 @@ TA_data . 2030 . DG                             NaN         0.016700         0.0
 TA_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 TA_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 TA_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+TA_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 TA_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 TA_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
 TA_data . 2030 . MDV                            NaN         0.000000      1000.000000          NaN
@@ -175,6 +187,7 @@ TU_data . 2030 . DG                             NaN         0.003000         0.0
 TU_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 TU_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 TU_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+TU_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 TU_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 TU_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN
 TU_data . 2030 . MDV                            NaN         0.000000      1000.000000          NaN
@@ -188,6 +201,7 @@ VU_data . 2030 . DG                             NaN         0.023200         0.0
 VU_data . 2030 . DW_Electric_converter          NaN         0.000000      1000.000000          NaN
 VU_data . 2030 . DW_LPG_converter               NaN         0.000000      1000.000000          NaN
 VU_data . 2030 . HDV                            NaN         0.000000      1000.000000          NaN
+VU_data . 2030 . HFO                            NaN         0.000000      1000.000000          NaN
 VU_data . 2030 . Hydro_B                        NaN         0.000540         0.000540          NaN
 VU_data . 2030 . Industry                       NaN         0.000000      1000.000000          NaN
 VU_data . 2030 . LDV                            NaN         0.000000      1000.000000          NaN

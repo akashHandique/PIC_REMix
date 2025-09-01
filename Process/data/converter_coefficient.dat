@@ -21,6 +21,9 @@ Geothermal_B . 2030 . Powergen . Elec                      1.00       NaN      N
 HDV . 2030 . Powergen . CO2                                0.02       NaN      NaN      NaN    NaN
 HDV . 2030 . Powergen . Diesel                            -1.00       NaN      NaN      NaN    NaN
 HDV . 2030 . Powergen . T_HDV                              1.00       NaN      NaN      NaN    NaN
+HFO . 2030 . Powergen . CO2                                0.02       NaN      NaN      NaN    NaN
+HFO . 2030 . Powergen . HFOO                              -1.00       NaN      NaN      NaN    NaN
+HFO . 2030 . Powergen . T_Marine_f                         1.00       NaN      NaN      NaN    NaN
 Hydro_B . 2030 . Powergen . Elec                           1.00       NaN      NaN      NaN    NaN
 Industry . 2030 . Powergen . CO2                           0.02       NaN      NaN      NaN    NaN
 Industry . 2030 . Powergen . Diesel                       -1.17       NaN      NaN      NaN    NaN

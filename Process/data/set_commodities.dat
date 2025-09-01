@@ -5,6 +5,7 @@ DHW_LPG
 Diesel
 Elec
 Gasoline
+HFOO
 Heat_cooking
 Heat_industry
 JetA1
@@ -17,4 +18,5 @@ T_HDV
 T_LDV
 T_MDV
 T_Marine
+T_Marine_f
 T_Two_wheel

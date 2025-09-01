@@ -109,7 +109,7 @@ m.datadir = "./data"
 # time profiles that are loaded here.
 # %%
 # load input data
-profiles = pd.read_csv("../_input/Basecase_2020_14_PIC.csv", index_col=0)
+profiles = pd.read_csv("../_input/Basecase_2020_14_PIC - Final.csv", index_col=0)
 # %% [markdown]
 # ### Defining the model scope
 #
@@ -302,7 +302,8 @@ tech_specs = {
     "cook": {"lifeTime": 25, "activityUpperLimit": 1},
     "Industry": {"lifeTime": 25, "activityUpperLimit": 1},
     "DW_LPG_converter": {"lifeTime": 25, "activityUpperLimit": 1},
-    "DW_Electric_converter": {"lifeTime": 25, "activityUpperLimit": 1}
+    "DW_Electric_converter": {"lifeTime": 25, "activityUpperLimit": 1},
+    "HFO": {"lifeTime": 25, "activityUpperLimit": 1}
 
 }
 
@@ -341,7 +342,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
     },
     "FJ_data": {
         "DG": (0.172, 0.172),
@@ -358,7 +360,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)# hydro adjusted
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)# hydro adjusted
     },
     "FSM_data": {
         "DG": (0.0388, 0.0388),
@@ -375,10 +378,11 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)# hydro adjusted
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)# hydro adjusted
     },
     "KB_data": {
-        "DG": (0.0066, 0.0066),
+        "DG": (0.0066, 0.0067),
         "PV_B": (0.0030, 0.0030),
         "MDV": (0, 1000),
         "HDV": (0, 1000),
@@ -390,7 +394,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
     },
     "MI_data": {
         "DG": (0.0287, 0.0287),
@@ -405,7 +410,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
     },
     "NU_data": {
         "DG": (0.0245, 0.0245),
@@ -420,7 +426,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
     },
     "NE_data": {
         "DG": (0.0021, 0.0021),
@@ -435,7 +442,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
     },
     "PU_data": {
         "DG": (0.0303, 0.0303),
@@ -450,10 +458,11 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
     },
     "PNG_data": {
-        "DG": (0.280, .300),
+        "DG": (0.280, .350),
         "NG_plant": (0.082, 0.082),
         "BG_B": (0.0182, 0.0182),
         "PV_B": (0.0031, 0.0031),
@@ -469,7 +478,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
         },
     "SA_data": {
         "DG": (0.0315, 0.0315),
@@ -487,7 +497,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)# hydro adjusted
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)# hydro adjusted
     },
     "SI_data": {
         "DG": (0.0527, 0.0527),
@@ -504,7 +515,8 @@ capacity_limits = {
         "cook": (0, 1000),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)# hydro adjusted
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)# hydro adjusted
     },
     "TA_data": {
         "DG": (0.0167, 0.0167),
@@ -520,7 +532,8 @@ capacity_limits = {
         "cook": (0, 1),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
     },
     "TU_data": {
         "DG": (0.003, 0.003),
@@ -535,7 +548,8 @@ capacity_limits = {
         "cook": (0, 1),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)
     },
     "VU_data": {
         "DG": (0.0232, 0.0232),
@@ -552,7 +566,8 @@ capacity_limits = {
         "cook": (0, 1),
         "Industry": (0, 1000),
         "DW_LPG_converter": (0, 1000),
-        "DW_Electric_converter": (0, 1000)# hydro adjusted
+        "DW_Electric_converter": (0, 1000),
+        "HFO": (0, 1000)# hydro adjusted
     }
 }
 
@@ -594,10 +609,10 @@ converter_capacityParam
 converter_coefficient = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
-            ["DG", "BG_B", "PV_B", "WindOnshore_B", "Hydro_B", "Geothermal_B","MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine","cook", "Industry", "DW_LPG_converter", "DW_Electric_converter", "NG_plant"],
+            ["DG", "BG_B", "PV_B", "WindOnshore_B", "Hydro_B", "Geothermal_B","MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine","cook", "Industry", "DW_LPG_converter", "DW_Electric_converter", "NG_plant", "HFO"],
             m.set.yearssel,
             ["Powergen"],
-            ["Biomass", "Elec", "CO2", "Diesel", "Gasoline", "JetA1", "MDO", "T_MDV", "T_HDV","T_LDV","T_Bus","T_Two_wheel","T_Aviation","T_Marine", "Heat_cooking", "Heat_industry", "LPG", "DHW_LPG", "DHW_Elec", "NG"],
+            ["Biomass", "Elec", "CO2", "Diesel", "Gasoline", "JetA1", "MDO", "T_MDV", "T_HDV","T_LDV","T_Bus","T_Two_wheel","T_Aviation","T_Marine", "T_Marine_f","Heat_cooking", "Heat_industry", "LPG", "DHW_LPG", "DHW_Elec", "NG", "HFOO"],
         ]
     )
 )
@@ -664,6 +679,10 @@ converter_coefficient.loc[idx["Aviation",:, :, "CO2"], "coefficient"] = 0.02
 converter_coefficient.loc[idx["Marine",:,:,"T_Marine"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["Marine",:, :, "MDO"], "coefficient"] = -1
 converter_coefficient.loc[idx["Marine",:, :, "CO2"], "coefficient"] = 0.02
+
+converter_coefficient.loc[idx["HFO",:,:,"T_Marine_f"], "coefficient"] = 1  # GWh_el # GWh_ch
+converter_coefficient.loc[idx["HFO",:, :, "HFOO"], "coefficient"] = -1
+converter_coefficient.loc[idx["HFO",:, :, "CO2"], "coefficient"] = 0.02
 
 
 converter_coefficient = converter_coefficient.dropna(how="all")
@@ -733,7 +752,7 @@ accounting_converterUnits = pd.DataFrame(
             ["Invest", "OMFix"],
             ["global"],
             ["horizon"],
-            ["DG", "BG_B", "PV_B", "WindOnshore_B", "Hydro_B", "Geothermal_B", "MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine", "cook", "Industry", "DW_LPG_converter", "DW_Electric_converter"],
+            ["DG", "BG_B", "PV_B", "WindOnshore_B", "Hydro_B", "Geothermal_B", "MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine", "cook", "Industry", "DW_LPG_converter", "DW_Electric_converter", "HFOO"],
             m.set.yearssel,
         ]
     )
@@ -1032,6 +1051,22 @@ accounting_converterUnits.loc[
 ] = 0
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "DW_Electric_converter", "2030"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "HFO", "2030"], "perUnitBuild"
+] = 0
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "HFO", "2030"], "useAnnuity"
+] = 0
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "HFO", "2030"], "amorTime"
+] = 0
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "HFO", "2030"], "interest"
+] = 0
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "HFO", "2030"], "perUnitTotal"
 ] = 0
 accounting_converterUnits = accounting_converterUnits.fillna(0)
 
@@ -1384,7 +1419,48 @@ sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
-###############################################################################
+#################################################################################
+demand_R4_R9_CH = profiles[["Marinef_CI", "Marinef_FJ","Marinef_FSM", "Marinef_KB", "Marinef_MI","Marinef_NU","Marinef_NE","Marinef_PU","Marinef_PNG","Marinef_SA","Marinef_SI","Marinef_TA","Marinef_TU","Marinef_VU"]]
+
+demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R9_CH = demand_R4_R9_CH.T
+
+demand_R4_R9_CH = demand_R4_R9_CH.rename(
+    index={"Marinef_CI": "CI_data", "Marinef_FJ": "FJ_data", "Marinef_FSM": "FSM_data", "Marinef_KB": "KB_data", "Marinef_MI": "MI_data","Marinef_NU": "NU_data","Marinef_NE": "NE_data","Marinef_PU": "PU_data","Marinef_PNG": "PNG_data","Marinef_SA": "SA_data","Marinef_SI": "SI_data","Marinef_TA": "TA_data","Marinef_TU": "TU_data","Marinef_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R9_CH["years"] = "2030"
+demand_R4_R9_CH["techs"] = "Demand"
+demand_R4_R9_CH["commodity"] = "T_Marine_f"
+demand_R4_R9_CH["type"] = "fixed"
+demand_R4_R9_CH = demand_R4_R9_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
+demand_R4_R9_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_f"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+#################################################################################
 demand_R4_R10_CH = profiles[["HC_CI", "HC_FJ","HC_FSM", "HC_KB", "HC_MI","HC_NU","HC_NE","HC_PU","HC_PNG","HC_SA","HC_SI","HC_TA","HC_TU","HC_VU"]]
 
 demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
@@ -1569,8 +1645,8 @@ sourcesink_config
 
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
-#biomass_limits = [10000, 10000, 10000, 10000, 10000,10000,10000,10000, 10000,10000, 10000, 10000,10000, 10000] 
-biomass_limits = [12, 2380, 168, 221, 22,5,4,11330, 1, 295, 1507, 211, 9, 671] 
+
+biomass_limits = [12, 2380, 168, 221, 22,5,4,12100, 1, 295, 1507, 211, 9, 671] 
 #Dictionary####dic - pd df 
 # GW or other units for R1_data, R2_data
 lower_limit = 0  # same for all in this example
@@ -1602,6 +1678,25 @@ sourcesink_annualSum = pd.DataFrame(
 )
 
 for node, limit in zip(m.set.nodesdata, NG_limits):
+    sourcesink_annualSum.loc[idx[node, :, :, :], "upper"] = limit
+    sourcesink_annualSum.loc[idx[node, :, :, :], "lower"] = lower_limit
+
+sourcesink_annualSum = sourcesink_annualSum.dropna()
+
+m.parameter.add(sourcesink_annualSum, "sourcesink_annualsum")
+###########################################################
+HFOO_limits = [1000000, 1000000, 1000000, 1000000, 1000000,1000000,100000,1000000, 1000000,1000000, 1000000, 1000000,1000000, 1000000] 
+#Dictionary####dic - pd df 
+# GW or other units for R1_data, R2_data
+lower_limit = 0  # same for all in this example
+
+sourcesink_annualSum = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["HFOO"]]
+    )
+)
+
+for node, limit in zip(m.set.nodesdata, HFOO_limits):
     sourcesink_annualSum.loc[idx[node, :, :, :], "upper"] = limit
     sourcesink_annualSum.loc[idx[node, :, :, :], "lower"] = lower_limit
 
@@ -1728,6 +1823,18 @@ sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
+################################################################################
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["HFOO"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesUpperSum"] = 1
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesLowerProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
 #################################################################################
 sourcesink_config = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -1813,6 +1920,21 @@ NG_prices = [0.027, 0.027, 0.027, 0.027,0.027, 0.027, 0.027, 0.027, 0.027, 0.027
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [["FuelCost"], m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["NG"]]
+    )
+)
+
+for node, price in zip(m.set.nodesdata, NG_prices):
+    accounting_sourcesinkFlow.loc[idx["FuelCost", node, :, :, :], "perFlow"] = price
+
+accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
+
+m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
+######################################################################
+NG_prices = [0.031, 0.031, 0.031, 0.031,0.031, 0.031, 0.031, 0.031, 0.031, 0.031, 0.031, 0.031,0.031, 0.031]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+
+accounting_sourcesinkFlow = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [["FuelCost"], m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["HFOO"]]
     )
 )
 
