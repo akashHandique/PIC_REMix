@@ -2,7 +2,7 @@
 Invest . global . horizon . Aviation . 2030                        0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . BG_B . 2030                            0.0           NaN          0.00         1.0      25.0      0.06
 Invest . global . horizon . Bus . 2030                             0.0           NaN          0.00         0.0       0.0      0.00
-Invest . global . horizon . DG . 2030                            400.0           NaN          0.00         1.0       2.0      0.06
+Invest . global . horizon . DG . 2030                              0.0           NaN          0.00         1.0       2.0      0.06
 Invest . global . horizon . DW_Electric_converter . 2030           0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . DW_LPG_converter . 2030                0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . Geothermal_B . 2030                    0.0           NaN          0.00         1.0      25.0      0.06
@@ -14,7 +14,7 @@ Invest . global . horizon . Industry . 2030                        0.0          
 Invest . global . horizon . LDV . 2030                             0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . MDV . 2030                             0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . Marine . 2030                          0.0           NaN          0.00         0.0       0.0      0.00
-Invest . global . horizon . NG_plant . 2030                        0.0           NaN          0.00         1.0       2.0      0.06
+Invest . global . horizon . NG_plant . 2030                        0.0           NaN          0.00         1.0      25.0      0.06
 Invest . global . horizon . PV_B . 2030                            0.0           NaN          0.00         1.0      25.0      0.06
 Invest . global . horizon . Two_wheel . 2030                       0.0           NaN          0.00         0.0       0.0      0.00
 Invest . global . horizon . WindOnshore_B . 2030                   0.0           NaN          0.00         1.0      25.0      0.06

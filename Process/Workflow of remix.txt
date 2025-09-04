@@ -103,7 +103,16 @@ For PNG, in the existing energy systems, Capacity use is exhausted and DG requir
 Existing energy systems..nearly there...update heating and transport demand...and double check the coeff. of the converters to elec and co2 both. 
 Heating done.. transportation marine t-km HFO to be added..for smaller islands, heating demand can be too much.. need adjustment.../additional elec demand from DW can render the model infeasible..as capacities are fixed.
 With Kiribati, DG Capacities needed to scale up by .1 MW (Minor modifications, no considerable impact on the costs).
-Still marine (freight is to be added)....
+Still marine (freight is to be added)....Done!!
 Problem: for PNG, elec and biomass both are limited, should i assign a different pile of resources? and for elec, capacities aree to be scaled considerably..biomass increase is minute, 11300-12100 GWh. but diesel increment is from (280 MW -  345 MW)...thats all.. everything else runs smooth.
+sort out the co2 and other remaining coefficients..done!!
+for transport and heating,, all the converters are considered without costs. (transport makes sense, heating??) (I might have to add costs for heating equip (refering to the CBR result of delayed heat cost parity owing to high investement costs of technologies))
+"PIC_Basecase_2020.gdx"
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+When comparing results, For fiji, a trend is seen where Biomass is underutilized by a huge margin ease of daily limitaion. whereas REMix uses Biomass profusely, DG reltaively less. 
+I tried reducing the biomass costs to 0 and still Homer didnot utilize the biomass at its full. (??). 
+MI values were also disaligned, so when i put a 35% eff fuel curve in DG, it showed similar values. samr case of nauru, my vbase results are wrong, DG fuel curve is not 35%, a bit higher. have to update all my results and figures associated with it.
+But for samoa, BG and DG generation share is similar.
+NIue DHWE, DHWL and HC values are not reflected in gams (too small?): Q for manuel
+REmix min value for demand is .876/a, if its too low, not shown and if (.05 - .1) hourly values, it assign 0.876.
+same for marine and heat with 1.756, when values are .15-.23 in thatr range, assign value is 1.752. 

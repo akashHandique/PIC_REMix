@@ -618,15 +618,15 @@ converter_coefficient = pd.DataFrame(
 )
 converter_coefficient.loc[idx["DG", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 converter_coefficient.loc[idx["DG", :, :, "Diesel"], "coefficient"] = -2.85  # GWh_ch
-converter_coefficient.loc[idx["DG", :, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["DG", :, :, "CO2"], "coefficient"] = .76
 
 converter_coefficient.loc[idx["NG_plant", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 converter_coefficient.loc[idx["NG_plant", :, :, "NG"], "coefficient"] = -2  # GWh_ch
-converter_coefficient.loc[idx["NG_plant", :, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["NG_plant", :, :, "CO2"], "coefficient"] = 0.40
 
 converter_coefficient.loc[idx["BG_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 converter_coefficient.loc[idx["BG_B", :, :, "Biomass"], "coefficient"] = -2.85  # GWh_ch
-converter_coefficient.loc[idx["BG_B", :, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["BG_B", :, :, "CO2"], "coefficient"] = 0
 
 converter_coefficient.loc[idx["PV_B", :, :, "Elec"], "coefficient"] = 1  # GWh_el
 
@@ -637,52 +637,52 @@ converter_coefficient.loc[idx["Geothermal_B", :, :, "Elec"], "coefficient"] = 1
 
 converter_coefficient.loc[idx["cook",:,:,"Heat_cooking"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["cook",:, :, "Biomass"], "coefficient"] = -1
-converter_coefficient.loc[idx["cook",:, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["cook",:, :, "CO2"], "coefficient"] = 0
 
 converter_coefficient.loc[idx["Industry",:,:,"Heat_industry"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["Industry",:, :, "Diesel"], "coefficient"] = -1.17
-converter_coefficient.loc[idx["Industry",:, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["Industry",:, :, "CO2"], "coefficient"] = .31
 
 converter_coefficient.loc[idx["DW_LPG_converter",:,:,"DHW_LPG"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["DW_LPG_converter",:, :, "LPG"], "coefficient"] = -1.17
-converter_coefficient.loc[idx["DW_LPG_converter",:, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["DW_LPG_converter",:, :, "CO2"], "coefficient"] = .27
 
 converter_coefficient.loc[idx["DW_Electric_converter",:,:,"DHW_Elec"], "coefficient"] = 1  # GWh_el # GWh_ch
-converter_coefficient.loc[idx["DW_Electric_converter",:, :, "Elec"], "coefficient"] = -1.17
-converter_coefficient.loc[idx["DW_Electric_converter",:, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["DW_Electric_converter",:, :, "Elec"], "coefficient"] = -1.05
+converter_coefficient.loc[idx["DW_Electric_converter",:, :, "CO2"], "coefficient"] = 0
 
 
 converter_coefficient.loc[idx["MDV", :, :, "T_MDV"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["MDV",:, :, "Diesel"], "coefficient"] = -1
-converter_coefficient.loc[idx["MDV",:, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["MDV",:, :, "CO2"], "coefficient"] = 0.26
 
 converter_coefficient.loc[idx["HDV",:, :, "T_HDV"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["HDV",:,:,"Diesel"], "coefficient"] = -1
-converter_coefficient.loc[idx["HDV",:,:,"CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["HDV",:,:,"CO2"], "coefficient"] = 0.26
 
 converter_coefficient.loc[idx["LDV",:, :, "T_LDV"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["LDV",:,:,"Gasoline"], "coefficient"] = -1
-converter_coefficient.loc[idx["LDV",:,:,"CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["LDV",:,:,"CO2"], "coefficient"] = 0.25
 
 converter_coefficient.loc[idx["Bus",:, :, "T_Bus"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["Bus",:,:,"Diesel"], "coefficient"] = -1
-converter_coefficient.loc[idx["Bus",:,:,"CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["Bus",:,:,"CO2"], "coefficient"] = 0.26
 
 converter_coefficient.loc[idx["Two_wheel",:, :, "T_Two_wheel"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["Two_wheel",:,:,"Gasoline"], "coefficient"] = -1
-converter_coefficient.loc[idx["Two_wheel",:,:,"CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["Two_wheel",:,:,"CO2"], "coefficient"] = 0.25
 
 converter_coefficient.loc[idx["Aviation",:,:,"T_Aviation"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["Aviation",:, :, "JetA1"], "coefficient"] = -1
-converter_coefficient.loc[idx["Aviation",:, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["Aviation",:, :, "CO2"], "coefficient"] = 0.26
 
 converter_coefficient.loc[idx["Marine",:,:,"T_Marine"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["Marine",:, :, "MDO"], "coefficient"] = -1
-converter_coefficient.loc[idx["Marine",:, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["Marine",:, :, "CO2"], "coefficient"] = 0.27
 
 converter_coefficient.loc[idx["HFO",:,:,"T_Marine_f"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["HFO",:, :, "HFOO"], "coefficient"] = -1
-converter_coefficient.loc[idx["HFO",:, :, "CO2"], "coefficient"] = 0.02
+converter_coefficient.loc[idx["HFO",:, :, "CO2"], "coefficient"] = 0.29
 
 
 converter_coefficient = converter_coefficient.dropna(how="all")
@@ -760,7 +760,7 @@ accounting_converterUnits = pd.DataFrame(
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "DG", "2030"], "perUnitBuild"
-] = 400  # Mio EUR per unit
+] = 0  # Mio EUR per unit
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "DG", "2030"], "useAnnuity"
 ] = 1  # binary yes/no
@@ -782,7 +782,7 @@ accounting_converterUnits.loc[
 ] = 1  # binary yes/no
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "NG_plant", "2030"], "amorTime"
-] = 2  # years
+] = 25  # years
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "NG_plant", "2030"], "interest"
 ] = 0.06  # percent/100
@@ -1645,7 +1645,7 @@ sourcesink_config
 
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
-
+#biomass_limits = [12, 2380, 168, 221, 22,5,4,11330, 1, 295, 1507, 211, 9, 671] 
 biomass_limits = [12, 2380, 168, 221, 22,5,4,12100, 1, 295, 1507, 211, 9, 671] 
 #Dictionary####dic - pd df 
 # GW or other units for R1_data, R2_data
@@ -1930,7 +1930,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 ######################################################################
-NG_prices = [0.031, 0.031, 0.031, 0.031,0.031, 0.031, 0.031, 0.031, 0.031, 0.031, 0.031, 0.031,0.031, 0.031]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+HFOO_prices = [0.031, 0.031, 0.031, 0.031,0.031, 0.031, 0.031, 0.031, 0.031, 0.031, 0.031, 0.031,0.031, 0.031]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -1938,7 +1938,7 @@ accounting_sourcesinkFlow = pd.DataFrame(
     )
 )
 
-for node, price in zip(m.set.nodesdata, NG_prices):
+for node, price in zip(m.set.nodesdata, HFOO_prices):
     accounting_sourcesinkFlow.loc[idx["FuelCost", node, :, :, :], "perFlow"] = price
 
 accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()

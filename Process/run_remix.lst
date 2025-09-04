@@ -1,4 +1,4 @@
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/01/25 14:07:36 Page 1
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/02/25 11:26:14 Page 1
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 C o m p i l a t i o n
 
@@ -36,10 +36,10 @@ INCLUDE    C:\Local\framework\remix\framework\model\source\metadata.gms
   69   
   70  * Include metadata in gdx file
   71  set metadata(*) /
-INCLUDE    C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\metadata
+INCLUDE    C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\metadata
   73  remix_version "0.13.0"
   74  gams_version "43.3.0"
-  75  timestamp "09/01/25 14:07:36"
+  75  timestamp "09/02/25 11:26:14"
   76  framework_path "C:\Local\framework\remix\framework\model\source"
   77   
   78  framework_hash c4d562dc434502ae346f255d5b29b268f7db540c
@@ -48,7 +48,7 @@ INCLUDE    C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\metada
   81   
   82  project_path "C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\data"
   83   
-  84  project_hash "1477d6033ff72ed9aa067c0c4ab0d01c6bfea4e9"
+  84  project_hash "45b15142ca8cdff49b1f05ad170f23850c7090e6"
   85   
   86  project_branch "main"
   87   
@@ -7258,7 +7258,7 @@ INCLUDE    C:\Local\framework\remix\framework\model\source\postcalc\writegdx.gms
 10358      diagnostics
 10359      ;
 10362   
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/01/25 14:07:36 Page 2
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/02/25 11:26:14 Page 2
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Include File Summary
 
@@ -7266,124 +7266,124 @@ Include File Summary
    SEQ   GLOBAL TYPE      PARENT   LOCAL  FILENAME
 
      1        1 INPUT          0       0  C:\Local\framework\remix\framework\model\run_remix.gms
-     2       19 IF DEXIST      1      19  C:\Local\remix-pic\REMix-Pacific_island_Countries\process\data\
+     2       19 IF DEXIST      1      19  C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\data\
      3       22 INCLUDE        1      22  .C:\Local\framework\remix\framework\model\source\metadata.gms
-     4       36 CALL           3      27  .printf "remix_version \"0.13.0\"\n" > C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-     5       37 CALL           3      28  .printf "gams_version \"43.3.0\"\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-     6       38 CALL           3      29  .printf "timestamp \"09/01/25 14:07:36\"\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-     7       41 CALL           3      32  .printf "framework_path " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-     8       42 CALL           3      33  .cd C:\Local\framework\remix\framework\model\source && cd| sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-     9       43 CALL           3      34  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    10       46 CALL           3      37  .printf "framework_hash " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    11       47 CALL           3      38  .cd C:\Local\framework\remix\framework\model\source && git rev-parse HEAD >nul 2>&1 && git rev-parse HEAD >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    12       48 CALL           3      39  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    13       51 CALL           3      42  .printf "framework_branch " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    14       52 CALL           3      43  .cd C:\Local\framework\remix\framework\model\source && git rev-parse --abbrev-ref HEAD >nul 2>&1 && git rev-parse --abbrev-ref HEAD | sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    15       53 CALL           3      44  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    16       56 CALL           3      47  .printf "project_path " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    17       57 CALL           3      48  .cd ./data\./ && cd| sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    18       58 CALL           3      49  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    19       61 CALL           3      52  .printf "project_hash " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    20       62 CALL           3      53  .cd ./data\./ && git rev-parse HEAD >nul 2>&1 && git rev-parse HEAD | sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    21       63 CALL           3      54  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    22       66 CALL           3      57  .printf "project_branch " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    23       67 CALL           3      58  .cd ./data\./ && git rev-parse --abbrev-ref HEAD >nul 2>&1 && git rev-parse --abbrev-ref HEAD | sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    24       68 CALL           3      59  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata
-    25       72 INCLUDE        3      63  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\metadata
-    26       91 CALL           3      67  .cat C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\\metadata | grep -v "^$"
+     4       36 CALL           3      27  .printf "remix_version \"0.13.0\"\n" > C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+     5       37 CALL           3      28  .printf "gams_version \"43.3.0\"\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+     6       38 CALL           3      29  .printf "timestamp \"09/02/25 11:26:14\"\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+     7       41 CALL           3      32  .printf "framework_path " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+     8       42 CALL           3      33  .cd C:\Local\framework\remix\framework\model\source && cd| sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+     9       43 CALL           3      34  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    10       46 CALL           3      37  .printf "framework_hash " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    11       47 CALL           3      38  .cd C:\Local\framework\remix\framework\model\source && git rev-parse HEAD >nul 2>&1 && git rev-parse HEAD >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    12       48 CALL           3      39  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    13       51 CALL           3      42  .printf "framework_branch " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    14       52 CALL           3      43  .cd C:\Local\framework\remix\framework\model\source && git rev-parse --abbrev-ref HEAD >nul 2>&1 && git rev-parse --abbrev-ref HEAD | sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    15       53 CALL           3      44  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    16       56 CALL           3      47  .printf "project_path " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    17       57 CALL           3      48  .cd ./data\./ && cd| sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    18       58 CALL           3      49  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    19       61 CALL           3      52  .printf "project_hash " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    20       62 CALL           3      53  .cd ./data\./ && git rev-parse HEAD >nul 2>&1 && git rev-parse HEAD | sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    21       63 CALL           3      54  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    22       66 CALL           3      57  .printf "project_branch " >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    23       67 CALL           3      58  .cd ./data\./ && git rev-parse --abbrev-ref HEAD >nul 2>&1 && git rev-parse --abbrev-ref HEAD | sed "s/^/\"/;s/$/\"/" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    24       68 CALL           3      59  .printf "\n" >> C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata
+    25       72 INCLUDE        3      63  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\metadata
+    26       91 CALL           3      67  .cat C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\\metadata | grep -v "^$"
     27       97 INCLUDE        1      23  .C:\Local\framework\remix\framework\model\source\data_inheritance.gms
     28      141 INCLUDE        1      34  .C:\Local\framework\remix\framework\model\source\remix.gms
     29      166 INCLUDE       28      25  ..C:\Local\framework\remix\framework\model\source\sets.gms
-    30      190 IF EXIST      29      24  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\map_aggregatetimemodel.csv
-    31      255 IF EXIST      29     120  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesmodel.csv
-    32      255 INCLUDE       29     120  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesmodel.csv
-    33      271 IF EXIST      29     122  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesmodel.csv
-    34      278 IF EXIST      29     129  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesdata.csv
-    35      278 INCLUDE       29     129  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesdata.csv
-    36      294 IF EXIST      29     131  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesdata.csv
-    37      300 IF EXIST      29     137  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesmodelsel.csv
-    38      302 IF EXIST      29     139  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesmodelsel.csv
-    39      304 IF EXIST      29     141  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_nodesmodelsel.csv
-    40      317 IF EXIST      29     154  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\map_aggregatenodesmodel.csv
-    41      317 INCLUDE       29     154  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\map_aggregatenodesmodel.csv
-    42      333 IF EXIST      29     156  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\map_aggregatenodesmodel.csv
-    43      336 IF EXIST      29     159  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\map_aggregatenodesmodel.csv
-    44      365 IF EXIST      29     188  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_years.csv
-    45      365 INCLUDE       29     188  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_years.csv
-    46      368 IF EXIST      29     190  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_years.csv
-    47      377 IF EXIST      29     199  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_years.csv
-    48      377 INCLUDE       29     199  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_years.csv
-    49      380 IF EXIST      29     201  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_years.csv
-    50      386 IF EXIST      29     207  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_yearssel.csv
-    51      386 INCLUDE       29     207  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_yearssel.csv
-    52      389 IF EXIST      29     209  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_yearssel.csv
-    53      407 IF EXIST      29     227  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_activities.csv
-    54      407 INCLUDE       29     227  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_activities.csv
-    55      410 IF EXIST      29     229  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_activities.csv
-    56      418 IF EXIST      29     237  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_gridsegments.csv
-    57      420 IF EXIST      29     239  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_gridsegments.csv
-    58      428 IF EXIST      29     247  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_linksdata.csv
-    59      430 IF EXIST      29     249  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_linksdata.csv
-    60      448 IF EXIST      29     267  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_link_types.csv
-    61      450 IF EXIST      29     269  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_link_types.csv
-    62      459 IF EXIST      29     278  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_commodities.csv
-    63      459 INCLUDE       29     278  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_commodities.csv
-    64      483 IF EXIST      29     280  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_commodities.csv
-    65      492 IF EXIST      29     289  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_indicators.csv
-    66      492 INCLUDE       29     289  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_indicators.csv
-    67      498 IF EXIST      29     291  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_indicators.csv
-    68      507 IF EXIST      29     300  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_converter_techs.csv
-    69      507 INCLUDE       29     300  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_converter_techs.csv
-    70      530 IF EXIST      29     303  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_storage_techs.csv
-    71      533 IF EXIST      29     306  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_transfer_techs.csv
-    72      536 IF EXIST      29     309  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_sourcesink_techs.csv
-    73      536 INCLUDE       29     309  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_sourcesink_techs.csv
-    74      544 IF EXIST      29     314  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_converter_techs.csv
-    75      544 INCLUDE       29     314  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_converter_techs.csv
-    76      565 IF EXIST      29     315  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_converter_techs.csv
-    77      569 IF EXIST      29     319  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_storage_techs.csv
-    78      570 IF EXIST      29     320  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_storage_techs.csv
-    79      575 IF EXIST      29     325  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_transfer_techs.csv
-    80      576 IF EXIST      29     326  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_transfer_techs.csv
-    81      580 IF EXIST      29     330  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_sourcesink_techs.csv
-    82      580 INCLUDE       29     330  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_sourcesink_techs.csv
-    83      584 IF EXIST      29     331  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_sourcesink_techs.csv
-    84      594 IF EXIST      29     341  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_degradation_states.csv
-    85      596 IF EXIST      29     343  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_degradation_states.csv
-    86      605 IF EXIST      29     352  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_soc.csv
-    87      607 IF EXIST      29     354  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_soc.csv
-    88      623 IF EXIST      29     370  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_linkstartend.csv
-    89      625 IF EXIST      29     372  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_linkstartend.csv
+    30      190 IF EXIST      29      24  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\map_aggregatetimemodel.csv
+    31      255 IF EXIST      29     120  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesmodel.csv
+    32      255 INCLUDE       29     120  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesmodel.csv
+    33      271 IF EXIST      29     122  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesmodel.csv
+    34      278 IF EXIST      29     129  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesdata.csv
+    35      278 INCLUDE       29     129  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesdata.csv
+    36      294 IF EXIST      29     131  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesdata.csv
+    37      300 IF EXIST      29     137  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesmodelsel.csv
+    38      302 IF EXIST      29     139  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesmodelsel.csv
+    39      304 IF EXIST      29     141  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_nodesmodelsel.csv
+    40      317 IF EXIST      29     154  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\map_aggregatenodesmodel.csv
+    41      317 INCLUDE       29     154  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\map_aggregatenodesmodel.csv
+    42      333 IF EXIST      29     156  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\map_aggregatenodesmodel.csv
+    43      336 IF EXIST      29     159  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\map_aggregatenodesmodel.csv
+    44      365 IF EXIST      29     188  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_years.csv
+    45      365 INCLUDE       29     188  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_years.csv
+    46      368 IF EXIST      29     190  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_years.csv
+    47      377 IF EXIST      29     199  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_years.csv
+    48      377 INCLUDE       29     199  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_years.csv
+    49      380 IF EXIST      29     201  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_years.csv
+    50      386 IF EXIST      29     207  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_yearssel.csv
+    51      386 INCLUDE       29     207  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_yearssel.csv
+    52      389 IF EXIST      29     209  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_yearssel.csv
+    53      407 IF EXIST      29     227  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_activities.csv
+    54      407 INCLUDE       29     227  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_activities.csv
+    55      410 IF EXIST      29     229  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_activities.csv
+    56      418 IF EXIST      29     237  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_gridsegments.csv
+    57      420 IF EXIST      29     239  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_gridsegments.csv
+    58      428 IF EXIST      29     247  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_linksdata.csv
+    59      430 IF EXIST      29     249  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_linksdata.csv
+    60      448 IF EXIST      29     267  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_link_types.csv
+    61      450 IF EXIST      29     269  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_link_types.csv
+    62      459 IF EXIST      29     278  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_commodities.csv
+    63      459 INCLUDE       29     278  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_commodities.csv
+    64      483 IF EXIST      29     280  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_commodities.csv
+    65      492 IF EXIST      29     289  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_indicators.csv
+    66      492 INCLUDE       29     289  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_indicators.csv
+    67      498 IF EXIST      29     291  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_indicators.csv
+    68      507 IF EXIST      29     300  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_converter_techs.csv
+    69      507 INCLUDE       29     300  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_converter_techs.csv
+    70      530 IF EXIST      29     303  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_storage_techs.csv
+    71      533 IF EXIST      29     306  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_transfer_techs.csv
+    72      536 IF EXIST      29     309  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_sourcesink_techs.csv
+    73      536 INCLUDE       29     309  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_sourcesink_techs.csv
+    74      544 IF EXIST      29     314  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_converter_techs.csv
+    75      544 INCLUDE       29     314  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_converter_techs.csv
+    76      565 IF EXIST      29     315  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_converter_techs.csv
+    77      569 IF EXIST      29     319  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_storage_techs.csv
+    78      570 IF EXIST      29     320  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_storage_techs.csv
+    79      575 IF EXIST      29     325  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_transfer_techs.csv
+    80      576 IF EXIST      29     326  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_transfer_techs.csv
+    81      580 IF EXIST      29     330  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_sourcesink_techs.csv
+    82      580 INCLUDE       29     330  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_sourcesink_techs.csv
+    83      584 IF EXIST      29     331  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_sourcesink_techs.csv
+    84      594 IF EXIST      29     341  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_degradation_states.csv
+    85      596 IF EXIST      29     343  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_degradation_states.csv
+    86      605 IF EXIST      29     352  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_soc.csv
+    87      607 IF EXIST      29     354  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_soc.csv
+    88      623 IF EXIST      29     370  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_linkstartend.csv
+    89      625 IF EXIST      29     372  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_linkstartend.csv
     90      639 BATINCLUDE    29     386  ...C:\Local\framework\remix\framework\model\source\battools\aggregateNodes.gms
-    91      750 IF EXIST      29     495  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_accnodes.csv
-    92      752 IF EXIST      29     497  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\set_accnodes.csv
-    93      817 IF EXIST      29     562  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\map_accnodes.csv
-    94      819 IF EXIST      29     564  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\map_accnodes.csv
+    91      750 IF EXIST      29     495  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_accnodes.csv
+    92      752 IF EXIST      29     497  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\set_accnodes.csv
+    93      817 IF EXIST      29     562  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\map_accnodes.csv
+    94      819 IF EXIST      29     564  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\map_accnodes.csv
     95      872 INCLUDE       28      26  ..C:\Local\framework\remix\framework\model\source\accounting\input.gms
-    96      904 IF EXIST      95      32  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_converterunits.csv
-    97      904 INCLUDE       95      32  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_converterunits.csv
-    98      947 IF EXIST      95      34  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_converterunits.csv
-    99      961 IF EXIST      95      48  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_converteractivity.csv
-   100      963 IF EXIST      95      50  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_converteractivity.csv
-   101      980 IF EXIST      95      67  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_converterstartup.csv
-   102      982 IF EXIST      95      69  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_converterstartup.csv
-   103     1001 IF EXIST      95      88  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_storageunits.csv
-   104     1003 IF EXIST      95      90  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_storageunits.csv
-   105     1025 IF EXIST      95     112  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_transferlinks.csv
-   106     1027 IF EXIST      95     114  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_transferlinks.csv
-   107     1049 IF EXIST      95     136  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_transferperlength.csv
-   108     1051 IF EXIST      95     138  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_transferperlength.csv
-   109     1066 IF EXIST      95     153  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_sourcesinkflow.csv
-   110     1066 INCLUDE       95     153  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_sourcesinkflow.csv
-   111     1181 IF EXIST      95     155  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_sourcesinkflow.csv
-   112     1195 IF EXIST      95     169  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_perindicator.csv
-   113     1195 INCLUDE       95     169  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_perindicator.csv
-   114     1201 IF EXIST      95     171  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_perindicator.csv
-   115     1227 IF EXIST      95     197  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_indicatorbounds.csv
-   116     1227 INCLUDE       95     197  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_indicatorbounds.csv
-   117     1231 IF EXIST      95     199  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_indicatorbounds.csv
-   118     1250 IF EXIST      95     218  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_indicatorbounds_links.csv
-   119     1252 IF EXIST      95     220  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\accounting_indicatorbounds_links.csv
+    96      904 IF EXIST      95      32  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_converterunits.csv
+    97      904 INCLUDE       95      32  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_converterunits.csv
+    98      947 IF EXIST      95      34  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_converterunits.csv
+    99      961 IF EXIST      95      48  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_converteractivity.csv
+   100      963 IF EXIST      95      50  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_converteractivity.csv
+   101      980 IF EXIST      95      67  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_converterstartup.csv
+   102      982 IF EXIST      95      69  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_converterstartup.csv
+   103     1001 IF EXIST      95      88  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_storageunits.csv
+   104     1003 IF EXIST      95      90  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_storageunits.csv
+   105     1025 IF EXIST      95     112  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_transferlinks.csv
+   106     1027 IF EXIST      95     114  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_transferlinks.csv
+   107     1049 IF EXIST      95     136  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_transferperlength.csv
+   108     1051 IF EXIST      95     138  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_transferperlength.csv
+   109     1066 IF EXIST      95     153  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_sourcesinkflow.csv
+   110     1066 INCLUDE       95     153  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_sourcesinkflow.csv
+   111     1181 IF EXIST      95     155  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_sourcesinkflow.csv
+   112     1195 IF EXIST      95     169  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_perindicator.csv
+   113     1195 INCLUDE       95     169  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_perindicator.csv
+   114     1201 IF EXIST      95     171  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_perindicator.csv
+   115     1227 IF EXIST      95     197  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_indicatorbounds.csv
+   116     1227 INCLUDE       95     197  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_indicatorbounds.csv
+   117     1231 IF EXIST      95     199  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_indicatorbounds.csv
+   118     1250 IF EXIST      95     218  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_indicatorbounds_links.csv
+   119     1252 IF EXIST      95     220  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\accounting_indicatorbounds_links.csv
    120     1258 BATINCLUDE    95     226  ...C:\Local\framework\remix\framework\model\source\battools\aggregateAccountingMean.gms
    121     1326 BATINCLUDE    95     227  ...C:\Local\framework\remix\framework\model\source\battools\aggregateAccountingMean.gms
    122     1378 BATINCLUDE    95     228  ...C:\Local\framework\remix\framework\model\source\battools\aggregateAccountingMean.gms
@@ -7395,78 +7395,78 @@ Include File Summary
    128     2169 INCLUDE       28      29  ..C:\Local\framework\remix\framework\model\source\methods\mga_pre.gms
    129     2176 INCLUDE       28      30  ..C:\Local\framework\remix\framework\model\source\methods\pareto_pre.gms
    130     2183 INCLUDE       28      31  ..C:\Local\framework\remix\framework\model\source\postcalc\declaration.gms
-   131     2200 IF DEXIST    130      17  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\results\
+   131     2200 IF DEXIST    130      17  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\results\
    132     2418 INCLUDE       28      32  ..C:\Local\framework\remix\framework\model\source\loadgdx.gms
    133     2431 INCLUDE       28      34  ..C:\Local\framework\remix\framework\model\source\core\converter.gms
-   134     2534 IF EXIST     133     103  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_capacityparam.csv
-   135     2534 INCLUDE      133     103  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_capacityparam.csv
-   136     2749 IF EXIST     133     105  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_capacityparam.csv
+   134     2534 IF EXIST     133     103  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_capacityparam.csv
+   135     2534 INCLUDE      133     103  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_capacityparam.csv
+   136     2749 IF EXIST     133     105  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_capacityparam.csv
    137     2757 BATINCLUDE   133     113  ...C:\Local\framework\remix\framework\model\source\battools\aggregateNodes.gms
    138     2768 BATINCLUDE   133     114  ...C:\Local\framework\remix\framework\model\source\battools\aggregateNodes.gms
-   139     2801 IF EXIST     133     137  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_techparam.csv
-   140     2801 INCLUDE      133     137  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_techparam.csv
-   141     2823 IF EXIST     133     139  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_techparam.csv
-   142     2845 IF EXIST     133     161  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_activityprofile.csv
-   143     2845 INCLUDE      133     161  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_activityprofile.csv
-   144     2917 IF EXIST     133     162  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_activityprofile.csv
-   145     2919 IF EXIST     133     164  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_activityprofile.csv
-   146     2940 IF EXIST     133     185  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_coefficient.csv
-   147     2940 INCLUDE      133     185  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_coefficient.csv
-   148     2991 IF EXIST     133     186  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_coefficient.csv
-   149     2992 IF EXIST     133     187  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_coefficient.csv
-   150     2994 IF EXIST     133     189  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_coefficient.csv
-   151     3007 IF EXIST     133     202  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_coefficientprofile.csv
-   152     3008 IF EXIST     133     203  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_coefficientprofile.csv
-   153     3010 IF EXIST     133     205  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\converter_coefficientprofile.csv
+   139     2801 IF EXIST     133     137  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_techparam.csv
+   140     2801 INCLUDE      133     137  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_techparam.csv
+   141     2823 IF EXIST     133     139  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_techparam.csv
+   142     2845 IF EXIST     133     161  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_activityprofile.csv
+   143     2845 INCLUDE      133     161  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_activityprofile.csv
+   144     2917 IF EXIST     133     162  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_activityprofile.csv
+   145     2919 IF EXIST     133     164  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_activityprofile.csv
+   146     2940 IF EXIST     133     185  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_coefficient.csv
+   147     2940 INCLUDE      133     185  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_coefficient.csv
+   148     2991 IF EXIST     133     186  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_coefficient.csv
+   149     2992 IF EXIST     133     187  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_coefficient.csv
+   150     2994 IF EXIST     133     189  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_coefficient.csv
+   151     3007 IF EXIST     133     202  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_coefficientprofile.csv
+   152     3008 IF EXIST     133     203  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_coefficientprofile.csv
+   153     3010 IF EXIST     133     205  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\converter_coefficientprofile.csv
    154     4011 INCLUDE       28      35  ..C:\Local\framework\remix\framework\model\source\core\storage.gms
-   155     4104 IF EXIST     154      93  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_reservoirparam.csv
-   156     4106 IF EXIST     154      95  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_reservoirparam.csv
+   155     4104 IF EXIST     154      93  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_reservoirparam.csv
+   156     4106 IF EXIST     154      95  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_reservoirparam.csv
    157     4110 BATINCLUDE   154      99  ...C:\Local\framework\remix\framework\model\source\battools\aggregateNodes.gms
    158     4121 BATINCLUDE   154     100  ...C:\Local\framework\remix\framework\model\source\battools\aggregateNodes.gms
    159     4132 BATINCLUDE   154     101  ...C:\Local\framework\remix\framework\model\source\battools\aggregateNodes.gms
-   160     4168 IF EXIST     154     127  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_techparam.csv
-   161     4170 IF EXIST     154     129  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_techparam.csv
-   162     4191 IF EXIST     154     150  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_sizeparam.csv
-   163     4193 IF EXIST     154     152  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_sizeparam.csv
-   164     4210 IF EXIST     154     169  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_socparam.csv
-   165     4212 IF EXIST     154     171  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_socparam.csv
-   166     4231 IF EXIST     154     190  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_degradationparam.csv
-   167     4233 IF EXIST     154     192  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_degradationparam.csv
-   168     4262 IF EXIST     154     221  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_levelprofile.csv
-   169     4263 IF EXIST     154     222  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_levelprofile.csv
-   170     4265 IF EXIST     154     224  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\storage_levelprofile.csv
+   160     4168 IF EXIST     154     127  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_techparam.csv
+   161     4170 IF EXIST     154     129  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_techparam.csv
+   162     4191 IF EXIST     154     150  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_sizeparam.csv
+   163     4193 IF EXIST     154     152  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_sizeparam.csv
+   164     4210 IF EXIST     154     169  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_socparam.csv
+   165     4212 IF EXIST     154     171  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_socparam.csv
+   166     4231 IF EXIST     154     190  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_degradationparam.csv
+   167     4233 IF EXIST     154     192  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_degradationparam.csv
+   168     4262 IF EXIST     154     221  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_levelprofile.csv
+   169     4263 IF EXIST     154     222  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_levelprofile.csv
+   170     4265 IF EXIST     154     224  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\storage_levelprofile.csv
    171     5202 INCLUDE       28      36  ..C:\Local\framework\remix\framework\model\source\core\transfer.gms
-   172     5267 IF EXIST     171      71  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_linksparam.csv
-   173     5269 IF EXIST     171      73  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_linksparam.csv
-   174     5285 IF EXIST     171      89  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_flowprofile.csv
-   175     5287 IF EXIST     171      91  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_flowprofile.csv
-   176     5307 IF EXIST     171     111  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_techparam.csv
-   177     5309 IF EXIST     171     113  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_techparam.csv
-   178     5324 IF EXIST     171     128  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_coefficient.csv
-   179     5326 IF EXIST     171     130  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_coefficient.csv
-   180     5340 IF EXIST     171     144  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_coefperflow.csv
-   181     5342 IF EXIST     171     146  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_coefperflow.csv
-   182     5357 IF EXIST     171     161  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_coefperlength.csv
-   183     5359 IF EXIST     171     163  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_coefperlength.csv
-   184     5373 IF EXIST     171     177  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_reactperlength.csv
-   185     5375 IF EXIST     171     179  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_reactperlength.csv
-   186     5389 IF EXIST     171     193  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_lengthparam.csv
-   187     5391 IF EXIST     171     195  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_lengthparam.csv
-   188     5405 IF EXIST     171     209  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_gridsegments.csv
-   189     5407 IF EXIST     171     211  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\transfer_gridsegments.csv
+   172     5267 IF EXIST     171      71  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_linksparam.csv
+   173     5269 IF EXIST     171      73  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_linksparam.csv
+   174     5285 IF EXIST     171      89  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_flowprofile.csv
+   175     5287 IF EXIST     171      91  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_flowprofile.csv
+   176     5307 IF EXIST     171     111  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_techparam.csv
+   177     5309 IF EXIST     171     113  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_techparam.csv
+   178     5324 IF EXIST     171     128  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_coefficient.csv
+   179     5326 IF EXIST     171     130  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_coefficient.csv
+   180     5340 IF EXIST     171     144  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_coefperflow.csv
+   181     5342 IF EXIST     171     146  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_coefperflow.csv
+   182     5357 IF EXIST     171     161  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_coefperlength.csv
+   183     5359 IF EXIST     171     163  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_coefperlength.csv
+   184     5373 IF EXIST     171     177  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_reactperlength.csv
+   185     5375 IF EXIST     171     179  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_reactperlength.csv
+   186     5389 IF EXIST     171     193  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_lengthparam.csv
+   187     5391 IF EXIST     171     195  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_lengthparam.csv
+   188     5405 IF EXIST     171     209  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_gridsegments.csv
+   189     5407 IF EXIST     171     211  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\transfer_gridsegments.csv
    190     6062 INCLUDE       28      37  ..C:\Local\framework\remix\framework\model\source\core\sourcesink.gms
-   191     6100 IF EXIST     190      38  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_config.csv
-   192     6100 INCLUDE      190      38  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_config.csv
-   193     6411 IF EXIST     190      40  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_config.csv
+   191     6100 IF EXIST     190      38  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_config.csv
+   192     6100 INCLUDE      190      38  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_config.csv
+   193     6411 IF EXIST     190      40  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_config.csv
    194     6415 BATINCLUDE   190      44  ...C:\Local\framework\remix\framework\model\source\battools\aggregateNodes.gms
-   195     6443 IF EXIST     190      62  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_profile.csv
-   196     6443 INCLUDE      190      62  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_profile.csv
-   197     6627 IF EXIST     190      63  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_profile.csv
-   198     6628 IF EXIST     190      64  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_profile.csv
-   199     6630 IF EXIST     190      66  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_profile.csv
-   200     6650 IF EXIST     190      86  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_annualsum.csv
-   201     6650 INCLUDE      190      86  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_annualsum.csv
-   202     6779 IF EXIST     190      88  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\process\225a\sourcesink_annualsum.csv
+   195     6443 IF EXIST     190      62  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_profile.csv
+   196     6443 INCLUDE      190      62  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_profile.csv
+   197     6627 IF EXIST     190      63  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_profile.csv
+   198     6628 IF EXIST     190      64  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_profile.csv
+   199     6630 IF EXIST     190      66  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_profile.csv
+   200     6650 IF EXIST     190      86  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_annualsum.csv
+   201     6650 INCLUDE      190      86  ...C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_annualsum.csv
+   202     6779 IF EXIST     190      88  ..C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\225a\sourcesink_annualsum.csv
    203     6782 BATINCLUDE   190      91  ...C:\Local\framework\remix\framework\model\source\battools\aggregateNodes.gms
    204     6970 INCLUDE       28      38  ..C:\Local\framework\remix\framework\model\source\core\balance.gms
    205     7118 INCLUDE       28      40  ..C:\Local\framework\remix\framework\model\source\accounting\equations.gms
@@ -7492,8 +7492,8 @@ Include File Summary
    225    10297 INCLUDE       28      99  ..C:\Local\framework\remix\framework\model\source\postcalc\writegdx.gms
 
 
-COMPILATION TIME     =       13.438 SECONDS     66 MB  43.3.0 9e10b068 WEX-WEI
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/01/25 14:07:36 Page 3
+COMPILATION TIME     =       14.156 SECONDS     66 MB  43.3.0 9e10b068 WEX-WEI
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/02/25 11:26:14 Page 3
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Range Statistics    SOLVE remix Using MIP From line 9085
 
@@ -7504,7 +7504,7 @@ RHS       [min, max] : [ 1.000E-04, 1.000E+06] - Zero values observed as well
 Bound     [min, max] : [        NA,        NA] - Zero values observed as well
 Matrix    [min, max] : [ 3.200E-04, 5.357E+02]
 
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/01/25 14:07:36 Page 4
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/02/25 11:26:14 Page 4
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Model Statistics    SOLVE remix Using MIP From line 9085
 
@@ -7516,16 +7516,16 @@ MODEL STATISTICS
 
 BLOCKS OF EQUATIONS          79     SINGLE EQUATIONS    6,347,892
 BLOCKS OF VARIABLES          37     SINGLE VARIABLES    4,753,456
-NON ZERO ELEMENTS    15,433,632
+NON ZERO ELEMENTS    15,153,298
 
 
-GENERATION TIME      =       24.563 SECONDS  3,579 MB  43.3.0 9e10b068 WEX-WEI
+GENERATION TIME      =       24.297 SECONDS  3,532 MB  43.3.0 9e10b068 WEX-WEI
 
 
-EXECUTION TIME       =       33.641 SECONDS  3,579 MB  43.3.0 9e10b068 WEX-WEI
+EXECUTION TIME       =       33.453 SECONDS  3,532 MB  43.3.0 9e10b068 WEX-WEI
                L O O P S         optiframeToCalc of1
 
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/01/25 14:07:36 Page 5
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/02/25 11:26:14 Page 5
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 Solution Report     SOLVE remix Using MIP From line 9085
 
@@ -7538,13 +7538,13 @@ Solution Report     SOLVE remix Using MIP From line 9085
 
 **** SOLVER STATUS     1 Normal Completion
 **** MODEL STATUS      1 Optimal
-**** OBJECTIVE VALUE             3788.7427
+**** OBJECTIVE VALUE             3599.2071
 
- RESOURCE USAGE, LIMIT          8.250   1209600.000
+ RESOURCE USAGE, LIMIT          8.047   1209600.000
  ITERATION COUNT, LIMIT        11    2147483647
 --- GAMS/CPLEX licensed for continuous and discrete problems.
 
-Reading parameter(s) from "C:\Local\remix-pic\REMix-Pacific_island_Countries\process\cplex.opt"
+Reading parameter(s) from "C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\cplex.opt"
 >>  names no
 >>  rerun no
 >>  lpmethod 4
@@ -7557,34 +7557,34 @@ Reading parameter(s) from "C:\Local\remix-pic\REMix-Pacific_island_Countries\pro
 >>  epgap 1e-3
 >>  iis 0
 >>  quality 1
-Finished reading from "C:\Local\remix-pic\REMix-Pacific_island_Countries\process\cplex.opt"
+Finished reading from "C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\cplex.opt"
 
 --- GMO setup time: 0.00s
---- GMO memory 1971.37 Mb (peak 2007.63 Mb)
+--- GMO memory 1958.37 Mb (peak 1994.63 Mb)
 --- Dictionary memory 0.00 Mb
---- Cplex 22.1.1.0 link memory 163.31 Mb (peak 425.42 Mb)
+--- Cplex 22.1.1.0 link memory 163.31 Mb (peak 422.22 Mb)
 --- Starting Cplex
 
 
 --- LP status (1): optimal.
---- Cplex Time: 6.22sec (det. 7443.29 ticks)
+--- Cplex Time: 6.08sec (det. 7425.23 ticks)
 
 
 Optimal solution found
-Objective:         3788.742728
+Objective:         3599.207056
 
 Solution Quality Statistics:
                                    unscaled                scaled
                                max         sum         max         sum
-primal infeasibility        2.845e-03   2.629e-02   2.845e-03   2.629e-02
+primal infeasibility        1.509e-03   1.342e-02   1.509e-03   1.342e-02
 dual infeasibility          0.000e+00   0.000e+00   0.000e+00   0.000e+00
-primal residual             7.632e-11   2.246e-09   7.632e-11   2.246e-09
-dual residual               3.987e-09   1.916e-05   3.987e-09   1.916e-05
-primal solution vector      2.112e+00   1.387e+05   2.112e+00   1.387e+05
-dual solution vector        2.377e+03   3.832e+05   2.377e+03   3.832e+05
+primal residual             6.306e-11   2.284e-09   6.306e-11   2.284e-09
+dual residual               3.620e-09   1.744e-05   3.620e-09   1.744e-05
+primal solution vector      2.098e+00   1.460e+05   2.098e+00   1.460e+05
+dual solution vector        2.159e+03   3.691e+05   2.159e+03   3.691e+05
 slacks                      1.000e+06   9.184e+07   1.000e+06   9.184e+07
-reduced costs               1.000e+00   1.262e+04   1.000e+00   1.262e+04
-comp. slackness viol.       1.583e-05   1.858e-04
+reduced costs               1.000e+00   1.247e+04   1.000e+00   1.247e+04
+comp. slackness viol.       5.825e-05   2.340e-04
 
 
 
@@ -7592,7 +7592,7 @@ comp. slackness viol.       1.583e-05   1.858e-04
 **** REPORT SUMMARY :        0     NONOPT
                              0 INFEASIBLE
                              0  UNBOUNDED
-GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/01/25 14:07:36 Page 6
+GAMS 43.3.0  9e10b068 May 18, 2023          WEX-WEI x86 64bit/MS Windows - 09/02/25 11:26:14 Page 6
 G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
 E x e c u t i o n
 
@@ -7600,10 +7600,10 @@ E x e c u t i o n
 **** REPORT FILE SUMMARY
 
 props 
-opt C:\Local\remix-pic\REMix-Pacific_island_Countries\process\cplex.opt
+opt C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\cplex.opt
 
 
-EXECUTION TIME       =       46.172 SECONDS  3,112 MB  43.3.0 9e10b068 WEX-WEI
+EXECUTION TIME       =       43.610 SECONDS  3,064 MB  43.3.0 9e10b068 WEX-WEI
 
 
 USER: Medium MUD - 10 User License                   S220920|0002AO-GEN
@@ -7614,4 +7614,4 @@ USER: Medium MUD - 10 User License                   S220920|0002AO-GEN
 **** FILE SUMMARY
 
 Input      C:\Local\framework\remix\framework\model\run_remix.gms
-Output     C:\Local\remix-pic\REMix-Pacific_island_Countries\process\run_remix.lst
+Output     C:\Local\remix-pic\REMix-Pacific_island_Countries\Process\run_remix.lst
