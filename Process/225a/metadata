@@ -1,0 +1,15 @@
+remix_version "0.13.0"
+gams_version "43.3.0"
+timestamp "02/13/26 09:54:13"
+framework_path "C:\Local\framework\remix\framework\model\source"
+
+framework_hash c4d562dc434502ae346f255d5b29b268f7db540c
+
+framework_branch "dev"
+
+project_path "C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\data"
+
+project_hash "1d14b98620a5f3cd65508bbeb79457527fae93a8"
+
+project_branch "main"
+
