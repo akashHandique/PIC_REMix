@@ -1,0 +1,24 @@
+- GDXReader:
+    file: C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\results\IP_2050_2_biomasscap.gdx
+    symbols: 
+      - name: commodity_balance
+- Filter:
+    name: commodity_balance
+    newName: commodity_balance_filter_
+    labelFilters:
+      - column: 2
+        keep: ['PNG_model']
+      - column: 3
+        keep: ['2050']
+      - column: 5
+        keep: ['Elec']
+    valueFilters:
+      - column: value
+        rule: (x>=0) & (x<=25.978861)
+- PandasExcelWriter:
+    file: C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\results\IP_2050_2_biomasscap_export.xlsx
+    excelWriterArguments: { engine: null, mode: w, if_sheet_exists: null}
+    symbols:
+      - name: commodity_balance_filter_
+        range: commodity_balance!A1
+        rowDimension: 5

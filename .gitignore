@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.snakemake
+
+# REMix files
+*.gdx
+*.lst
+*.log
+*.opt
+
+
+# Large input datasets
+_input/IP_2040_2050_14_PIC.csv
+Process/data/sourcesink_profile.dat
+*.dat
+*.csv
+

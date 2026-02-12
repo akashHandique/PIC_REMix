@@ -1,0 +1,213 @@
+- GDXReader:
+    file: C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\results\PIC_Basecase_2020.gdx
+    symbols: 
+      - name: metadata
+      - name: timeModel
+      - name: timeModelToCalc
+      - name: nodesModel
+      - name: linksModel
+      - name: indicator
+      - name: commodity
+      - name: techs
+      - name: accNodesModel
+      - name: accYears
+      - name: map_nodesModel
+      - name: map_linksModel
+      - name: map_nodesAccounting
+      - name: indicator_accounting
+      - name: indicator_accounting_var
+      - name: indicator_accounting_ref
+      - name: indicator_accounting_comp
+      - name: indicator_accounting_detailed
+      - name: indicator_accounting_links
+      - name: converter_caps
+      - name: converter_units
+      - name: transfer_caps
+      - name: transfer_links
+      - name: transfer_flows
+      - name: transfer_flows_annual
+      - name: transfer_losses
+      - name: transfer_losses_annual
+      - name: storage_caps
+      - name: storage_units
+      - name: storage_flows
+      - name: storage_level_out
+      - name: storage_flows_annual
+      - name: storage_losses_out
+      - name: storage_losses_annual
+      - name: commodity_balance
+      - name: commodity_balance_annual
+      - name: marginals_balance
+      - name: marginals_sourcesink_profile
+      - name: marginals_sourcesink_sum
+      - name: marginals_indicator_bounds
+      - name: diagnostics
+- Filter:
+    name: indicator_accounting
+    newName: indicator_accounting_filter_
+    labelFilters:
+      - column: 1
+        keep: ['CI_model']
+      - column: 3
+        reject: ['Invest']
+- Filter:
+    name: indicator_accounting_comp
+    newName: indicator_accounting_comp_filter_
+    labelFilters:
+      - column: 1
+        keep: ['CI_model']
+      - column: 2
+        keep: ['2030']
+- Filter:
+    name: indicator_accounting_detailed
+    newName: indicator_accounting_detailed_filter_
+    labelFilters:
+      - column: 2
+        keep: ['CI_model']
+- Filter:
+    name: commodity_balance
+    newName: commodity_balance_filter_
+    labelFilters:
+      - column: 2
+        keep: ['PNG_model']
+      - column: 4
+        keep: ['HFO', 'Two_wheel', 'BG_B', 'NG_plant']
+      - column: 5
+        keep: ['Diesel', 'Elec', 'HFOO', 'T_Marine_f']
+- Filter:
+    name: commodity_balance_annual
+    newName: commodity_balance_annual_filter_
+    labelFilters:
+      - column: 1
+        keep: ['CI_model']
+      - column: 3
+        keep: ['Demand', 'cook']
+      - column: 5
+        keep: ['net']
+- PandasExcelWriter:
+    file: C:\Local\remix-pic\REMix-Pacific_Island_Countries\Process\results\PIC_Basecase_2020_export.xlsx
+    excelWriterArguments: { engine: null, mode: w, if_sheet_exists: null}
+    symbols:
+      - name: metadata
+        range: metadata!A1
+        rowDimension: 1
+      - name: timeModel
+        range: timeModel!A1
+        rowDimension: 1
+      - name: timeModelToCalc
+        range: timeModelToCalc!A1
+        rowDimension: 1
+      - name: nodesModel
+        range: nodesModel!A1
+        rowDimension: 1
+      - name: linksModel
+        range: linksModel!A1
+        rowDimension: 1
+      - name: indicator
+        range: indicator!A1
+        rowDimension: 1
+      - name: commodity
+        range: commodity!A1
+        rowDimension: 1
+      - name: techs
+        range: techs!A1
+        rowDimension: 1
+      - name: accNodesModel
+        range: accNodesModel!A1
+        rowDimension: 1
+      - name: accYears
+        range: accYears!A1
+        rowDimension: 1
+      - name: map_nodesModel
+        range: map_nodesModel!A1
+        rowDimension: 2
+      - name: map_linksModel
+        range: map_linksModel!A1
+        rowDimension: 2
+      - name: map_nodesAccounting
+        range: map_nodesAccounting!A1
+        rowDimension: 2
+      - name: indicator_accounting_filter_
+        range: indicator_accounting!A1
+        rowDimension: 3
+      - name: indicator_accounting_var
+        range: indicator_accounting_var!A1
+        rowDimension: 3
+      - name: indicator_accounting_ref
+        range: indicator_accounting_ref!A1
+        rowDimension: 3
+      - name: indicator_accounting_comp_filter_
+        range: indicator_accounting_comp!A1
+        rowDimension: 6
+      - name: indicator_accounting_detailed_filter_
+        range: indicator_accounting_detailed!A1
+        rowDimension: 4
+      - name: indicator_accounting_links
+        range: indicator_accounting_links!A1
+        rowDimension: 6
+      - name: converter_caps
+        range: converter_caps!A1
+        rowDimension: 5
+      - name: converter_units
+        range: converter_units!A1
+        rowDimension: 5
+      - name: transfer_caps
+        range: transfer_caps!A1
+        rowDimension: 7
+      - name: transfer_links
+        range: transfer_links!A1
+        rowDimension: 5
+      - name: transfer_flows
+        range: transfer_flows!A1
+        rowDimension: 7
+      - name: transfer_flows_annual
+        range: transfer_flows_annual!A1
+        rowDimension: 7
+      - name: transfer_losses
+        range: transfer_losses!A1
+        rowDimension: 7
+      - name: transfer_losses_annual
+        range: transfer_losses_annual!A1
+        rowDimension: 7
+      - name: storage_caps
+        range: storage_caps!A1
+        rowDimension: 5
+      - name: storage_units
+        range: storage_units!A1
+        rowDimension: 5
+      - name: storage_flows
+        range: storage_flows!A1
+        rowDimension: 5
+      - name: storage_level_out
+        range: storage_level_out!A1
+        rowDimension: 5
+      - name: storage_flows_annual
+        range: storage_flows_annual!A1
+        rowDimension: 5
+      - name: storage_losses_out
+        range: storage_losses_out!A1
+        rowDimension: 5
+      - name: storage_losses_annual
+        range: storage_losses_annual!A1
+        rowDimension: 5
+      - name: commodity_balance_filter_
+        range: commodity_balance!A1
+        rowDimension: 5
+      - name: commodity_balance_annual_filter_
+        range: commodity_balance_annual!A1
+        rowDimension: 5
+      - name: marginals_balance
+        range: marginals_balance!A1
+        rowDimension: 4
+      - name: marginals_sourcesink_profile
+        range: marginals_sourcesink_profile!A1
+        rowDimension: 5
+      - name: marginals_sourcesink_sum
+        range: marginals_sourcesink_sum!A1
+        rowDimension: 4
+      - name: marginals_indicator_bounds
+        range: marginals_indicator_bounds!A1
+        rowDimension: 3
+      - name: diagnostics
+        range: diagnostics!A1
+        rowDimension: 1
