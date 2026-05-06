@@ -10,39 +10,6 @@ Created on Fri Nov 28 10:33:50 2025
 
 """
 
-
-
-# %% [markdown]
-# (tutorial_101_label)=
-#
-# # Tutorial 101 - Converters, sources and sinks
-#
-# <div style="text-align: center;">
-#
-# ![Model overview for tutorial 101](../../img/REMix_tutorial101.svg "Model overview for tutorial 101")
-#
-# Model overview of tutorial 101
-#
-# </div>
-#
-# ## Part a: setting up the model
-#
-# This is the first tutorial to introduce a way to set up a model in REMix. It presents a basic model with four regions
-# including renewable energy sources, conventional power plant technologies, an electrical demand and accounting for
-# carbon emissions.
-#
-# For the general structure of REMix tutorials have a look at the README.
-#
-# We build a first base model to be used in later tutorials to build up on and include other energy system
-# components (like energy storage and transfer) as well as technologies (e.g. electric vehicles) and concepts
-# (e.g. demand response).
-
-# %% [markdown]
-# ### Setting up Python
-#
-# In this first section, we are importing the Python packages needed to run the model and later exemplary evaluation.
-# There are also directories defined where the model data and optimization results will be stored.
-
 # %%
 # importing dependencies
 import numpy as np
@@ -52,94 +19,16 @@ from remix.framework import Instance
 
 # define often-used shortcut
 idx = pd.IndexSlice
-# %% [markdown]
-# ### General introduction to building models in REMix
-#
-# For the setup of a model in REMix, preprocessing of data is necessary.
-# To do that, the tutorials make use of Pandas DataFrames.
-# These are separately set up and collected in lists, before these are being
-# written to files that are used as input to the solver.
-#
-# For the creation of Pandas (pd) DataFrames, we will typically use the
-# pd.DataFrame class.
-# In addition, we use the pd.MultiIndex.from_product() method to generate a
-# multi-index (e.g. three index layers with the first describing the indicator,
-# the second describing the indicator used to derive the first indicator and
-# third the years).
-#
-# In the following section, the lists to collect the Pandas DataFrames in are
-# initialized in the Instance `m` (as in "model").
-# This object is a container in which we will collect all necessary model data.
-#
-# Not all of the lists initialized with the Instance `m` will be filled in this
-# first tutorial.
-# This is especially true for storage technologies and energy transfer.
-# These two concepts (and more) will be introduced in later tutorials.
-#
-# One more note: if you do not provide a feature (i.e. fill an empty list),
-# REMix will run anyway without that feature but with the other available
-# files/features, unless that feature is strictly necessary, like a regional
-# mapping.
-#
-# If you are not yet familiar with the basic functions of Pandas, you can check
-# out the 10-minute tutorial in the Pandas documentation:
-# https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html
 
 # %%
 # initialize model structure of REMix
 m = Instance()
-
-# setting the directory the model data should be written to
 # a folder "./data" in the project directory is the default in REMix
 m.datadir = "./data"
 
-
-# %% [markdown]
-#
-# When printing `m`, you will see all REMix features it includes.
-#
-# For the purpose of the REMix tutorials, we have prepared some dummy data with
-# time profiles that are loaded here.
-# %%
 # load input data
 profiles = pd.read_csv("../_input/IP_2040_2050_14_PIC.csv", index_col=0)
-# %% [markdown]
-# ### Defining the model scope
-#
-# Here is where the model building starts. First of all, we define the model scope.
-#
-# The model scope describes the fundamental dimensions of the model, e.g. which
-# distinct regions and years are modeled.
-#
-# #### Spatial scope
-#
-# - `set.nodesdata` : describes the regions for which input data is provided
-# such as profiles and capacities for
-# power plants
-# - `set.nodesmodel` : describes the model regions which can be the same as the
-# data regions if the optimization should be done in full resolution.
-# - `map.aggregatenodesmodel` : describes the aggregation mapping for data to
-# model regions. This can be a 1:1 mapping (like `R3_data` to `R3_model`) or a
-# n:1 mapping (like e.g. "R1_North_data" and "R1_South_data" to `R1_model`) if
-# multiple data regions should be summed up to a model region.
-#
-# #### Temporal scope
-#
-# - `set.years` : the individual years which can be modeled for historical and
-# new power plants
-# - `set.yearssel` : the years which should be optimized during the run. For
-# now, we only use a single year to be optimized.
-#
-# Our model will comprise four regions, also referred to as "nodes", whose names
-# can be arbitrarily chosen. Here, they are called `R3_model`, `R1_model`,
-# `R2_model` and `R4_model` (although having nothing to do with the actual
-# energy systems of the countries these abbreviations hint at).
-# In the first two tutorials, we will only use one node, which is
-# `R1_data`/`R1_model`, so the other nodes are not needed until tutorial 103.
 
-# %%
-# "map_aggregateNodesModel"
-# DataFrame for aggregation from data to model regions
 df = pd.DataFrame(
     [
         ["CI_data", "CI_model", 1],
@@ -178,42 +67,11 @@ m.set.add(
 # Set the years to be considered in the model and the years to be optimized
 # "set_years"
 m.set.add(
-    ["2020", "2030"], "years"
+    ["2020", "2030", "2040"], "years"
 )  # must include all years that data is provided for in the model
 # "set_yearsSel"
-m.set.add(["2020", "2030"], "yearssel") 
+m.set.add(["2020", "2030", "2040"], "yearssel") 
 
-
-
-
-
- # years to be optimised
-# %% [markdown]
-# ### Setting the objective function and indicator bounds
-#
-# Models in REMix are usually optimized based on a cost-minimization approach.
-# The framework theoretically also allows other approaches.
-#
-# We will use different types of commodities - electricity, methane, carbon
-# dioxide - and system costs as indicator.
-# We will use the following units for these:
-#
-# - Elec : electricity in GWh_el
-# - CH4 : methane in GWh_ch
-# - CO2 : carbon dioxide emissions in tsd. t or kt
-# - Cost (Invest, OMVar, OMFix, CarbonCost, FuelCost) : cost values in million EUR or MEUR
-#
-# In the first DataFrame we define a value for the indicator `SystemCost` and
-# column `obj` to -1 to communicate that we want to minimize this indicator.
-# Similarly, a value of 1 would indicate a maximization.
-# The first field is used for the regional and year dimensions.
-# The value `global` uses all the regions in the system (in this example
-# R1_model, R2_model, R3_model, R4_model), whereas the value `horizon` takes
-# into account all years in the set `set.yearssel` (here only 2020).
-#
-# We set a social discount rate in the same DataFrame, which will be the default
-# value throughout the model, but can be overwritten for certain technologies or
-# model regions if wanted.
 
 # %%
 # "accounting_indicatorBounds"
@@ -226,21 +84,6 @@ accounting_indicatorBounds["discount"] = 0.08  # social discount rate for the in
 
 m.parameter.add(accounting_indicatorBounds, "accounting_indicatorbounds")
 accounting_indicatorBounds
-# %% [markdown]
-# We are also setting up the indicators we want to account for as `SystemCost`
-# in the model.
-#
-# Indicators are used for general accounting inside the energy system. For this
-# purpose we introduce an indicator `SystemCost` to reflect the overall costs of
-# the system.
-# This indicator is calculated by summing up the following individual cost
-# indicators with an equal weighting of 1 in the `accounting_perIndicator`
-# DataFrame.
-#
-# - `Invest` : investment cost for a technology unit (in MEUR/MW)
-# - `OMVar` : variable operation and maintenance cost  (in MEUR/MWh) (not set in this tutorial)
-# - `OMFix` : fix operation and maintenance costs (in MEUR/MW/year)
-# - `FuelCost` : costs for imports of methane into the model regions (in MEUR/MWh)
 
 # %%
 # "accounting_perIndicator"
@@ -263,20 +106,6 @@ accounting_perIndicator["perIndicator"] = 1
 
 m.parameter.add(accounting_perIndicator, "accounting_perindicator")
 accounting_perIndicator
-# %% [markdown]
-# ### Converter technologies
-#
-# #### Adding converter technologies
-#
-# In this section, the basic structure of including different converter
-# technologies in REMix is introduced.
-#
-# In this basic model, we introduce the possibility for the model to build
-# methane-fired combined-cycle gas turbines ("CCGT"), solar power plants ("PV")
-# and onshore wind turbine ("WindOnshore").
-#
-# The names chosen for the technologies are completely arbitrary.
-# We are trying to use the same ones throughout the tutorials, however.
 
 # %%
 # "converter_techParam"
@@ -361,42 +190,42 @@ converter_techParam
 ################################################################################
 
 tech_specss = {
-    "BG_N": {"lifeTime": 25, "activityUpperLimit": 0},  # No feed-in
-    "PV_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "WindOnshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "Hydro_N": {"lifeTime": 50, "activityUpperLimit": 0},
-    "Wave_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "ST_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "DW_Electric_converter_2": {"lifeTime": 25, "activityUpperLimit": 1},
-    "LDV_BF": {"lifeTime": 25, "activityUpperLimit": 1},
-    "RO": {"lifeTime": 25, "activityUpperLimit": 1},
+    "BG_N": {"lifeTime": 25, "activityUpperLimit": 0,"mipUnits": 0},  # No feed-in
+    "PV_N": {"lifeTime": 25, "activityUpperLimit": 0,"mipUnits": 0},
+    "WindOnshore_N": {"lifeTime": 25, "activityUpperLimit": 0,"mipUnits": 0},
+    "Hydro_N": {"lifeTime": 50, "activityUpperLimit": 0,"mipUnits": 0},
+    "Wave_N": {"lifeTime": 25, "activityUpperLimit": 0,"mipUnits": 0},
+    "ST_N": {"lifeTime": 25, "activityUpperLimit": 0},"mipUnits": 0,
+    "DW_Electric_converter_2": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "LDV_BF": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "RO": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
 #    "AEL": {"lifeTime": 25, "activityUpperLimit": 1},
-#    "AEL_10": {"lifeTime": 25,"activityUpperLimit": 1},
-    "AEL_100": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Ammonia_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},   
-    "DAC": {"lifeTime": 25, "activityUpperLimit": 1}, 
-    "Methanol_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},
-    "HP": {"lifeTime": 25, "activityUpperLimit": 1},
-    "FTL": {"lifeTime": 25, "activityUpperLimit": 1},
-    "LDV_el": {"lifeTime": 25, "activityUpperLimit": 1},
-    "HDV_el": {"lifeTime": 25, "activityUpperLimit": 1},
-    "HDV_BF": {"lifeTime": 25, "activityUpperLimit": 1},
-    "MDV_el": {"lifeTime": 25, "activityUpperLimit": 1},
-    "MDV_BF": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Two_wheel_el": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Bus_el": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Marine_e": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Aviation_el": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Aviation_e": {"lifeTime": 25, "activityUpperLimit": 1},
-    "cook_el": {"lifeTime": 25, "activityUpperLimit": 1},
-    "cook_LPG": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Industry_EH": {"lifeTime": 25, "activityUpperLimit": 1},
-    "ST_N_DW": {"lifeTime": 25, "activityUpperLimit": 0},
-    "DW_heat": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Dummy_Ammonia": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Dummy_Methanol": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Industry_EL": {"lifeTime": 25, "activityUpperLimit": 1},
-    "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0}
+    "AEL_10": {"lifeTime": 25,"activityUpperLimit": 1,"mipUnits": 1},
+    "AEL_100": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Ammonia_synthesis": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},   
+    "DAC": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0}, 
+    "Methanol_synthesis": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "HP": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "FTL": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "LDV_el": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "HDV_el": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "HDV_BF": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "MDV_el": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "MDV_BF": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Two_wheel_el": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Bus_el": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Marine_e": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Aviation_el": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Aviation_e": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "cook_el": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "cook_LPG": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Industry_EH": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "ST_N_DW": {"lifeTime": 25, "activityUpperLimit": 0,"mipUnits": 0},
+    "DW_heat": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Dummy_Ammonia": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Dummy_Methanol": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "Industry_EL": {"lifeTime": 25, "activityUpperLimit": 1,"mipUnits": 0},
+    "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0,"mipUnits": 0}
 
 }
 
@@ -409,7 +238,7 @@ converter_techParam = pd.DataFrame(
 for tech, specs in tech_specss.items():
     converter_techParam.loc[idx[tech], "lifeTime"] = specs["lifeTime"]
     converter_techParam.loc[idx[tech], "activityUpperLimit"] = specs["activityUpperLimit"]
-
+    converter_techParam.loc[idx[tech], "mipUnits"] = specs["mipUnits"]
 
 # Add to model
 m.parameter.add(converter_techParam, "converter_techparam")
@@ -429,7 +258,7 @@ tech_specss = {
 #    "AEL": {"lifeTime": 25, "activityUpperLimit": 1},
 #    "AEL_10": {"lifeTime": 25,"activityUpperLimit": 1},
     "AEL_100": {"lifeTime": 25, "activityUpperLimit": 1},
-    "Ammonia_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},   
+    "Ammonia_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},     
     "DAC": {"lifeTime": 25, "activityUpperLimit": 1}, 
     "Methanol_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},
     "HP": {"lifeTime": 25, "activityUpperLimit": 1},
@@ -2525,17 +2354,7 @@ converter_capacityParam = converter_capacityParam.dropna(how="all")
 m.parameter.add(converter_capacityParam, "converter_capacityparam")
 
 converter_capacityParam
-# %% [markdown]
-# Activities in REMix are the conversion processes a technology can perform.
-# For this example we define an activity "Powergen" (as in power generation).
-#
-# For the CCGT technology this means burning methane in order to get electricity
-# and carbon dioxide as a by-product of the combustion process.
-#
-# For the renewable energy sources wind and PV we model the activity `Powergen`
-# by setting a value of 1, which is arbitrary in this case, however, since the
-# actual potential for wind and solar energy is modeled as "activityProfile"
-# below, which overwrites this value.
+
 
 # %%
 # "converter_coefficient"
@@ -2745,9 +2564,9 @@ converter_coefficient.loc[idx["FTL",:,:,"co"], "coefficient"] = -0.305 #(CBR) kt
 # converter_coefficient.loc[idx["AEL",:,:,"Elec"], "coefficient"] = -.00142 
 # #converter_coefficient.loc[idx["AEL",:,:,"Heat"], "coefficient"] = 0.38  # 30% of energy is heat and 90% is recoverable
 
-# converter_coefficient.loc[idx["AEL_10",:,:,"Hydrogen"], "coefficient"] = .01 #Gwh
-# converter_coefficient.loc[idx["AEL_10",:,:,"Pure_water"], "coefficient"] = -0.00450  # (1000 * m3) (Based on 15L/KG H2 from IRENA data and 70% eff)
-# converter_coefficient.loc[idx["AEL_10",:,:,"Elec"], "coefficient"] = -.0142 
+converter_coefficient.loc[idx["AEL_10",:,:,"Hydrogen"], "coefficient"] = .01 #Gwh
+converter_coefficient.loc[idx["AEL_10",:,:,"Pure_water"], "coefficient"] = -0.00450  # (1000 * m3) (Based on 15L/KG H2 from IRENA data and 70% eff)
+converter_coefficient.loc[idx["AEL_10",:,:,"Elec"], "coefficient"] = -.0142 
 # #converter_coefficient.loc[idx["AEL_10",:,:,"Heat"], "coefficient"] = 0.38 
 
 
@@ -3759,21 +3578,21 @@ accounting_converterUnits.loc[
 #     idx["OMFix", "global", "horizon", "AEL", "2040"], "perUnitTotal"
 # ] = 0
 
-# accounting_converterUnits.loc[
-#     idx["Invest", "global", "horizon", "AEL_10", "2040"], "perUnitBuild"
-# ] = 200
-# accounting_converterUnits.loc[
-#     idx["Invest", "global", "horizon", "AEL_10", "2040"], "useAnnuity"
-# ] = 1
-# accounting_converterUnits.loc[
-#     idx["Invest", "global", "horizon", "AEL_10", "2040"], "amorTime"
-# ] = 25
-# accounting_converterUnits.loc[
-#     idx["Invest", "global", "horizon", "AEL_10", "2040"], "interest"
-# ] = 0.06
-# accounting_converterUnits.loc[
-#     idx["OMFix", "global", "horizon", "AEL_10", "2040"], "perUnitTotal"
-# ] = 0
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "AEL_10", "2040"], "perUnitBuild"
+] = 200
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "AEL_10", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "AEL_10", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "global", "horizon", "AEL_10", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "global", "horizon", "AEL_10", "2040"], "perUnitTotal"
+] = 0
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "AEL_100", "2040"], "perUnitBuild"
@@ -4758,6 +4577,59 @@ accounting_converteractivity
 # that this profile needs to be matched exactly on an hour-by-hour level.
 
 # %%
+#########################shorter loop#######################################
+# Define islands (same for all years)
+islands = ["CI","FJ","FSM","KB","MI","NU","NE","PU","PNG","SA","SI","TA","TU","VU"]
+  # prefix of columns in 'profiles'
+
+# Define a dictionary: year -> list of (commodity_name, short_name)
+year_commodities = {
+    "2020": [("T_LDV_th", "LDV"), ("T_MDV_th", "MDV"),("T_HDV_th", "HDV"),("T_Bus_th", "Bus"),("T_Two_wheel_th", "Two_wheel"),("T_Marine_th", "Marine"),("T_Aviation_th", "Aviation"),("T_Marine_f_th", "Marinef"), ("Heat_cooking", "HC"),("Heat_industry", "HI"),("DHW_el", "DHWE"),("DHW_LPG", "DHWL")]
+    # "2030": [("Heat_cooking", "HC"), ("Electricity_process", "EP")],
+    # "2040": [("Heat_cooking", "HC"), ("Electricity_household", "EL")],
+}
+
+# Loop through years and commodities
+for year, commodities in year_commodities.items():
+    for commodity, short_name in commodities:
+        # Build column list
+        cols = [f"{short_name}_{i}" for i in islands]
+        
+        # Select demand columns and scale
+        demand_df = profiles[cols].div(1e3).mul(-1)
+        
+        # Transpose
+        demand_df = demand_df.T
+        
+        # Rename index for REMix
+        rename_dict = {f"{short_name}_{i}": f"{i}_data" for i in islands}
+        demand_df = demand_df.rename(index=rename_dict)
+        
+        # Add metadata columns
+        demand_df["years"] = year
+        demand_df["techs"] = "Demand"
+        demand_df["commodity"] = commodity
+        demand_df["type"] = "fixed"
+        
+        # Set multi-index
+        demand_df = demand_df.set_index(["years", "techs", "commodity", "type"], append=True)
+        
+        # Add profile to REMix model
+        m.profile.add(demand_df, "sourcesink_profile")
+        
+        # Create sourcesink_config
+        sourcesink_config = pd.DataFrame(
+            index=pd.MultiIndex.from_product(
+                [m.set.nodesdata, m.set.yearssel, ["Demand"], [commodity]]
+            )
+        )
+        node_indices = [f"{i}_data" for i in islands]
+        sourcesink_config.loc[idx[node_indices, :, :, :], "usesFixedProfile"] = 1
+        sourcesink_config = sourcesink_config.dropna()
+        
+        # Add to model
+        m.parameter.add(sourcesink_config, "sourcesink_config")
+
 ###DEmand data#############################################################
 # "sourcesink_profile"
 demand_R4_R2_CH = profiles[["demand_CI_2020", "demand_FJ_2020","demand_FSM_2020", "demand_KB_2020", "demand_MI_2020","demand_NU_2020","demand_NE_2020","demand_PU_2020","demand_PNG_2020","demand_SA_2020","demand_SI_2020","demand_TA_2020","demand_TU_2020","demand_VU_2020"]]
@@ -4802,501 +4674,501 @@ m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
 
 ##############################################################################
-demand_R4_R3_CH = profiles[["MDV_CI","MDV_FJ","MDV_FSM","MDV_KB","MDV_MI","MDV_NU","MDV_NE","MDV_PU","MDV_PNG","MDV_SA","MDV_SI","MDV_TA","MDV_TU","MDV_VU"]]
-
-demand_R4_R3_CH = demand_R4_R3_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R3_CH = demand_R4_R3_CH.T
-
-demand_R4_R3_CH = demand_R4_R3_CH.rename(
-    index={"MDV_CI": "CI_data", "MDV_FJ": "FJ_data", "MDV_FSM": "FSM_data", "MDV_KB": "KB_data", "MDV_MI": "MI_data","MDV_NU": "NU_data","MDV_NE": "NE_data","MDV_PU": "PU_data","MDV_PNG": "PNG_data","MDV_SA": "SA_data","MDV_SI": "SI_data","MDV_TA": "TA_data","MDV_TU": "TU_data","MDV_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R3_CH["years"] = "2020"
-demand_R4_R3_CH["techs"] = "Demand"
-demand_R4_R3_CH["commodity"] = "T_MDV_th"
-demand_R4_R3_CH["type"] = "fixed"
-demand_R4_R3_CH = demand_R4_R3_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R3_CH, "sourcesink_profile")
-demand_R4_R3_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_MDV_th"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-########################################################
-
-demand_R4_R4_CH = profiles[["HDV_CI", "HDV_FJ","HDV_FSM", "HDV_KB", "HDV_MI","HDV_NU","HDV_NE","HDV_PU","HDV_PNG","HDV_SA","HDV_SI","HDV_TA","HDV_TU","HDV_VU"]]
-
-demand_R4_R4_CH = demand_R4_R4_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R4_CH = demand_R4_R4_CH.T
-
-demand_R4_R4_CH = demand_R4_R4_CH.rename(
-    index={"HDV_CI": "CI_data", "HDV_FJ": "FJ_data", "HDV_FSM": "FSM_data", "HDV_KB": "KB_data", "HDV_MI": "MI_data","HDV_NU": "NU_data","HDV_NE": "NE_data","HDV_PU": "PU_data","HDV_PNG": "PNG_data","HDV_SA": "SA_data","HDV_SI": "SI_data","HDV_TA": "TA_data","HDV_TU": "TU_data","HDV_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R4_CH["years"] = "2020"
-demand_R4_R4_CH["techs"] = "Demand"
-demand_R4_R4_CH["commodity"] = "T_HDV_th"
-demand_R4_R4_CH["type"] = "fixed"
-demand_R4_R4_CH = demand_R4_R4_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R4_CH, "sourcesink_profile")
-demand_R4_R4_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_HDV_th"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-#############################################################
-
-demand_R4_R5_CH = profiles[["LDV_CI", "LDV_FJ","LDV_FSM", "LDV_KB", "LDV_MI","LDV_NU","LDV_NE","LDV_PU","LDV_PNG","LDV_SA","LDV_SI","LDV_TA","LDV_TU","LDV_VU"]]
-
-demand_R4_R5_CH = demand_R4_R5_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R5_CH = demand_R4_R5_CH.T
-
-demand_R4_R5_CH = demand_R4_R5_CH.rename(
-    index={"LDV_CI": "CI_data", "LDV_FJ": "FJ_data", "LDV_FSM": "FSM_data", "LDV_KB": "KB_data", "LDV_MI": "MI_data","LDV_NU": "NU_data","LDV_NE": "NE_data","LDV_PU": "PU_data","LDV_PNG": "PNG_data","LDV_SA": "SA_data","LDV_SI": "SI_data","LDV_TA": "TA_data","LDV_TU": "TU_data","LDV_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R5_CH["years"] = "2020"
-demand_R4_R5_CH["techs"] = "Demand"
-demand_R4_R5_CH["commodity"] = "T_LDV_th"
-demand_R4_R5_CH["type"] = "fixed"
-demand_R4_R5_CH = demand_R4_R5_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R5_CH, "sourcesink_profile")
-demand_R4_R5_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_LDV_th"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-############################################################
-demand_R4_R6_CH = profiles[["Bus_CI", "Bus_FJ","Bus_FSM", "Bus_KB", "Bus_MI","Bus_NU","Bus_NE","Bus_PU","Bus_PNG","Bus_SA","Bus_SI","Bus_TA","Bus_TU","Bus_VU"]]
-
-demand_R4_R6_CH = demand_R4_R6_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R6_CH = demand_R4_R6_CH.T
-
-demand_R4_R6_CH = demand_R4_R6_CH.rename(
-    index={"Bus_CI": "CI_data", "Bus_FJ": "FJ_data", "Bus_FSM": "FSM_data", "Bus_KB": "KB_data", "Bus_MI": "MI_data","Bus_NU": "NU_data","Bus_NE": "NE_data","Bus_PU": "PU_data","Bus_PNG": "PNG_data","Bus_SA": "SA_data","Bus_SI": "SI_data","Bus_TA": "TA_data","Bus_TU": "TU_data","Bus_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R6_CH["years"] = "2020"
-demand_R4_R6_CH["techs"] = "Demand"
-demand_R4_R6_CH["commodity"] = "T_Bus_th"
-demand_R4_R6_CH["type"] = "fixed"
-demand_R4_R6_CH = demand_R4_R6_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R6_CH, "sourcesink_profile")
-demand_R4_R6_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Bus_th"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-############################################################
-demand_R4_R7_CH = profiles[["Two_wheel_CI", "Two_wheel_FJ","Two_wheel_FSM", "Two_wheel_KB", "Two_wheel_MI","Two_wheel_NU","Two_wheel_NE","Two_wheel_PU","Two_wheel_PNG","Two_wheel_SA","Two_wheel_SI","Two_wheel_TA","Two_wheel_TU","Two_wheel_VU"]]
-
-demand_R4_R7_CH = demand_R4_R7_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R7_CH = demand_R4_R7_CH.T
-
-demand_R4_R7_CH = demand_R4_R7_CH.rename(
-    index={"Two_wheel_CI": "CI_data", "Two_wheel_FJ": "FJ_data", "Two_wheel_FSM": "FSM_data", "Two_wheel_KB": "KB_data", "Two_wheel_MI": "MI_data","Two_wheel_NU": "NU_data","Two_wheel_NE": "NE_data","Two_wheel_PU": "PU_data","Two_wheel_PNG": "PNG_data","Two_wheel_SA": "SA_data","Two_wheel_SI": "SI_data","Two_wheel_TA": "TA_data","Two_wheel_TU": "TU_data","Two_wheel_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R7_CH["years"] = "2020"
-demand_R4_R7_CH["techs"] = "Demand"
-demand_R4_R7_CH["commodity"] = "T_Two_wheel_th"
-demand_R4_R7_CH["type"] = "fixed"
-demand_R4_R7_CH = demand_R4_R7_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R7_CH, "sourcesink_profile")
-demand_R4_R7_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Two_wheel_th"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-############################################################
-demand_R4_R8_CH = profiles[["Marine_CI", "Marine_FJ","Marine_FSM", "Marine_KB", "Marine_MI","Marine_NU","Marine_NE","Marine_PU","Marine_PNG","Marine_SA","Marine_SI","Marine_TA","Marine_TU","Marine_VU"]]
-
-demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R8_CH = demand_R4_R8_CH.T
-
-demand_R4_R8_CH = demand_R4_R8_CH.rename(
-    index={"Marine_CI": "CI_data", "Marine_FJ": "FJ_data", "Marine_FSM": "FSM_data", "Marine_KB": "KB_data", "Marine_MI": "MI_data","Marine_NU": "NU_data","Marine_NE": "NE_data","Marine_PU": "PU_data","Marine_PNG": "PNG_data","Marine_SA": "SA_data","Marine_SI": "SI_data","Marine_TA": "TA_data","Marine_TU": "TU_data","Marine_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R8_CH["years"] = "2020"
-demand_R4_R8_CH["techs"] = "Demand"
-demand_R4_R8_CH["commodity"] = "T_Marine_th"
-demand_R4_R8_CH["type"] = "fixed"
-demand_R4_R8_CH = demand_R4_R8_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
-demand_R4_R8_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_th"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-#############################################################
-demand_R4_R9_CH = profiles[["Aviation_CI", "Aviation_FJ","Aviation_FSM", "Aviation_KB", "Aviation_MI","Aviation_NU","Aviation_NE","Aviation_PU","Aviation_PNG","Aviation_SA","Aviation_SI","Aviation_TA","Aviation_TU","Aviation_VU"]]
-
-demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R9_CH = demand_R4_R9_CH.T
-
-demand_R4_R9_CH = demand_R4_R9_CH.rename(
-    index={"Aviation_CI": "CI_data", "Aviation_FJ": "FJ_data", "Aviation_FSM": "FSM_data", "Aviation_KB": "KB_data", "Aviation_MI": "MI_data","Aviation_NU": "NU_data","Aviation_NE": "NE_data","Aviation_PU": "PU_data","Aviation_PNG": "PNG_data","Aviation_SA": "SA_data","Aviation_SI": "SI_data","Aviation_TA": "TA_data","Aviation_TU": "TU_data","Aviation_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R9_CH["years"] = "2020"
-demand_R4_R9_CH["techs"] = "Demand"
-demand_R4_R9_CH["commodity"] = "T_Aviation_th"
-demand_R4_R9_CH["type"] = "fixed"
-demand_R4_R9_CH = demand_R4_R9_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
-demand_R4_R9_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Aviation_th"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-#################################################################################
-demand_R4_R9_CH = profiles[["Marinef_CI", "Marinef_FJ","Marinef_FSM", "Marinef_KB", "Marinef_MI","Marinef_NU","Marinef_NE","Marinef_PU","Marinef_PNG","Marinef_SA","Marinef_SI","Marinef_TA","Marinef_TU","Marinef_VU"]]
-
-demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R9_CH = demand_R4_R9_CH.T
-
-demand_R4_R9_CH = demand_R4_R9_CH.rename(
-    index={"Marinef_CI": "CI_data", "Marinef_FJ": "FJ_data", "Marinef_FSM": "FSM_data", "Marinef_KB": "KB_data", "Marinef_MI": "MI_data","Marinef_NU": "NU_data","Marinef_NE": "NE_data","Marinef_PU": "PU_data","Marinef_PNG": "PNG_data","Marinef_SA": "SA_data","Marinef_SI": "SI_data","Marinef_TA": "TA_data","Marinef_TU": "TU_data","Marinef_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R9_CH["years"] = "2020"
-demand_R4_R9_CH["techs"] = "Demand"
-demand_R4_R9_CH["commodity"] = "T_Marine_f_th"
-demand_R4_R9_CH["type"] = "fixed"
-demand_R4_R9_CH = demand_R4_R9_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
-demand_R4_R9_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_f_th"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-#################################################################################
-demand_R4_R10_CH = profiles[["HC_CI", "HC_FJ","HC_FSM", "HC_KB", "HC_MI","HC_NU","HC_NE","HC_PU","HC_PNG","HC_SA","HC_SI","HC_TA","HC_TU","HC_VU"]]
-
-demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R10_CH = demand_R4_R10_CH.T
-
-demand_R4_R10_CH = demand_R4_R10_CH.rename(
-    index={"HC_CI": "CI_data", "HC_FJ": "FJ_data", "HC_FSM": "FSM_data", "HC_KB": "KB_data", "HC_MI": "MI_data","HC_NU": "NU_data","HC_NE": "NE_data","HC_PU": "PU_data","HC_PNG": "PNG_data","HC_SA": "SA_data","HC_SI": "SI_data","HC_TA": "TA_data","HC_TU": "TU_data","HC_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R10_CH["years"] = "2020"
-demand_R4_R10_CH["techs"] = "Demand"
-demand_R4_R10_CH["commodity"] = "Heat_cooking"
-demand_R4_R10_CH["type"] = "fixed"
-demand_R4_R10_CH = demand_R4_R10_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
-demand_R4_R10_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Heat_cooking"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-###########################################################
-demand_R4_R10_CH = profiles[["HI_CI", "HI_FJ","HI_FSM", "HI_KB", "HI_MI","HI_NU","HI_NE","HI_PU","HI_PNG","HI_SA","HI_SI","HI_TA","HI_TU","HI_VU"]]
-
-demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R10_CH = demand_R4_R10_CH.T
-
-demand_R4_R10_CH = demand_R4_R10_CH.rename(
-    index={"HI_CI": "CI_data", "HI_FJ": "FJ_data", "HI_FSM": "FSM_data", "HI_KB": "KB_data", "HI_MI": "MI_data","HI_NU": "NU_data","HI_NE": "NE_data","HI_PU": "PU_data","HI_PNG": "PNG_data","HI_SA": "SA_data","HI_SI": "SI_data","HI_TA": "TA_data","HI_TU": "TU_data","HI_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R10_CH["years"] = "2020"
-demand_R4_R10_CH["techs"] = "Demand"
-demand_R4_R10_CH["commodity"] = "Heat_industry"
-demand_R4_R10_CH["type"] = "fixed"
-demand_R4_R10_CH = demand_R4_R10_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
-demand_R4_R10_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Heat_industry"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-################################################################
-demand_R4_R10_CH = profiles[["DHWE_CI", "DHWE_FJ","DHWE_FSM", "DHWE_KB", "DHWE_MI","DHWE_NU","DHWE_NE","DHWE_PU","DHWE_PNG","DHWE_SA","DHWE_SI","DHWE_TA","DHWE_TU","DHWE_VU"]]
-
-demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R10_CH = demand_R4_R10_CH.T
-
-demand_R4_R10_CH = demand_R4_R10_CH.rename(
-    index={"DHWE_CI": "CI_data", "DHWE_FJ": "FJ_data", "DHWE_FSM": "FSM_data", "DHWE_KB": "KB_data", "DHWE_MI": "MI_data","DHWE_NU": "NU_data","DHWE_NE": "NE_data","DHWE_PU": "PU_data","DHWE_PNG": "PNG_data","DHWE_SA": "SA_data","DHWE_SI": "SI_data","DHWE_TA": "TA_data","DHWE_TU": "TU_data","DHWE_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R10_CH["years"] = "2020"
-demand_R4_R10_CH["techs"] = "Demand"
-demand_R4_R10_CH["commodity"] = "DHW_el"
-demand_R4_R10_CH["type"] = "fixed"
-demand_R4_R10_CH = demand_R4_R10_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
-demand_R4_R10_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["DHW_el"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-#############################################################
-
-###########################################################
-demand_R4_R10_CH = profiles[["DHWL_CI", "DHWL_FJ","DHWL_FSM", "DHWL_KB", "DHWL_MI","DHWL_NU","DHWL_NE","DHWL_PU","DHWL_PNG","DHWL_SA","DHWL_SI","DHWL_TA","DHWL_TU","DHWL_VU"]]
-
-demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R10_CH = demand_R4_R10_CH.T
-
-demand_R4_R10_CH = demand_R4_R10_CH.rename(
-    index={"DHWL_CI": "CI_data", "DHWL_FJ": "FJ_data", "DHWL_FSM": "FSM_data", "DHWL_KB": "KB_data", "DHWL_MI": "MI_data","DHWL_NU": "NU_data","DHWL_NE": "NE_data","DHWL_PU": "PU_data","DHWL_PNG": "PNG_data","DHWL_SA": "SA_data","DHWL_SI": "SI_data","DHWL_TA": "TA_data","DHWL_TU": "TU_data","DHWL_VU": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R10_CH["years"] = "2020"
-demand_R4_R10_CH["techs"] = "Demand"
-demand_R4_R10_CH["commodity"] = "DHW_LPG"
-demand_R4_R10_CH["type"] = "fixed"
-demand_R4_R10_CH = demand_R4_R10_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
-demand_R4_R10_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["DHW_LPG"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
+# demand_R4_R3_CH = profiles[["MDV_CI","MDV_FJ","MDV_FSM","MDV_KB","MDV_MI","MDV_NU","MDV_NE","MDV_PU","MDV_PNG","MDV_SA","MDV_SI","MDV_TA","MDV_TU","MDV_VU"]]
+
+# demand_R4_R3_CH = demand_R4_R3_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R3_CH = demand_R4_R3_CH.T
+
+# demand_R4_R3_CH = demand_R4_R3_CH.rename(
+#     index={"MDV_CI": "CI_data", "MDV_FJ": "FJ_data", "MDV_FSM": "FSM_data", "MDV_KB": "KB_data", "MDV_MI": "MI_data","MDV_NU": "NU_data","MDV_NE": "NE_data","MDV_PU": "PU_data","MDV_PNG": "PNG_data","MDV_SA": "SA_data","MDV_SI": "SI_data","MDV_TA": "TA_data","MDV_TU": "TU_data","MDV_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R3_CH["years"] = "2020"
+# demand_R4_R3_CH["techs"] = "Demand"
+# demand_R4_R3_CH["commodity"] = "T_MDV_th"
+# demand_R4_R3_CH["type"] = "fixed"
+# demand_R4_R3_CH = demand_R4_R3_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R3_CH, "sourcesink_profile")
+# demand_R4_R3_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_MDV_th"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# ########################################################
+
+# demand_R4_R4_CH = profiles[["HDV_CI", "HDV_FJ","HDV_FSM", "HDV_KB", "HDV_MI","HDV_NU","HDV_NE","HDV_PU","HDV_PNG","HDV_SA","HDV_SI","HDV_TA","HDV_TU","HDV_VU"]]
+
+# demand_R4_R4_CH = demand_R4_R4_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R4_CH = demand_R4_R4_CH.T
+
+# demand_R4_R4_CH = demand_R4_R4_CH.rename(
+#     index={"HDV_CI": "CI_data", "HDV_FJ": "FJ_data", "HDV_FSM": "FSM_data", "HDV_KB": "KB_data", "HDV_MI": "MI_data","HDV_NU": "NU_data","HDV_NE": "NE_data","HDV_PU": "PU_data","HDV_PNG": "PNG_data","HDV_SA": "SA_data","HDV_SI": "SI_data","HDV_TA": "TA_data","HDV_TU": "TU_data","HDV_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R4_CH["years"] = "2020"
+# demand_R4_R4_CH["techs"] = "Demand"
+# demand_R4_R4_CH["commodity"] = "T_HDV_th"
+# demand_R4_R4_CH["type"] = "fixed"
+# demand_R4_R4_CH = demand_R4_R4_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R4_CH, "sourcesink_profile")
+# demand_R4_R4_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_HDV_th"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# #############################################################
+
+# demand_R4_R5_CH = profiles[["LDV_CI", "LDV_FJ","LDV_FSM", "LDV_KB", "LDV_MI","LDV_NU","LDV_NE","LDV_PU","LDV_PNG","LDV_SA","LDV_SI","LDV_TA","LDV_TU","LDV_VU"]]
+
+# demand_R4_R5_CH = demand_R4_R5_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R5_CH = demand_R4_R5_CH.T
+
+# demand_R4_R5_CH = demand_R4_R5_CH.rename(
+#     index={"LDV_CI": "CI_data", "LDV_FJ": "FJ_data", "LDV_FSM": "FSM_data", "LDV_KB": "KB_data", "LDV_MI": "MI_data","LDV_NU": "NU_data","LDV_NE": "NE_data","LDV_PU": "PU_data","LDV_PNG": "PNG_data","LDV_SA": "SA_data","LDV_SI": "SI_data","LDV_TA": "TA_data","LDV_TU": "TU_data","LDV_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R5_CH["years"] = "2020"
+# demand_R4_R5_CH["techs"] = "Demand"
+# demand_R4_R5_CH["commodity"] = "T_LDV_th"
+# demand_R4_R5_CH["type"] = "fixed"
+# demand_R4_R5_CH = demand_R4_R5_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R5_CH, "sourcesink_profile")
+# demand_R4_R5_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_LDV_th"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# ############################################################
+# demand_R4_R6_CH = profiles[["Bus_CI", "Bus_FJ","Bus_FSM", "Bus_KB", "Bus_MI","Bus_NU","Bus_NE","Bus_PU","Bus_PNG","Bus_SA","Bus_SI","Bus_TA","Bus_TU","Bus_VU"]]
+
+# demand_R4_R6_CH = demand_R4_R6_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R6_CH = demand_R4_R6_CH.T
+
+# demand_R4_R6_CH = demand_R4_R6_CH.rename(
+#     index={"Bus_CI": "CI_data", "Bus_FJ": "FJ_data", "Bus_FSM": "FSM_data", "Bus_KB": "KB_data", "Bus_MI": "MI_data","Bus_NU": "NU_data","Bus_NE": "NE_data","Bus_PU": "PU_data","Bus_PNG": "PNG_data","Bus_SA": "SA_data","Bus_SI": "SI_data","Bus_TA": "TA_data","Bus_TU": "TU_data","Bus_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R6_CH["years"] = "2020"
+# demand_R4_R6_CH["techs"] = "Demand"
+# demand_R4_R6_CH["commodity"] = "T_Bus_th"
+# demand_R4_R6_CH["type"] = "fixed"
+# demand_R4_R6_CH = demand_R4_R6_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R6_CH, "sourcesink_profile")
+# demand_R4_R6_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Bus_th"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# ############################################################
+# demand_R4_R7_CH = profiles[["Two_wheel_CI", "Two_wheel_FJ","Two_wheel_FSM", "Two_wheel_KB", "Two_wheel_MI","Two_wheel_NU","Two_wheel_NE","Two_wheel_PU","Two_wheel_PNG","Two_wheel_SA","Two_wheel_SI","Two_wheel_TA","Two_wheel_TU","Two_wheel_VU"]]
+
+# demand_R4_R7_CH = demand_R4_R7_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R7_CH = demand_R4_R7_CH.T
+
+# demand_R4_R7_CH = demand_R4_R7_CH.rename(
+#     index={"Two_wheel_CI": "CI_data", "Two_wheel_FJ": "FJ_data", "Two_wheel_FSM": "FSM_data", "Two_wheel_KB": "KB_data", "Two_wheel_MI": "MI_data","Two_wheel_NU": "NU_data","Two_wheel_NE": "NE_data","Two_wheel_PU": "PU_data","Two_wheel_PNG": "PNG_data","Two_wheel_SA": "SA_data","Two_wheel_SI": "SI_data","Two_wheel_TA": "TA_data","Two_wheel_TU": "TU_data","Two_wheel_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R7_CH["years"] = "2020"
+# demand_R4_R7_CH["techs"] = "Demand"
+# demand_R4_R7_CH["commodity"] = "T_Two_wheel_th"
+# demand_R4_R7_CH["type"] = "fixed"
+# demand_R4_R7_CH = demand_R4_R7_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R7_CH, "sourcesink_profile")
+# demand_R4_R7_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Two_wheel_th"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# ############################################################
+# demand_R4_R8_CH = profiles[["Marine_CI", "Marine_FJ","Marine_FSM", "Marine_KB", "Marine_MI","Marine_NU","Marine_NE","Marine_PU","Marine_PNG","Marine_SA","Marine_SI","Marine_TA","Marine_TU","Marine_VU"]]
+
+# demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R8_CH = demand_R4_R8_CH.T
+
+# demand_R4_R8_CH = demand_R4_R8_CH.rename(
+#     index={"Marine_CI": "CI_data", "Marine_FJ": "FJ_data", "Marine_FSM": "FSM_data", "Marine_KB": "KB_data", "Marine_MI": "MI_data","Marine_NU": "NU_data","Marine_NE": "NE_data","Marine_PU": "PU_data","Marine_PNG": "PNG_data","Marine_SA": "SA_data","Marine_SI": "SI_data","Marine_TA": "TA_data","Marine_TU": "TU_data","Marine_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R8_CH["years"] = "2020"
+# demand_R4_R8_CH["techs"] = "Demand"
+# demand_R4_R8_CH["commodity"] = "T_Marine_th"
+# demand_R4_R8_CH["type"] = "fixed"
+# demand_R4_R8_CH = demand_R4_R8_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
+# demand_R4_R8_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_th"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# #############################################################
+# demand_R4_R9_CH = profiles[["Aviation_CI", "Aviation_FJ","Aviation_FSM", "Aviation_KB", "Aviation_MI","Aviation_NU","Aviation_NE","Aviation_PU","Aviation_PNG","Aviation_SA","Aviation_SI","Aviation_TA","Aviation_TU","Aviation_VU"]]
+
+# demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R9_CH = demand_R4_R9_CH.T
+
+# demand_R4_R9_CH = demand_R4_R9_CH.rename(
+#     index={"Aviation_CI": "CI_data", "Aviation_FJ": "FJ_data", "Aviation_FSM": "FSM_data", "Aviation_KB": "KB_data", "Aviation_MI": "MI_data","Aviation_NU": "NU_data","Aviation_NE": "NE_data","Aviation_PU": "PU_data","Aviation_PNG": "PNG_data","Aviation_SA": "SA_data","Aviation_SI": "SI_data","Aviation_TA": "TA_data","Aviation_TU": "TU_data","Aviation_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R9_CH["years"] = "2020"
+# demand_R4_R9_CH["techs"] = "Demand"
+# demand_R4_R9_CH["commodity"] = "T_Aviation_th"
+# demand_R4_R9_CH["type"] = "fixed"
+# demand_R4_R9_CH = demand_R4_R9_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
+# demand_R4_R9_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Aviation_th"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# #################################################################################
+# demand_R4_R9_CH = profiles[["Marinef_CI", "Marinef_FJ","Marinef_FSM", "Marinef_KB", "Marinef_MI","Marinef_NU","Marinef_NE","Marinef_PU","Marinef_PNG","Marinef_SA","Marinef_SI","Marinef_TA","Marinef_TU","Marinef_VU"]]
+
+# demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R9_CH = demand_R4_R9_CH.T
+
+# demand_R4_R9_CH = demand_R4_R9_CH.rename(
+#     index={"Marinef_CI": "CI_data", "Marinef_FJ": "FJ_data", "Marinef_FSM": "FSM_data", "Marinef_KB": "KB_data", "Marinef_MI": "MI_data","Marinef_NU": "NU_data","Marinef_NE": "NE_data","Marinef_PU": "PU_data","Marinef_PNG": "PNG_data","Marinef_SA": "SA_data","Marinef_SI": "SI_data","Marinef_TA": "TA_data","Marinef_TU": "TU_data","Marinef_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R9_CH["years"] = "2020"
+# demand_R4_R9_CH["techs"] = "Demand"
+# demand_R4_R9_CH["commodity"] = "T_Marine_f_th"
+# demand_R4_R9_CH["type"] = "fixed"
+# demand_R4_R9_CH = demand_R4_R9_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
+# demand_R4_R9_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_f_th"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# #################################################################################
+# demand_R4_R10_CH = profiles[["HC_CI", "HC_FJ","HC_FSM", "HC_KB", "HC_MI","HC_NU","HC_NE","HC_PU","HC_PNG","HC_SA","HC_SI","HC_TA","HC_TU","HC_VU"]]
+
+# demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R10_CH = demand_R4_R10_CH.T
+
+# demand_R4_R10_CH = demand_R4_R10_CH.rename(
+#     index={"HC_CI": "CI_data", "HC_FJ": "FJ_data", "HC_FSM": "FSM_data", "HC_KB": "KB_data", "HC_MI": "MI_data","HC_NU": "NU_data","HC_NE": "NE_data","HC_PU": "PU_data","HC_PNG": "PNG_data","HC_SA": "SA_data","HC_SI": "SI_data","HC_TA": "TA_data","HC_TU": "TU_data","HC_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R10_CH["years"] = "2020"
+# demand_R4_R10_CH["techs"] = "Demand"
+# demand_R4_R10_CH["commodity"] = "Heat_cooking"
+# demand_R4_R10_CH["type"] = "fixed"
+# demand_R4_R10_CH = demand_R4_R10_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
+# demand_R4_R10_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Heat_cooking"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# ###########################################################
+# demand_R4_R10_CH = profiles[["HI_CI", "HI_FJ","HI_FSM", "HI_KB", "HI_MI","HI_NU","HI_NE","HI_PU","HI_PNG","HI_SA","HI_SI","HI_TA","HI_TU","HI_VU"]]
+
+# demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R10_CH = demand_R4_R10_CH.T
+
+# demand_R4_R10_CH = demand_R4_R10_CH.rename(
+#     index={"HI_CI": "CI_data", "HI_FJ": "FJ_data", "HI_FSM": "FSM_data", "HI_KB": "KB_data", "HI_MI": "MI_data","HI_NU": "NU_data","HI_NE": "NE_data","HI_PU": "PU_data","HI_PNG": "PNG_data","HI_SA": "SA_data","HI_SI": "SI_data","HI_TA": "TA_data","HI_TU": "TU_data","HI_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R10_CH["years"] = "2020"
+# demand_R4_R10_CH["techs"] = "Demand"
+# demand_R4_R10_CH["commodity"] = "Heat_industry"
+# demand_R4_R10_CH["type"] = "fixed"
+# demand_R4_R10_CH = demand_R4_R10_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
+# demand_R4_R10_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Heat_industry"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# ################################################################
+# demand_R4_R10_CH = profiles[["DHWE_CI", "DHWE_FJ","DHWE_FSM", "DHWE_KB", "DHWE_MI","DHWE_NU","DHWE_NE","DHWE_PU","DHWE_PNG","DHWE_SA","DHWE_SI","DHWE_TA","DHWE_TU","DHWE_VU"]]
+
+# demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R10_CH = demand_R4_R10_CH.T
+
+# demand_R4_R10_CH = demand_R4_R10_CH.rename(
+#     index={"DHWE_CI": "CI_data", "DHWE_FJ": "FJ_data", "DHWE_FSM": "FSM_data", "DHWE_KB": "KB_data", "DHWE_MI": "MI_data","DHWE_NU": "NU_data","DHWE_NE": "NE_data","DHWE_PU": "PU_data","DHWE_PNG": "PNG_data","DHWE_SA": "SA_data","DHWE_SI": "SI_data","DHWE_TA": "TA_data","DHWE_TU": "TU_data","DHWE_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R10_CH["years"] = "2020"
+# demand_R4_R10_CH["techs"] = "Demand"
+# demand_R4_R10_CH["commodity"] = "DHW_el"
+# demand_R4_R10_CH["type"] = "fixed"
+# demand_R4_R10_CH = demand_R4_R10_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
+# demand_R4_R10_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["DHW_el"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
+# #############################################################
+
+# ###########################################################
+# demand_R4_R10_CH = profiles[["DHWL_CI", "DHWL_FJ","DHWL_FSM", "DHWL_KB", "DHWL_MI","DHWL_NU","DHWL_NE","DHWL_PU","DHWL_PNG","DHWL_SA","DHWL_SI","DHWL_TA","DHWL_TU","DHWL_VU"]]
+
+# demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
+# # transpose DataFrame for needed format
+# demand_R4_R10_CH = demand_R4_R10_CH.T
+
+# demand_R4_R10_CH = demand_R4_R10_CH.rename(
+#     index={"DHWL_CI": "CI_data", "DHWL_FJ": "FJ_data", "DHWL_FSM": "FSM_data", "DHWL_KB": "KB_data", "DHWL_MI": "MI_data","DHWL_NU": "NU_data","DHWL_NE": "NE_data","DHWL_PU": "PU_data","DHWL_PNG": "PNG_data","DHWL_SA": "SA_data","DHWL_SI": "SI_data","DHWL_TA": "TA_data","DHWL_TU": "TU_data","DHWL_VU": "VU_data"}
+# )
+
+# # add columns and set them as index
+# demand_R4_R10_CH["years"] = "2020"
+# demand_R4_R10_CH["techs"] = "Demand"
+# demand_R4_R10_CH["commodity"] = "DHW_LPG"
+# demand_R4_R10_CH["type"] = "fixed"
+# demand_R4_R10_CH = demand_R4_R10_CH.set_index(
+#     ["years", "techs", "commodity", "type"], append=True
+# )
+
+# m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
+# demand_R4_R10_CH.iloc[:, 0:8]
+
+# # load the profiles DataFrame, select the demand column
+# # %% [markdown]
+# # Now that we have created the profile, we need to create a config with the
+# # information that the created profile is going to be integrated into the model
+# # as fixed profile.
+
+# # %%
+# # "sourcesink_config" (demand configuration)
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["DHW_LPG"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
 ##################################2030##########################################
 demand_R4_R2_CH = profiles[["demand_CI_2030", "demand_FJ_2030","demand_FSM_2030", "demand_KB_2030", "demand_MI_2030","demand_NU_2030","demand_NE_2030","demand_PU_2030","demand_PNG_2030","demand_SA_2030","demand_SI_2030","demand_TA_2030","demand_TU_2030","demand_VU_2030"]]
 
@@ -6501,47 +6373,6 @@ sourcesink_config = sourcesink_config.dropna()
 m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
 ###############################################################################
-demand_R4_R8_CH = profiles[["Marine_M_CI_2040", "Marine_M_FJ_2040","Marine_M_FSM_2040", "Marine_M_KB_2040", "Marine_M_MI_2040","Marine_M_NU_2040","Marine_M_NE_2040","Marine_M_PU_2040","Marine_M_PNG_2040","Marine_M_SA_2040","Marine_M_SI_2040","Marine_M_TA_2040","Marine_M_TU_2040","Marine_M_VU_2040"]]
-
-demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
-# transpose DataFrame for needed format
-demand_R4_R8_CH = demand_R4_R8_CH.T
-
-demand_R4_R8_CH = demand_R4_R8_CH.rename(
-    index={"Marine_M_CI_2040": "CI_data", "Marine_M_FJ_2040": "FJ_data", "Marine_M_FSM_2040": "FSM_data", "Marine_M_KB_2040": "KB_data", "Marine_M_MI_2040": "MI_data","Marine_M_NU_2040": "NU_data","Marine_M_NE_2040": "NE_data","Marine_M_PU_2040": "PU_data","Marine_E_PNG_2040": "PNG_data","Marine_E_SA_2040": "SA_data","Marine_E_SI_2040": "SI_data","Marine_E_TA_2040": "TA_data","Marine_E_TU_2040": "TU_data","Marine_E_VU_2040": "VU_data"}
-)
-
-# add columns and set them as index
-demand_R4_R8_CH["years"] = "2040"
-demand_R4_R8_CH["techs"] = "Demand"
-demand_R4_R8_CH["commodity"] = "Dummy_EL"
-demand_R4_R8_CH["type"] = "fixed"
-demand_R4_R8_CH = demand_R4_R8_CH.set_index(
-    ["years", "techs", "commodity", "type"], append=True
-)
-
-m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
-demand_R4_R8_CH.iloc[:, 0:8]
-
-# load the profiles DataFrame, select the demand column
-# %% [markdown]
-# Now that we have created the profile, we need to create a config with the
-# information that the created profile is going to be integrated into the model
-# as fixed profile.
-
-# %%
-# "sourcesink_config" (demand configuration)
-sourcesink_config = pd.DataFrame(
-    index=pd.MultiIndex.from_product(
-        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Dummy_EL"]]
-    )
-)
-sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-sourcesink_config = sourcesink_config.dropna()
-
-m.parameter.add(sourcesink_config, "sourcesink_config")
-sourcesink_config
-################################################################################
 demand_R4_R9_CH = profiles[["AVIA_TH_CI_2040", "AVIA_TH_FJ_2040","AVIA_TH_FSM_2040", "AVIA_TH_KB_2040", "AVIA_TH_MI_2040","AVIA_TH_NU_2040","AVIA_TH_NE_2040","AVIA_TH_PU_2040","AVIA_TH_PNG_2040","AVIA_TH_SA_2040","AVIA_TH_SI_2040","AVIA_TH_TA_2040","AVIA_TH_TU_2040","AVIA_TH_VU_2040"]]
 
 demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)

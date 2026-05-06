@@ -10,6 +10,39 @@ Created on Fri Nov 28 10:33:50 2025
 
 """
 
+
+
+# %% [markdown]
+# (tutorial_101_label)=
+#
+# # Tutorial 101 - Converters, sources and sinks
+#
+# <div style="text-align: center;">
+#
+# ![Model overview for tutorial 101](../../img/REMix_tutorial101.svg "Model overview for tutorial 101")
+#
+# Model overview of tutorial 101
+#
+# </div>
+#
+# ## Part a: setting up the model
+#
+# This is the first tutorial to introduce a way to set up a model in REMix. It presents a basic model with four regions
+# including renewable energy sources, conventional power plant technologies, an electrical demand and accounting for
+# carbon emissions.
+#
+# For the general structure of REMix tutorials have a look at the README.
+#
+# We build a first base model to be used in later tutorials to build up on and include other energy system
+# components (like energy storage and transfer) as well as technologies (e.g. electric vehicles) and concepts
+# (e.g. demand response).
+
+# %% [markdown]
+# ### Setting up Python
+#
+# In this first section, we are importing the Python packages needed to run the model and later exemplary evaluation.
+# There are also directories defined where the model data and optimization results will be stored.
+
 # %%
 # importing dependencies
 import numpy as np
@@ -19,16 +52,94 @@ from remix.framework import Instance
 
 # define often-used shortcut
 idx = pd.IndexSlice
+# %% [markdown]
+# ### General introduction to building models in REMix
+#
+# For the setup of a model in REMix, preprocessing of data is necessary.
+# To do that, the tutorials make use of Pandas DataFrames.
+# These are separately set up and collected in lists, before these are being
+# written to files that are used as input to the solver.
+#
+# For the creation of Pandas (pd) DataFrames, we will typically use the
+# pd.DataFrame class.
+# In addition, we use the pd.MultiIndex.from_product() method to generate a
+# multi-index (e.g. three index layers with the first describing the indicator,
+# the second describing the indicator used to derive the first indicator and
+# third the years).
+#
+# In the following section, the lists to collect the Pandas DataFrames in are
+# initialized in the Instance `m` (as in "model").
+# This object is a container in which we will collect all necessary model data.
+#
+# Not all of the lists initialized with the Instance `m` will be filled in this
+# first tutorial.
+# This is especially true for storage technologies and energy transfer.
+# These two concepts (and more) will be introduced in later tutorials.
+#
+# One more note: if you do not provide a feature (i.e. fill an empty list),
+# REMix will run anyway without that feature but with the other available
+# files/features, unless that feature is strictly necessary, like a regional
+# mapping.
+#
+# If you are not yet familiar with the basic functions of Pandas, you can check
+# out the 10-minute tutorial in the Pandas documentation:
+# https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html
 
 # %%
 # initialize model structure of REMix
 m = Instance()
+
+# setting the directory the model data should be written to
 # a folder "./data" in the project directory is the default in REMix
 m.datadir = "./data"
 
-# load input data
-profiles = pd.read_csv("../_input/IP_2040_2050_14_PIC.csv", index_col=0)
 
+# %% [markdown]
+#
+# When printing `m`, you will see all REMix features it includes.
+#
+# For the purpose of the REMix tutorials, we have prepared some dummy data with
+# time profiles that are loaded here.
+# %%
+# load input data
+profiles = pd.read_csv("../_input/IP_2040_2050_14_PIC - Copy.csv", index_col=0)
+# %% [markdown]
+# ### Defining the model scope
+#
+# Here is where the model building starts. First of all, we define the model scope.
+#
+# The model scope describes the fundamental dimensions of the model, e.g. which
+# distinct regions and years are modeled.
+#
+# #### Spatial scope
+#
+# - `set.nodesdata` : describes the regions for which input data is provided
+# such as profiles and capacities for
+# power plants
+# - `set.nodesmodel` : describes the model regions which can be the same as the
+# data regions if the optimization should be done in full resolution.
+# - `map.aggregatenodesmodel` : describes the aggregation mapping for data to
+# model regions. This can be a 1:1 mapping (like `R3_data` to `R3_model`) or a
+# n:1 mapping (like e.g. "R1_North_data" and "R1_South_data" to `R1_model`) if
+# multiple data regions should be summed up to a model region.
+#
+# #### Temporal scope
+#
+# - `set.years` : the individual years which can be modeled for historical and
+# new power plants
+# - `set.yearssel` : the years which should be optimized during the run. For
+# now, we only use a single year to be optimized.
+#
+# Our model will comprise four regions, also referred to as "nodes", whose names
+# can be arbitrarily chosen. Here, they are called `R3_model`, `R1_model`,
+# `R2_model` and `R4_model` (although having nothing to do with the actual
+# energy systems of the countries these abbreviations hint at).
+# In the first two tutorials, we will only use one node, which is
+# `R1_data`/`R1_model`, so the other nodes are not needed until tutorial 103.
+
+# %%
+# "map_aggregateNodesModel"
+# DataFrame for aggregation from data to model regions
 df = pd.DataFrame(
     [
         ["CI_data", "CI_model", 1],
@@ -44,7 +155,31 @@ df = pd.DataFrame(
         ["SI_data", "SI_model", 1],
         ["TA_data", "TA_model", 1],
         ["TU_data", "TU_model", 1],
-        ["VU_data", "VU_model", 1],# not strictly necessary for tutorial 1 and 2
+        ["VU_data", "VU_model", 1]
+        # ["Z1_data", "Z1_model", 1],
+        # ["Z2_data", "Z2_model", 1],
+        # ["Z3_data", "Z3_model", 1],
+        # ["Z4_data", "Z4_model", 1],
+        # ["Z5_data", "Z5_model", 1],
+        # ["Z6_data", "Z6_model", 1],
+        # ["Z7_data", "Z7_model", 1],
+        # ["Z8_data", "Z8_model", 1],
+        # ["Z9_data", "Z9_model", 1],
+        # ["Z10_data", "Z10_model", 1],
+        # ["Z11_data", "Z11_model", 1],
+        # ["Z12_data", "Z12_model", 1],
+        # ["Z13_data", "Z13_model", 1],
+        # ["Z14_data", "Z14_model", 1],
+        # ["Z15_data", "Z15_model", 1],
+        # ["Z16_data", "Z16_model", 1],
+        # ["Z17_data", "Z17_model", 1],
+        # ["Z18_data", "Z18_model", 1],
+        # ["Z19_data", "Z19_model", 1],
+        # ["Z20_data", "Z20_model", 1],
+        # ["Z21_data", "Z21_model", 1],
+        # ["Z22_data", "Z22_model", 1],
+        # ["Z23_data", "Z23_model", 1],
+        # not strictly necessary for tutorial 1 and 2
     ]
 )
 df.columns = ["nodesData", "nodesModel", "aggregate"]
@@ -57,21 +192,52 @@ m.map.add(df, "aggregatenodesmodel")
 # Get the data and model regions based on the mapping
 # "set_nodesData"
 m.set.add(
-    list(sorted(set(m.map.aggregatenodesmodel.index.get_level_values(0)))), "nodesdata"
+    list(set(m.map.aggregatenodesmodel.index.get_level_values(0))), "nodesdata"
 )
 # "set_nodesModel" & "set_nodesModelSel"
 m.set.add(
-    list(sorted(set(m.map.aggregatenodesmodel.index.get_level_values(1)))), "nodesmodel"
+    list(set(m.map.aggregatenodesmodel.index.get_level_values(1))), "nodesmodel"
 )
 
 # Set the years to be considered in the model and the years to be optimized
 # "set_years"
 m.set.add(
-    ["2020", "2030"], "years"
+    ["2020", "2030","2040", "2050"], "years"
 )  # must include all years that data is provided for in the model
 # "set_yearsSel"
-m.set.add(["2020", "2030"], "yearssel") 
+m.set.add(["2020", "2030", "2040", "2050"], "yearssel") 
 
+
+
+
+
+ # years to be optimised
+# %% [markdown]
+# ### Setting the objective function and indicator bounds
+#
+# Models in REMix are usually optimized based on a cost-minimization approach.
+# The framework theoretically also allows other approaches.
+#
+# We will use different types of commodities - electricity, methane, carbon
+# dioxide - and system costs as indicator.
+# We will use the following units for these:
+#
+# - Elec : electricity in GWh_el
+# - CH4 : methane in GWh_ch
+# - CO2 : carbon dioxide emissions in tsd. t or kt
+# - Cost (Invest, OMVar, OMFix, CarbonCost, FuelCost) : cost values in million EUR or MEUR
+#
+# In the first DataFrame we define a value for the indicator `SystemCost` and
+# column `obj` to -1 to communicate that we want to minimize this indicator.
+# Similarly, a value of 1 would indicate a maximization.
+# The first field is used for the regional and year dimensions.
+# The value `global` uses all the regions in the system (in this example
+# R1_model, R2_model, R3_model, R4_model), whereas the value `horizon` takes
+# into account all years in the set `set.yearssel` (here only 2020).
+#
+# We set a social discount rate in the same DataFrame, which will be the default
+# value throughout the model, but can be overwritten for certain technologies or
+# model regions if wanted.
 
 # %%
 # "accounting_indicatorBounds"
@@ -84,6 +250,21 @@ accounting_indicatorBounds["discount"] = 0.08  # social discount rate for the in
 
 m.parameter.add(accounting_indicatorBounds, "accounting_indicatorbounds")
 accounting_indicatorBounds
+# %% [markdown]
+# We are also setting up the indicators we want to account for as `SystemCost`
+# in the model.
+#
+# Indicators are used for general accounting inside the energy system. For this
+# purpose we introduce an indicator `SystemCost` to reflect the overall costs of
+# the system.
+# This indicator is calculated by summing up the following individual cost
+# indicators with an equal weighting of 1 in the `accounting_perIndicator`
+# DataFrame.
+#
+# - `Invest` : investment cost for a technology unit (in MEUR/MW)
+# - `OMVar` : variable operation and maintenance cost  (in MEUR/MWh) (not set in this tutorial)
+# - `OMFix` : fix operation and maintenance costs (in MEUR/MW/year)
+# - `FuelCost` : costs for imports of methane into the model regions (in MEUR/MWh)
 
 # %%
 # "accounting_perIndicator"
@@ -106,6 +287,262 @@ accounting_perIndicator["perIndicator"] = 1
 
 m.parameter.add(accounting_perIndicator, "accounting_perindicator")
 accounting_perIndicator
+#################################################################################
+"transfer_linkStartEnd"
+# link_names = ["Ship__Z_1", "Ship_Z1", "Ship__Z_2", "Ship_Z2", "Ship__Z_3", "Ship_Z3","Ship__Z_4", "Ship_Z4","Ship__Z_5", "Ship_Z5","Ship__Z_6", "Ship_Z6",
+# "Ship__Z_7", "Ship_Z7","Ship__Z_8", "Ship_Z8", "Ship__Z_9", "Ship_Z9","Ship__Z_10", "Ship_Z10", "Ship_Z11","Ship__Z_12", "Ship_Z12",
+# "Ship__Z_13", "Ship_Z13","Ship__Z_14", "Ship_Z14","Ship__Z_15", "Ship_Z15","Ship__Z_16", "Ship_Z16","Ship__Z_17", "Ship_Z17","Ship__Z_18", "Ship_Z18",
+# "Ship__Z_19", "Ship_Z19","Ship__Z_20", "Ship_Z20", "Ship__Z_21", "Ship_Z21", "Ship__Z_22", "Ship_Z22"]
+
+
+link_names = ["Ship__Z_1", "Ship__Z_2","Ship__Z_3", "Ship__Z_4", "Ship__Z_5", "Ship__Z_6","Ship__Z_7", "Ship__Z_8", "Ship__Z_9", "Ship__Z_10",
+"Ship__Z_11",
+"Ship__Z_12",
+"Ship__Z_13","Ship__Z_14","Ship__Z_15","Ship__Z_16","Ship__Z_17","Ship__Z_18",
+"Ship__Z_19", "Ship__Z_20", "Ship__Z_21", "Ship__Z_22"]
+
+Transfer_year = ["2040", "2050"]
+data_nodes = m.set.nodesdata
+
+transfer_connections = pd.DataFrame(
+    index=pd.MultiIndex.from_product([link_names, data_nodes])
+)
+transfer_connections.loc[idx["Ship__Z_1", "FJ_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_1", "VU_data"], ["end"]] = 1
+
+
+transfer_connections.loc[idx["Ship__Z_2", "FJ_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_2", "TA_data"], ["end"]] = 1
+
+
+transfer_connections.loc[idx["Ship__Z_3", "FJ_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_3", "KB_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z3", "KB_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z3", "Z3_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_4", "FJ_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_4", "SA_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z4", "SA_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z4", "Z4_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_5", "FJ_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_5", "TU_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z5", "TU_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z5", "Z5_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_6", "FJ_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_6", "NU_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z6", "NU_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z6", "Z6_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_7", "VU_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_7", "SI_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z7", "SI_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z7", "Z7_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_8", "VU_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_8", "KB_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z8", "KB_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z8", "Z8_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_9", "TA_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_9", "SA_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z9", "SA_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z9", "Z9_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_10", "TA_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_10", "CI_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z10", "CI_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z10", "Z10_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_11", "TA_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_11", "NE_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z11", "NE_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z11", "Z11_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_12", "NE_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_12", "CI_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z12", "CI_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z12", "Z12_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_13", "CI_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_13", "SA_data"], ["end"]] = 1
+# # transfer_connections.loc[idx["Ship_Z13", "SA_data"], ["start"]] = 1
+# # transfer_connections.loc[idx["Ship_Z13", "Z13_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_14", "KB_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_14", "MI_data"], ["end"]] = 1
+# # transfer_connections.loc[idx["Ship_Z14", "MI_data"], ["start"]] = 1
+# # transfer_connections.loc[idx["Ship_Z14", "Z14_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_15", "KB_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_15", "SI_data"], ["end"]] = 1
+# # transfer_connections.loc[idx["Ship_Z15", "SI_data"], ["start"]] = 1
+# # transfer_connections.loc[idx["Ship_Z15", "Z15_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_16", "KB_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_16", "TU_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z16", "TU_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z16", "Z16_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_17", "MI_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_17", "FSM_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z17", "FSM_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z17", "Z17_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_18", "MI_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_18", "TU_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z18", "TU_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z18", "Z18_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_19", "FSM_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_19", "PNG_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z19", "PNG_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z19", "Z19_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_20", "PNG_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_20", "SI_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z20", "SI_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z20", "Z20_data"], ["end"]] = 1
+###PALAU CONNECTIONS MADE UP
+
+transfer_connections.loc[idx["Ship__Z_21", "PU_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_21", "PNG_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z21", "PNG_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z21", "Z21_data"], ["end"]] = 1
+
+transfer_connections.loc[idx["Ship__Z_22", "PU_data"], ["start"]] = 1
+transfer_connections.loc[idx["Ship__Z_22", "FSM_data"], ["end"]] = 1
+# transfer_connections.loc[idx["Ship_Z22", "FSM_data"], ["start"]] = 1
+# transfer_connections.loc[idx["Ship_Z22", "Z22_data"], ["end"]] = 1
+# ####fj and PNG connection for checking
+# # transfer_connections.loc[idx["Ship__Z_23", "FJ_data"], ["start"]] = 1
+# # transfer_connections.loc[idx["Ship__Z_23", "Z23_data"], ["end"]] = 1
+# # transfer_connections.loc[idx["Ship_Z23", "PNG_data"], ["start"]] = 1
+# # transfer_connections.loc[idx["Ship_Z23", "Z23_data"], ["end"]] = 1
+
+transfer_connections = transfer_connections.dropna(how="all").fillna(0)
+
+m.parameter.add(transfer_connections, "transfer_linkstartend")
+transfer_connections
+################################################################################
+# "transfer_linksParam"
+transfer_techs = ["port_A"]
+
+transfer_caps = pd.DataFrame(
+    index=pd.MultiIndex.from_product([link_names, Transfer_year, transfer_techs])
+)
+transfer_caps.loc[:, ["linksUpperLimit"]] = (
+    100  # Allow to build 100 GW for all links as the upper limit
+)
+
+m.parameter.add(transfer_caps, "transfer_linksparam")
+transfer_caps
+####################################################################################
+# "transfer_techParam"
+tech_params = pd.DataFrame(
+    index=pd.MultiIndex.from_product([transfer_techs, Transfer_year])
+)
+tech_params.loc[:, "lifeTime"] = 50
+tech_params.loc[:, "flowUpperLimit"] = 1
+
+m.parameter.add(tech_params, "transfer_techparam")
+tech_params
+###########################################################################
+# "transfer_coefficient"
+commodity = ["Ammonia"]
+
+transfer_coefficient = pd.DataFrame(
+    index=pd.MultiIndex.from_product([transfer_techs, Transfer_year, commodity])
+)
+transfer_coefficient["coefficient"] = 1 # maximum transferable commodity volume # GWh / h
+transfer_coefficient["delay"] = .5   
+
+m.parameter.add(transfer_coefficient, "transfer_coefficient")
+transfer_coefficient
+###########################################################################
+transfer_techs_M = ["port_M"]
+
+transfer_caps = pd.DataFrame(
+    index=pd.MultiIndex.from_product([link_names, Transfer_year, transfer_techs_M])
+)
+transfer_caps.loc[:, ["linksUpperLimit"]] = (
+    100  # Allow to build 100 GW for all links as the upper limit
+)
+
+m.parameter.add(transfer_caps, "transfer_linksparam")
+transfer_caps
+####################################################################################
+# "transfer_techParam"
+tech_params = pd.DataFrame(
+    index=pd.MultiIndex.from_product([transfer_techs_M, Transfer_year])
+)
+tech_params.loc[:, "lifeTime"] = 50
+tech_params.loc[:, "flowUpperLimit"] = 1
+
+m.parameter.add(tech_params, "transfer_techparam")
+tech_params
+###########################################################################
+# "transfer_coefficient"
+commodity = ["Methanol"]
+
+transfer_coefficient = pd.DataFrame(
+    index=pd.MultiIndex.from_product([transfer_techs_M, Transfer_year, commodity])
+)
+transfer_coefficient["coefficient"] = 1 # maximum transferable commodity volume # GWh / h
+transfer_coefficient["delay"] = .5   
+
+m.parameter.add(transfer_coefficient, "transfer_coefficient")
+transfer_coefficient
+###############################################################################
+transfer_techs_F = ["port_F"]
+
+transfer_caps = pd.DataFrame(
+    index=pd.MultiIndex.from_product([link_names, Transfer_year, transfer_techs_F])
+)
+transfer_caps.loc[:, ["linksUpperLimit"]] = (
+    100  # Allow to build 100 GW for all links as the upper limit
+)
+
+m.parameter.add(transfer_caps, "transfer_linksparam")
+transfer_caps
+####################################################################################
+# "transfer_techParam"
+tech_params = pd.DataFrame(
+    index=pd.MultiIndex.from_product([transfer_techs_F, Transfer_year])
+)
+tech_params.loc[:, "lifeTime"] = 50
+tech_params.loc[:, "flowUpperLimit"] = 1
+
+m.parameter.add(tech_params, "transfer_techparam")
+tech_params
+###########################################################################
+# "transfer_coefficient"
+commodity = ["eKerosene"]
+
+transfer_coefficient = pd.DataFrame(
+    index=pd.MultiIndex.from_product([transfer_techs_F, Transfer_year, commodity])
+)
+transfer_coefficient["coefficient"] = 1 # maximum transferable commodity volume # GWh / h
+transfer_coefficient["delay"] = .5   
+
+m.parameter.add(transfer_coefficient, "transfer_coefficient")
+transfer_coefficient
+
+# %% [markdown]
+# ### Converter technologies
+#
+# #### Adding converter technologies
+#
+# In this section, the basic structure of including different converter
+# technologies in REMix is introduced.
+#
+# In this basic model, we introduce the possibility for the model to build
+# methane-fired combined-cycle gas turbines ("CCGT"), solar power plants ("PV")
+# and onshore wind turbine ("WindOnshore").
+#
+# The names chosen for the technologies are completely arbitrary.
+# We are trying to use the same ones throughout the tutorials, however.
 
 # %%
 # "converter_techParam"
@@ -199,9 +636,9 @@ tech_specss = {
     "DW_Electric_converter_2": {"lifeTime": 25, "activityUpperLimit": 1},
     "LDV_BF": {"lifeTime": 25, "activityUpperLimit": 1},
     "RO": {"lifeTime": 25, "activityUpperLimit": 1},
-#    "AEL": {"lifeTime": 25, "activityUpperLimit": 1},
-#    "AEL_10": {"lifeTime": 25,"activityUpperLimit": 1},
-    "AEL_100": {"lifeTime": 25, "activityUpperLimit": 1},
+    "AEL": {"lifeTime": 25, "activityUpperLimit": 1},
+    # "AEL_10": {"lifeTime": 25,"activityUpperLimit": 1,  "mipUnits": 1},
+    # "AEL_100": {"lifeTime": 25, "activityUpperLimit": 1,  "mipUnits": 1},
     "Ammonia_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},   
     "DAC": {"lifeTime": 25, "activityUpperLimit": 1}, 
     "Methanol_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},
@@ -220,13 +657,12 @@ tech_specss = {
     "cook_el": {"lifeTime": 25, "activityUpperLimit": 1},
     "cook_LPG": {"lifeTime": 25, "activityUpperLimit": 1},
     "Industry_EH": {"lifeTime": 25, "activityUpperLimit": 1},
-    "ST_N_DW": {"lifeTime": 25, "activityUpperLimit": 0},
     "DW_heat": {"lifeTime": 25, "activityUpperLimit": 1},
     "Dummy_Ammonia": {"lifeTime": 25, "activityUpperLimit": 1},
     "Dummy_Methanol": {"lifeTime": 25, "activityUpperLimit": 1},
     "Industry_EL": {"lifeTime": 25, "activityUpperLimit": 1},
-    "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0}
-
+    "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
+    "Ship_BEV": {"lifeTime": 25, "activityUpperLimit": 1}
 }
 
 # Create DataFrame
@@ -238,6 +674,7 @@ converter_techParam = pd.DataFrame(
 for tech, specs in tech_specss.items():
     converter_techParam.loc[idx[tech], "lifeTime"] = specs["lifeTime"]
     converter_techParam.loc[idx[tech], "activityUpperLimit"] = specs["activityUpperLimit"]
+    # converter_techParam.loc[idx[tech], "mipUnits"] = specs["mipUnits"]
 
 
 # Add to model
@@ -251,13 +688,12 @@ tech_specss = {
     "Hydro_N": {"lifeTime": 50, "activityUpperLimit": 0},
     "Wave_N": {"lifeTime": 25, "activityUpperLimit": 0},
     "ST_N": {"lifeTime": 25, "activityUpperLimit": 0},
-    "ST_N_DW": {"lifeTime": 25, "activityUpperLimit": 0},
     "DW_Electric_converter_2": {"lifeTime": 25, "activityUpperLimit": 1},
     "LDV_BF": {"lifeTime": 25, "activityUpperLimit": 1},
     "RO": {"lifeTime": 25, "activityUpperLimit": 1},
-#    "AEL": {"lifeTime": 25, "activityUpperLimit": 1},
-#    "AEL_10": {"lifeTime": 25,"activityUpperLimit": 1},
-    "AEL_100": {"lifeTime": 25, "activityUpperLimit": 1},
+    "AEL": {"lifeTime": 25, "activityUpperLimit": 1},
+    # "AEL_10": {"lifeTime": 25,"activityUpperLimit": 1},
+    # "AEL_100": {"lifeTime": 25, "activityUpperLimit": 1},
     "Ammonia_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},   
     "DAC": {"lifeTime": 25, "activityUpperLimit": 1}, 
     "Methanol_synthesis": {"lifeTime": 25, "activityUpperLimit": 1},
@@ -280,7 +716,8 @@ tech_specss = {
     "Dummy_Ammonia": {"lifeTime": 50, "activityUpperLimit": 1},
     "Dummy_Methanol": {"lifeTime": 50, "activityUpperLimit": 1},
     "Industry_EL": {"lifeTime": 25, "activityUpperLimit": 1},
-    "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0}
+    "WindOffshore_N": {"lifeTime": 25, "activityUpperLimit": 0},
+    "Ship_BEV": {"lifeTime": 25, "activityUpperLimit": 1}
 }
 
 # Create DataFrame
@@ -587,8 +1024,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.011),
-        "PV_N": (0, 20),         
-        "WindOnshore_N": (0, 20)
+        "PV_N": (0, 1),         
+        "WindOnshore_N": (0, .08)
     },
     "FJ_data": {
         # "DG": (0, 0.172),
@@ -610,8 +1047,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 1),
-        "PV_N": (0, 1),
-        "WindOnshore_N": (0,1),
+        "PV_N": (0, 82),
+        "WindOnshore_N": (0,6),
         "Wave_N": (0, 1),  
         "WindOffshore_N": (0, 1)# hydro adjusted
     },
@@ -635,8 +1072,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.160),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 3.1),
+        "WindOnshore_N": (0, .23),
         "Wave_N": (0, 20),
         "WindOffshore_N": (0, 20)# hydro adjusted
     },
@@ -658,8 +1095,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.211),
-        "PV_N": (0, 20), 
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 3.2), 
+        "WindOnshore_N": (0, .24),
 
     },
     "MI_data": { 
@@ -680,8 +1117,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.02),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 0.82),
+        "WindOnshore_N": (0, 0.06),
         "Wave_N": (0, 20), 
         "WindOffshore_N": (0, 20)
     },
@@ -703,8 +1140,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0038),
-        "PV_N": (0, 20),  
-        "WindOnshore_N": (0, 20)
+        "PV_N": (0, .095),  
+        "WindOnshore_N": (0, .011)
     },
     "NE_data": {
         # "DG": (0, 0.0021),
@@ -724,8 +1161,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0047),
-        "PV_N": (0, 20), 
-        "WindOnshore_N": (0, 20)
+        "PV_N": (0, 1.1), 
+        "WindOnshore_N": (0, 0.087)
     },
     "PU_data": {
         # "DG": (0, 0.0303),
@@ -745,8 +1182,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0009),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20), 
+        "PV_N": (0, 2),
+        "WindOnshore_N": (0, 0.15), 
         "WindOffshore_N": (0, 20)
     },
     "PNG_data": {  
@@ -797,8 +1234,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.28),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 12),
+        "WindOnshore_N": (0, .95),
         "Wave_N": (0, 20), 
         "WindOffshore_N": (0, 20)# hydro adjusted
     },
@@ -823,7 +1260,7 @@ capacity_limits = {
         "HFO": (0, 1000),
         "BG_N": (0, 1.44),
         "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "WindOnshore_N": (0, 9),
         "Wave_N": (0, 20),
         "WindOffshore_N": (0, 20), 
         "Hydro_N": (.00675, .00675),
@@ -848,8 +1285,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.20),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 3),
+        "WindOnshore_N": (0, .25),
         "Wave_N": (0, 20),  
         "WindOffshore_N": (0, 20)
     },
@@ -871,8 +1308,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0084),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20), 
+        "PV_N": (0, 0.11),
+        "WindOnshore_N": (0, 0.009), 
         "Wave_N": (0, 20)
     },
     "VU_data": {  
@@ -895,8 +1332,8 @@ capacity_limits = {
         "DW_Electric_converter_D": (0, 1000),
         "HFO": (0, 1000),
         "BG_N": (0, .062),
-        "PV_N": (0, 10),
-        "WindOnshore_N": (0, 10),
+        "PV_N": (0, 20),
+        "WindOnshore_N": (0, 4),
         "Wave_N": (0, 10),
         "WindOffshore_N": (0, 10)# hydro adjusted
     }
@@ -942,9 +1379,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.011),
-        "PV_N": (0, 20),
+        "PV_N": (0, 1),         
+        "WindOnshore_N": (0, .08),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -966,9 +1404,10 @@ capacity_limits = {
         "DW_heat": (0, 1000), 
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
-        "WindOnshore_N": (0, 20)
+
+
     },
     "FJ_data": {
         # "DG": (0, 0.172),
@@ -991,11 +1430,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 20),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 82),
+        "WindOnshore_N": (0,6),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1017,8 +1456,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)# hydro adjusted
     },
     "FSM_data": { 
@@ -1042,11 +1481,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.160),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 3.1),
+        "WindOnshore_N": (0, .23),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000),
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1068,8 +1507,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)# hydro adjusted
     },
     "KB_data": { 
@@ -1091,9 +1530,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.211),
-        "PV_N": (0, 20),
+        "PV_N": (0, 3.2), 
+        "WindOnshore_N": (0, .24),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1115,9 +1555,10 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
-        "WindOnshore_N": (0, 20),
+
+
 
     },
     "MI_data": { 
@@ -1139,11 +1580,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.02),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 0.82),
+        "WindOnshore_N": (0, 0.06),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1165,8 +1606,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)
     },
     "NU_data": { 
@@ -1188,9 +1629,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0038),
-        "PV_N": (0, 20),
+        "PV_N": (0, .095),  
+        "WindOnshore_N": (0, .011),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1212,9 +1654,10 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
-        "WindOnshore_N": (0, 20)
+
+
     },
     "NE_data": {
         # "DG": (0, 0.0021),
@@ -1235,9 +1678,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0047),
-        "PV_N": (0, 20),
+        "PV_N": (0, 1.1), 
+        "WindOnshore_N": (0, 0.087),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1259,9 +1703,10 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
-        "WindOnshore_N": (0, 20)
+
+
     },
     "PU_data": {
         # "DG": (0, 0.0303),
@@ -1282,10 +1727,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0009),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 2),
+        "WindOnshore_N": (0, 0.15), 
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000),
         "HP": (0, 1000),
@@ -1307,8 +1752,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)
     },
     "PNG_data": {  
@@ -1338,7 +1783,7 @@ capacity_limits = {
         "WindOnshore_N": (0, 20),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1360,8 +1805,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)
         },
     "SA_data": { 
@@ -1386,11 +1831,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.28),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 12),
+        "WindOnshore_N": (0, 0.95),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000),
         "HP": (0, 1000),
@@ -1412,8 +1857,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)# hydro adjusted
     },
     "SI_data": {   
@@ -1438,11 +1883,11 @@ capacity_limits = {
         "HFO": (0, 1000),
         "BG_N": (0, 1.44),
         "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "WindOnshore_N": (0, 9),
         "Wave_N": (0, 20),
         "WindOffshore_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1464,8 +1909,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "Hydro_N": (.00675, .00675),
         # hydro adjusted
     },
@@ -1489,11 +1934,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.20),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 3),
+        "WindOnshore_N": (0, 0.25),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1515,8 +1960,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)
     },
     "TU_data": {  
@@ -1538,10 +1983,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0084),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 0.11),
+        "WindOnshore_N": (0, 0.009), 
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1563,8 +2008,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "Wave_N": (0, 20)
     },
     "VU_data": {  
@@ -1588,11 +2033,13 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, .062),
-        "PV_N": (0, 10),
-        "WindOnshore_N": (0, 10),
+        "PV_N": (0, 20),
+        "WindOnshore_N": (0, 4),
         "Wave_N": (0, 10),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        # "AEL_100": (0, 10),
+        # "AEL_10": (0,.01),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000),  
         "Methanol_synthesis": (0, 1000), 
         "DAC": (0, 1000), 
@@ -1613,8 +2060,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 10)# hydro adjusted
     }
 }
@@ -1659,9 +2106,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.011),
-        "PV_N": (0, 20),
+        "PV_N": (0, 1),         
+        "WindOnshore_N": (0, .08),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1683,9 +2131,9 @@ capacity_limits = {
         "DW_heat": (0, 1000), 
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
-        "WindOnshore_N": (0, 20)
+
     },
     "FJ_data": {
         # "DG": (0, 0.172),
@@ -1708,11 +2156,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 20),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 82),
+        "WindOnshore_N": (0,6),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1734,8 +2182,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)# hydro adjusted
     },
     "FSM_data": { 
@@ -1759,11 +2207,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.160),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 3.1),
+        "WindOnshore_N": (0, .23),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000),
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1785,8 +2233,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)# hydro adjusted
     },
     "KB_data": { 
@@ -1808,9 +2256,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.211),
-        "PV_N": (0, 20),
+        "PV_N": (0, 3.2), 
+        "WindOnshore_N": (0, .24),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1832,9 +2281,10 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
-        "WindOnshore_N": (0, 20),
+
+
 
     },
     "MI_data": { 
@@ -1856,11 +2306,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.02),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 0.82),
+        "WindOnshore_N": (0, 0.06),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1882,8 +2332,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)
     },
     "NU_data": { 
@@ -1905,9 +2355,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0038),
-        "PV_N": (0, 20),
+        "PV_N": (0, 0.50),  
+        "WindOnshore_N": (0, .011),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1929,9 +2380,10 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
-        "WindOnshore_N": (0, 20)
+
+
     },
     "NE_data": {
         # "DG": (0, 0.0021),
@@ -1952,9 +2404,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0047),
-        "PV_N": (0, 20),
+        "PV_N": (0, 1.1), 
+        "WindOnshore_N": (0, 0.087),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -1976,9 +2429,10 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
-        "WindOnshore_N": (0, 20)
+
+
     },
     "PU_data": {
         # "DG": (0, 0.0303),
@@ -1999,10 +2453,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0009),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 2),
+        "WindOnshore_N": (0, 0.15), 
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000),
         "HP": (0, 1000),
@@ -2024,8 +2478,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)
     },
     "PNG_data": {  
@@ -2055,7 +2509,7 @@ capacity_limits = {
         "WindOnshore_N": (0, 20),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -2077,8 +2531,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)
         },
     "SA_data": { 
@@ -2103,11 +2557,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.28),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 12),
+        "WindOnshore_N": (0, 0.95),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000),
         "HP": (0, 1000),
@@ -2129,8 +2583,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)# hydro adjusted
     },
     "SI_data": {   
@@ -2155,11 +2609,11 @@ capacity_limits = {
         "HFO": (0, 1000),
         "BG_N": (0, 1.44),
         "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "WindOnshore_N": (0, 9),
         "Wave_N": (0, 20),
         "WindOffshore_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -2181,8 +2635,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "Hydro_N": (.00675, .00675),
         # hydro adjusted
     },
@@ -2206,11 +2660,11 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.20),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 3),
+        "WindOnshore_N": (0, 0.25),
         "Wave_N": (0, 20),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -2232,8 +2686,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "WindOffshore_N": (0, 20)
     },
     "TU_data": {  
@@ -2255,10 +2709,10 @@ capacity_limits = {
         "ST_N": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, 0.0084),
-        "PV_N": (0, 20),
-        "WindOnshore_N": (0, 20),
+        "PV_N": (0, 0.11),
+        "WindOnshore_N": (0, 0.009), 
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000), 
         "Methanol_synthesis": (0, 1000), 
         "HP": (0, 1000),
@@ -2280,8 +2734,8 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
-        "ST_N_DW": (0, 1000000),
         "Wave_N": (0, 20)
     },
     "VU_data": {  
@@ -2303,14 +2757,15 @@ capacity_limits = {
         "DW_Electric_converter": (0, 1000),
         "DW_Electric_converter_2": (0, 1000),
         "ST_N": (0, 1000000),
-        "ST_N_DW": (0, 1000000),
         "HFO": (0, 1000),
         "BG_N": (0, .062),
-        "PV_N": (0, 10),
-        "WindOnshore_N": (0, 10),
+        "PV_N": (0, 20),
+        "WindOnshore_N": (0, 4),
         "Wave_N": (0, 10),
         "RO": (0, 1000),
-        "AEL_100": (0, 1000),
+        # "AEL_100": (0, 10),
+        # "AEL_10": (0,.01),
+        "AEL": (0, 10),
         "Ammonia_synthesis": (0, 1000),  
         "Methanol_synthesis": (0, 1000), 
         "DAC": (0, 1000), 
@@ -2331,6 +2786,7 @@ capacity_limits = {
         "DW_heat": (0, 1000),
         "Dummy_Ammonia": (0, 1000),
         "Dummy_Methanol": (0, 1000),
+        "Ship_BEV": (0, 1000),
         "Industry_EL": (0, 1000),
         "WindOffshore_N": (0, 10)# hydro adjusted
     }
@@ -2354,7 +2810,17 @@ converter_capacityParam = converter_capacityParam.dropna(how="all")
 m.parameter.add(converter_capacityParam, "converter_capacityparam")
 
 converter_capacityParam
-
+# %% [markdown]
+# Activities in REMix are the conversion processes a technology can perform.
+# For this example we define an activity "Powergen" (as in power generation).
+#
+# For the CCGT technology this means burning methane in order to get electricity
+# and carbon dioxide as a by-product of the combustion process.
+#
+# For the renewable energy sources wind and PV we model the activity `Powergen`
+# by setting a value of 1, which is arbitrary in this case, however, since the
+# actual potential for wind and solar energy is modeled as "activityProfile"
+# below, which overwrites this value.
 
 # %%
 # "converter_coefficient"
@@ -2464,9 +2930,6 @@ converter_coefficient.loc[idx["WindOffshore_N", :, :, "Elec"], "coefficient"] = 
 converter_coefficient.loc[idx["Hydro_N", :, :, "Elec"], "coefficient"] = 1 
 
 
-
-
-
 converter_coefficient = converter_coefficient.dropna(how="all")
 
 m.parameter.add(converter_coefficient, "converter_coefficient")
@@ -2475,10 +2938,10 @@ converter_coefficient
 converter_coefficient = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
-            ["BG_N","PV_N","WindOnshore_N", "Wave_N","WindOffshore_N", "ST_N","Industry_EL", "LDV_BF", "RO","Ammonia_synthesis", "DAC", "Methanol_synthesis", "HP", "FTL","AEL_100", "LDV_el", "HDV_el", "HDV_BF", "MDV_el", "MDV_BF", "Two_wheel_el", "Bus_el", "Marine_e", "Aviation_el", "Aviation_e", "cook_el", "cook_LPG", "Industry_EH", "DW_heat", "Dummy_Ammonia", "Dummy_Methanol", "ST_N_DW", "DW_Electric_converter_2"],
+            ["BG_N","PV_N","WindOnshore_N", "Wave_N","WindOffshore_N", "ST_N","Industry_EL", "LDV_BF", "RO","Ammonia_synthesis", "DAC", "Methanol_synthesis", "HP", "FTL","AEL","LDV_el", "HDV_el", "HDV_BF", "MDV_el", "MDV_BF", "Two_wheel_el", "Bus_el", "Marine_e", "Aviation_el", "Aviation_e", "cook_el", "cook_LPG", "Industry_EH", "DW_heat", "Dummy_Ammonia", "Dummy_Methanol", "DW_Electric_converter_2", "Ship_BEV"],
             ['2040', "2050"],
             ["Powergen"],
-            ["Biomass", "Elec", "LPG","CO2", "T_LDV_BF","Pure_water", "Hydrogen", "Heat","ST_Heat", "Ammonia", "co", "Methanol", "eKerosene", "T_LDV_el","T_HDV_el" , "T_HDV_BF", "T_MDV_el", "T_MDV_BF", "T_Two_wheel_el", "T_Bus_el","T_Marine_e", "T_Aviation_el", "T_Aviation_e", "DHW_ST", "T_cook_el", "T_cook_LPG", "T_Industry_EH", "T_DHW_heat", "Dummy_EL", "DHW_el"],
+            ["Biomass", "Elec", "LPG","CO2", "T_LDV_BF","Pure_water", "Hydrogen", "Heat","ST_Heat", "Ammonia", "co", "Methanol", "eKerosene", "T_LDV_el","T_HDV_el" , "T_HDV_BF", "T_MDV_el", "T_MDV_BF", "T_Two_wheel_el", "T_Bus_el","T_Marine_e", "T_Aviation_el", "T_Aviation_e", "DHW_ST", "T_cook_el", "T_cook_LPG", "T_Industry_EH", "T_DHW_heat", "Dummy_EL", "DHW_el", "T_ship_el"],
         ]
     )
 )
@@ -2499,9 +2962,7 @@ converter_coefficient.loc[idx["WindOffshore_N", :, :, "Elec"], "coefficient"] = 
 
 
 converter_coefficient.loc[idx["ST_N",:,:,"Heat"], "coefficient"] = 1
-
-converter_coefficient.loc[idx["ST_N_DW",:,:,"DHW_el"], "coefficient"] = 1
-converter_coefficient.loc[idx["ST_N_DW",:,:,"ST_Heat"], "coefficient"] = -1  # GWh_el # GWh_ch
+  # GWh_el # GWh_ch
 
 converter_coefficient.loc[idx["LDV_BF",:, :, "T_LDV_BF"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["LDV_BF",:,:,"Biomass"], "coefficient"] = -2.85
@@ -2570,9 +3031,18 @@ converter_coefficient.loc[idx["FTL",:,:,"co"], "coefficient"] = -0.305 #(CBR) kt
 # #converter_coefficient.loc[idx["AEL_10",:,:,"Heat"], "coefficient"] = 0.38 
 
 
-converter_coefficient.loc[idx["AEL_100",:,:,"Hydrogen"], "coefficient"] = 1 #Gwh
-converter_coefficient.loc[idx["AEL_100",:,:,"Pure_water"], "coefficient"] = -0.450  # (1000 * m3) (Based on 15L/KG H2 from IRENA data and 70% eff)
-converter_coefficient.loc[idx["AEL_100",:,:,"Elec"], "coefficient"] = -1.42 
+# converter_coefficient.loc[idx["AEL_100",:,:,"Hydrogen"], "coefficient"] = 1 #Gwh
+# converter_coefficient.loc[idx["AEL_100",:,:,"Pure_water"], "coefficient"] = -0.450  # (1000 * m3) (Based on 15L/KG H2 from IRENA data and 70% eff)
+# converter_coefficient.loc[idx["AEL_100",:,:,"Elec"], "coefficient"] = -1.42 
+
+# converter_coefficient.loc[idx["AEL_10",:,:,"Hydrogen"], "coefficient"] = 1 #Gwh
+# converter_coefficient.loc[idx["AEL_10",:,:,"Pure_water"], "coefficient"] = -0.450  # (1000 * m3) (Based on 15L/KG H2 from IRENA data and 70% eff)
+# converter_coefficient.loc[idx["AEL_10",:,:,"Elec"], "coefficient"] = -1.42
+
+converter_coefficient.loc[idx["AEL",:,:,"Hydrogen"], "coefficient"] = 1 #Gwh
+converter_coefficient.loc[idx["AEL",:,:,"Pure_water"], "coefficient"] = -.450  # (1000 * m3) (Based on 15L/KG H2 from IRENA data and 70% eff)
+converter_coefficient.loc[idx["AEL",:,:,"Elec"], "coefficient"] = -1.42
+
 #converter_coefficient.loc[idx["AEL_100",:,:,"Heat"], "coefficient"] = 0.38 
 
 converter_coefficient.loc[idx["cook_el",:,:,"T_cook_el"], "coefficient"] = 1  # GWh_el # GWh_ch
@@ -2598,11 +3068,14 @@ converter_coefficient.loc[idx["Dummy_Ammonia",:, :, "Ammonia"], "coefficient"] =
 converter_coefficient.loc[idx["Dummy_Methanol",:,:,"Dummy_EL"], "coefficient"] = 1  # GWh_el # GWh_ch
 converter_coefficient.loc[idx["Dummy_Methanol",:, :, "Methanol"], "coefficient"] = -1
 
+converter_coefficient.loc[idx["Ship_BEV",:,:,"T_ship_el"], "coefficient"] = 1  # GWh_el # GWh_ch
+converter_coefficient.loc[idx["Ship_BEV",:, :, "Elec"], "coefficient"] = -1
+
 converter_coefficient = converter_coefficient.dropna(how="all")
 
 m.parameter.add(converter_coefficient, "converter_coefficient")
 converter_coefficient
-######################################################################################################
+###########################################################################################
 # converter_coefficient = pd.DataFrame(
 #     index=pd.MultiIndex.from_product(
 #         [
@@ -2860,7 +3333,7 @@ accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
             ["Invest", "OMFix"],
-            ["global"],
+            ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"],
             ["horizon"],
             ["DG", "BG_B", "PV_B", "WindOnshore_B", "Hydro_B", "Geothermal_B", "MDV","HDV", "LDV", "Bus", "Two_wheel", "Aviation", "Marine", "cook_b", "Industry", "DW_LPG_converter", "DW_Electric_converter", "HFOO"],
             ['2020'],
@@ -3206,7 +3679,7 @@ accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
             ["Invest", "OMFix"],
-            ["global"],
+            ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"],
             ["horizon"],
             ["PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "BG_N", "Hydro_N"],
             ['2030'],
@@ -3323,9 +3796,9 @@ accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
             ["Invest", "OMFix"],
-            ["global"],
+            ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"],
             ["horizon"],
-            ["PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "BG_N", "Hydro_N", "ST_N", "LDV_BF", "RO","AEL_100","Ammonia_synthesis", "DAC", "Methanol_synthesis", "HP", "FTL", "LDV_el", "HDV_el", "HDV_BF", "MDV_el", "MDV_BF", "Two_wheel_el", "Bus_el", "Marine_e", "Aviation_el", "Aviation_e", "cook_el", "cook_LPG", "Industry_EH", "DW_heat", "Dummy_Ammonia", "Dummy_Methanol", "Industry_EL", "ST_N_DW", "DW_Electric_converter_2"],
+            ["PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "BG_N", "Hydro_N", "ST_N", "LDV_BF", "RO","AEL","Ammonia_synthesis", "DAC", "Methanol_synthesis", "HP", "FTL", "LDV_el", "HDV_el", "HDV_BF", "MDV_el", "MDV_BF", "Two_wheel_el", "Bus_el", "Marine_e", "Aviation_el", "Aviation_e", "cook_el", "cook_LPG", "Industry_EH", "DW_heat", "Dummy_Ammonia", "Dummy_Methanol", "Industry_EL","DW_Electric_converter_2", "Ship_BEV"],
             ['2040'],
         ]
     )
@@ -3350,20 +3823,21 @@ accounting_converterUnits.loc[
 
 
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "ST_N_DW", "2040"], "perUnitBuild"
+    idx["Invest", "global", "horizon", "Ship_BEV", "2040"], "perUnitBuild"
 ] = 0 # Mio EUR per unit
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "ST_N_DW", "2040"], "useAnnuity"
+    idx["Invest", "global", "horizon", "Ship_BEV", "2040"], "useAnnuity"
 ] = 0  # binary yes/no
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "ST_N_DW", "2040"], "amorTime"
+    idx["Invest", "global", "horizon", "Ship_BEV", "2040"], "amorTime"
 ] = 0  # years
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "ST_N_DW", "2040"], "interest"
+    idx["Invest", "global", "horizon", "Ship_BEV", "2040"], "interest"
 ] = 0  # percent/100
 accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "ST_N_DW", "2040"], "perUnitTotal"
+    idx["OMFix", "global", "horizon", "Ship_BEV", "2040"], "perUnitTotal"
 ] = 0 
+
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Dummy_Ammonia", "2040"], "perUnitBuild"
@@ -3433,6 +3907,7 @@ accounting_converterUnits.loc[
 ] = 78
 
 
+
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "PV_N", "2040"], "perUnitBuild"
 ] = 240
@@ -3448,6 +3923,9 @@ accounting_converterUnits.loc[
 accounting_converterUnits.loc[
     idx["OMFix", "global", "horizon", "PV_N", "2040"], "perUnitTotal"
 ] = 5.1
+
+
+
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "WindOnshore_N", "2040"], "perUnitBuild"
@@ -3564,7 +4042,7 @@ accounting_converterUnits.loc[
 
 # accounting_converterUnits.loc[
 #     idx["Invest", "global", "horizon", "AEL", "2040"], "perUnitBuild"
-# ] = 400
+# ] = 600
 # accounting_converterUnits.loc[
 #     idx["Invest", "global", "horizon", "AEL", "2040"], "useAnnuity"
 # ] = 1
@@ -3577,10 +4055,233 @@ accounting_converterUnits.loc[
 # accounting_converterUnits.loc[
 #     idx["OMFix", "global", "horizon", "AEL", "2040"], "perUnitTotal"
 # ] = 0
+ # ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"],
+accounting_converterUnits.loc[
+    idx["Invest", "CI_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 869
+accounting_converterUnits.loc[
+    idx["Invest", "CI_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "CI_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "CI_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "CI_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
 
+accounting_converterUnits.loc[
+    idx["Invest", "FJ_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 797
+accounting_converterUnits.loc[
+    idx["Invest", "FJ_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "FJ_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "FJ_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "FJ_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "FSM_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 828
+accounting_converterUnits.loc[
+    idx["Invest", "FSM_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "FSM_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "FSM_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "FSM_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "KB_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 894
+accounting_converterUnits.loc[
+    idx["Invest", "KB_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "KB_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "KB_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "KB_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "MI_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 1492
+accounting_converterUnits.loc[
+    idx["Invest", "MI_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "MI_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "MI_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "MI_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "NU_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 1223
+accounting_converterUnits.loc[
+    idx["Invest", "NU_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "NU_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "NU_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "NU_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "NE_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 1758
+accounting_converterUnits.loc[
+    idx["Invest", "NE_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "NE_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "NE_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "NE_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "PU_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 895
+accounting_converterUnits.loc[
+    idx["Invest", "PU_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "PU_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "PU_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "PU_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "PNG_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 480
+accounting_converterUnits.loc[
+    idx["Invest", "PNG_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "PNG_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "PNG_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "PNG_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "SA_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 727
+accounting_converterUnits.loc[
+    idx["Invest", "SA_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "SA_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "SA_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "SA_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "SI_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 707
+accounting_converterUnits.loc[
+    idx["Invest", "SI_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "SI_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "SI_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "SI_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "TA_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 761
+accounting_converterUnits.loc[
+    idx["Invest", "TA_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "TA_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "TA_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "TA_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "TU_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 1874
+accounting_converterUnits.loc[
+    idx["Invest", "TU_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "TU_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "TU_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "TU_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "VU_data", "horizon", "AEL", "2040"], "perUnitBuild"
+] = 727
+accounting_converterUnits.loc[
+    idx["Invest", "VU_data", "horizon", "AEL", "2040"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "VU_data", "horizon", "AEL", "2040"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "VU_data", "horizon", "AEL", "2040"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "VU_data", "horizon", "AEL", "2040"], "perUnitTotal"
+] = 0
 # accounting_converterUnits.loc[
 #     idx["Invest", "global", "horizon", "AEL_10", "2040"], "perUnitBuild"
-# ] = 200
+# ] = 700
 # accounting_converterUnits.loc[
 #     idx["Invest", "global", "horizon", "AEL_10", "2040"], "useAnnuity"
 # ] = 1
@@ -3594,21 +4295,21 @@ accounting_converterUnits.loc[
 #     idx["OMFix", "global", "horizon", "AEL_10", "2040"], "perUnitTotal"
 # ] = 0
 
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "AEL_100", "2040"], "perUnitBuild"
-] = 404
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "AEL_100", "2040"], "useAnnuity"
-] = 1
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "AEL_100", "2040"], "amorTime"
-] = 25
-accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "AEL_100", "2040"], "interest"
-] = 0.06
-accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "AEL_100", "2040"], "perUnitTotal"
-] = 14.08
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "AEL_100", "2040"], "perUnitBuild"
+# ] = 404
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "AEL_100", "2040"], "useAnnuity"
+# ] = 1
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "AEL_100", "2040"], "amorTime"
+# ] = 25
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "AEL_100", "2040"], "interest"
+# ] = 0.06
+# accounting_converterUnits.loc[
+#     idx["OMFix", "global", "horizon", "AEL_100", "2040"], "perUnitTotal"
+# ] = 14.08
 
 
 accounting_converterUnits.loc[
@@ -3919,21 +4620,59 @@ accounting_converterUnits = accounting_converterUnits.fillna(0)
 
 m.parameter.add(accounting_converterUnits, "accounting_converterunits")
 accounting_converterUnits
+
+
+##################################
+
+###############################
 ###########################################################################
+# accounting_converteractivity = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [["OMVar"], ["global"], ["horizon"], ["AEL_100"], ["2040"], ['Powergen']]
+#  )
+# ).sort_index()
+
+# accounting_converteractivity.loc[
+#     idx["OMVar", "global", "horizon", "AEL_100", "2040", "Powergen"], "perActivity"
+# ] = 0.0016
+
+# accounting_converteractivity = accounting_converteractivity.fillna(0)
+
+# m.parameter.add(accounting_converteractivity, "accounting_converteractivity")
+# accounting_converteractivity
+
+
+# accounting_converteractivity = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [["OMVar"], ["global"], ["horizon"], ["AEL_10"], ["2040"], ['Powergen']]
+#  )
+# ).sort_index()
+
+# accounting_converteractivity.loc[
+#     idx["OMVar", "global", "horizon", "AEL_10", "2040", "Powergen"], "perActivity"
+# ] = 0.0016
+
+# accounting_converteractivity = accounting_converteractivity.fillna(0)
+# m.parameter.add(accounting_converteractivity, "accounting_converteractivity")
+# accounting_converteractivity
+
+
 accounting_converteractivity = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["OMVar"], ["global"], ["horizon"], ["AEL_100"], ["2040"], ['Powergen']]
+        [["OMVar"], ["global"], ["horizon"], ["AEL"], ["2040"], ['Powergen']]
  )
 ).sort_index()
 
 accounting_converteractivity.loc[
-    idx["OMVar", "global", "horizon", "AEL_100", "2040", "Powergen"], "perActivity"
+    idx["OMVar", "global", "horizon", "AEL", "2040", "Powergen"], "perActivity"
 ] = 0.0016
 
 accounting_converteractivity = accounting_converteractivity.fillna(0)
 
 m.parameter.add(accounting_converteractivity, "accounting_converteractivity")
 accounting_converteractivity
+
+
 
 accounting_converteractivity = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -3949,33 +4688,112 @@ accounting_converteractivity = accounting_converteractivity.fillna(0)
 
 m.parameter.add(accounting_converteractivity, "accounting_converteractivity")
 accounting_converteractivity
+#############################################################################
+"accounting_transferLinks"
+# transfer_indicators = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [
+#             ["Invest", "OMFix"],
+#             ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data","Z_data"],
+#             ["horizon"],
+#             ["port"],
+#             ["2040"],
+#         ]
+#     )
+# ).sort_index()
+
+
+cost_indicators = ["Invest", "OMFix", "OMVar"]
+area = ["global"]
+horizon = ["horizon"]
+
+transfer_indicators = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [cost_indicators, area, horizon, transfer_techs, Transfer_year]
+    )
+).sort_index()
+
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "perLinkBuild"] = .0001
+transfer_indicators.loc[idx["Invest","global", "horizon"], "interest"] = 0.06
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "amorTime"] = 40
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "useAnnuity"] = 1
+transfer_indicators.loc[idx["OMFix", "global", "horizon"], "perLinkTotal"] = 0
+transfer_indicators.loc[idx["OMVar", "global", "horizon"], "perFlowAlong"] = 0.0021
+transfer_indicators = transfer_indicators.fillna(0)
+
+m.parameter.add(transfer_indicators, "accounting_transferlinks")
+transfer_indicators
+
+#########################################################################
+cost_indicators = ["Invest", "OMFix", "OMVar"]
+area = ["global"]
+horizon = ["horizon"]
+
+transfer_indicators = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [cost_indicators, area, horizon, transfer_techs_M, Transfer_year]
+    )
+).sort_index()
+
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "perLinkBuild"] = .0001
+transfer_indicators.loc[idx["Invest","global", "horizon"], "interest"] = 0.06
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "amorTime"] = 40
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "useAnnuity"] = 1
+transfer_indicators.loc[idx["OMFix", "global", "horizon"], "perLinkTotal"] = 0
+transfer_indicators.loc[idx["OMVar", "global", "horizon"], "perFlowAlong"] = 0.0014
+transfer_indicators = transfer_indicators.fillna(0)
+
+m.parameter.add(transfer_indicators, "accounting_transferlinks")
+transfer_indicators
+################################################################################
+cost_indicators = ["Invest", "OMFix", "OMVar"]
+area = ["global"]
+horizon = ["horizon"]
+
+transfer_indicators = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [cost_indicators, area, horizon, transfer_techs_F, Transfer_year]
+    )
+).sort_index()
+
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "perLinkBuild"] = .000001
+transfer_indicators.loc[idx["Invest","global", "horizon"], "interest"] = 0.06
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "amorTime"] = 40
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "useAnnuity"] = 1
+transfer_indicators.loc[idx["OMFix", "global", "horizon"], "perLinkTotal"] = 0
+transfer_indicators.loc[idx["OMVar", "global", "horizon"], "perFlowAlong"] = 0.0014
+transfer_indicators = transfer_indicators.fillna(0)
+
+m.parameter.add(transfer_indicators, "accounting_transferlinks")
+transfer_indicators
 #########################################################################
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
         [
             ["Invest", "OMFix"],
-            ["global"],
+            ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"],
             ["horizon"],
-            ["PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "BG_N", "Hydro_N", "ST_N", "LDV_BF", "RO","AEL_100","Ammonia_synthesis", "DAC", "Methanol_synthesis", "HP", "FTL", "LDV_el", "HDV_el", "HDV_BF", "MDV_el", "MDV_BF", "Two_wheel_el", "Bus_el", "Marine_e", "Aviation_el", "Aviation_e", "cook_el", "cook_LPG", "Industry_EH", "DW_heat", "Dummy_Ammonia", "Dummy_Methanol", "ST_N_DW", "Industry_EL"],
+            ["PV_N", "WindOnshore_N", "Wave_N", "WindOffshore_N", "BG_N", "Hydro_N", "ST_N", "LDV_BF", "RO","AEL","Ammonia_synthesis", "DAC", "Methanol_synthesis", "HP", "FTL", "LDV_el", "HDV_el", "HDV_BF", "MDV_el", "MDV_BF", "Two_wheel_el", "Bus_el", "Marine_e", "Aviation_el", "Aviation_e", "cook_el", "cook_LPG", "Industry_EH", "DW_heat", "Dummy_Ammonia", "Dummy_Methanol","Industry_EL", "Ship_BEV"],
             ['2050'],
         ]
     )
 ).sort_index()
 
+
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "ST_N_DW", "2050"], "perUnitBuild"
+    idx["Invest", "global", "horizon", "Ship_BEV", "2050"], "perUnitBuild"
 ] = 0  # Mio EUR per unit
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "ST_N_DW", "2050"], "useAnnuity"
+    idx["Invest", "global", "horizon", "Ship_BEV", "2050"], "useAnnuity"
 ] = 0  # binary yes/no
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "ST_N_DW", "2050"], "amorTime"
+    idx["Invest", "global", "horizon", "Ship_BEV", "2050"], "amorTime"
 ] = 0  # years
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "ST_N_DW", "2050"], "interest"
+    idx["Invest", "global", "horizon", "Ship_BEV", "2050"], "interest"
 ] = 0  # percent/100
 accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "ST_N_DW", "2050"], "perUnitTotal"
+    idx["OMFix", "global", "horizon", "Ship_BEV", "2050"], "perUnitTotal"
 ] = 0
 
 accounting_converterUnits.loc[
@@ -4204,22 +5022,244 @@ accounting_converterUnits.loc[
 #     idx["OMFix", "global", "horizon", "AEL_10", "2040"], "perUnitTotal"
 # ] = 0
 
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "AEL", "2050"], "perUnitBuild"
+# ] = 338
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "AEL", "2050"], "useAnnuity"
+# ] = 1
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "AEL", "2050"], "amorTime"
+# ] = 30
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "AEL", "2050"], "interest"
+# ] = 0.06
+# accounting_converterUnits.loc[
+#     idx["OMFix", "global", "horizon", "AEL", "2050"], "perUnitTotal"
+# ] = 11.9
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "AEL_100", "2050"], "perUnitBuild"
-] = 338
+    idx["Invest", "CI_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 535
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "AEL_100", "2050"], "useAnnuity"
+    idx["Invest", "CI_data", "horizon", "AEL", "2050"], "useAnnuity"
 ] = 1
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "AEL_100", "2050"], "amorTime"
-] = 30
+    idx["Invest", "CI_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
 accounting_converterUnits.loc[
-    idx["Invest", "global", "horizon", "AEL_100", "2050"], "interest"
+    idx["Invest", "CI_data", "horizon", "AEL", "2050"], "interest"
 ] = 0.06
 accounting_converterUnits.loc[
-    idx["OMFix", "global", "horizon", "AEL_100", "2050"], "perUnitTotal"
-] = 11.9
+    idx["OMFix", "CI_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
 
+accounting_converterUnits.loc[
+    idx["Invest", "FJ_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 378
+accounting_converterUnits.loc[
+    idx["Invest", "FJ_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "FJ_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "FJ_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "FJ_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "FSM_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 442
+accounting_converterUnits.loc[
+    idx["Invest", "FSM_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "FSM_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "FSM_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "FSM_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "KB_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 467
+accounting_converterUnits.loc[
+    idx["Invest", "KB_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "KB_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "KB_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "KB_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "MI_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 658
+accounting_converterUnits.loc[
+    idx["Invest", "MI_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "MI_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "MI_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "MI_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "NU_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 607
+accounting_converterUnits.loc[
+    idx["Invest", "NU_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "NU_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "NU_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "NU_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "NE_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 941
+accounting_converterUnits.loc[
+    idx["Invest", "NE_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "NE_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "NE_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "NE_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "PU_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 474
+accounting_converterUnits.loc[
+    idx["Invest", "PU_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "PU_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "PU_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "PU_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "PNG_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 332
+accounting_converterUnits.loc[
+    idx["Invest", "PNG_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "PNG_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "PNG_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "PNG_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "SA_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 434
+accounting_converterUnits.loc[
+    idx["Invest", "SA_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "SA_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "SA_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "SA_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "SI_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 404
+accounting_converterUnits.loc[
+    idx["Invest", "SI_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "SI_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "SI_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "SI_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "TA_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 441
+accounting_converterUnits.loc[
+    idx["Invest", "TA_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "TA_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "TA_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "TA_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "TU_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 789
+accounting_converterUnits.loc[
+    idx["Invest", "TU_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "TU_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "TU_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "TU_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
+
+accounting_converterUnits.loc[
+    idx["Invest", "VU_data", "horizon", "AEL", "2050"], "perUnitBuild"
+] = 407
+accounting_converterUnits.loc[
+    idx["Invest", "VU_data", "horizon", "AEL", "2050"], "useAnnuity"
+] = 1
+accounting_converterUnits.loc[
+    idx["Invest", "VU_data", "horizon", "AEL", "2050"], "amorTime"
+] = 25
+accounting_converterUnits.loc[
+    idx["Invest", "VU_data", "horizon", "AEL", "2050"], "interest"
+] = 0.06
+accounting_converterUnits.loc[
+    idx["OMFix", "VU_data", "horizon", "AEL", "2050"], "perUnitTotal"
+] = 0
 
 accounting_converterUnits.loc[
     idx["Invest", "global", "horizon", "Ammonia_synthesis", "2050"], "perUnitBuild"
@@ -4534,12 +5574,12 @@ accounting_converterUnits
 ##########################################################################
 accounting_converteractivity = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["OMVar"], ["global"], ["horizon"], ["AEL_100"], ["2050"], ['Powergen']]
+        [["OMVar"], ["global"], ["horizon"], ["AEL"], ["2050"], ['Powergen']]
  )
 ).sort_index()
 
 accounting_converteractivity.loc[
-    idx["OMVar", "global", "horizon", "AEL_100", "2050", "Powergen"], "perActivity"
+    idx["OMVar", "global", "horizon", "AEL", "2050", "Powergen"], "perActivity"
 ] = 0.0016
 
 accounting_converteractivity = accounting_converteractivity.fillna(0)
@@ -4562,6 +5602,70 @@ accounting_converteractivity = accounting_converteractivity.fillna(0)
 m.parameter.add(accounting_converteractivity, "accounting_converteractivity")
 accounting_converteractivity
 ###########################################################################
+cost_indicators = ["Invest", "OMFix", "OMVar"]
+area = ["global"]
+horizon = ["horizon"]
+
+transfer_indicators = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [cost_indicators, area, horizon, transfer_techs, Transfer_year]
+    )
+).sort_index()
+
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "perLinkBuild"] = .0001
+transfer_indicators.loc[idx["Invest","global", "horizon"], "interest"] = 0.06
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "amorTime"] = 40
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "useAnnuity"] = 1
+transfer_indicators.loc[idx["OMFix", "global", "horizon"], "perLinkTotal"] = 0
+transfer_indicators.loc[idx["OMVar", "global", "horizon"], "perFlowAlong"] = .0014
+transfer_indicators = transfer_indicators.fillna(0)
+
+m.parameter.add(transfer_indicators, "accounting_transferlinks")
+transfer_indicators
+
+#########################################################################
+cost_indicators = ["Invest", "OMFix", "OMVar"]
+area = ["global"]
+horizon = ["horizon"]
+
+transfer_indicators = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [cost_indicators, area, horizon, transfer_techs_M, Transfer_year]
+    )
+).sort_index()
+
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "perLinkBuild"] = .0001
+transfer_indicators.loc[idx["Invest","global", "horizon"], "interest"] = 0.06
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "amorTime"] = 40
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "useAnnuity"] = 1
+transfer_indicators.loc[idx["OMFix", "global", "horizon"], "perLinkTotal"] = 0
+transfer_indicators.loc[idx["OMVar", "global", "horizon"], "perFlowAlong"] = 0.0014
+transfer_indicators = transfer_indicators.fillna(0)
+
+m.parameter.add(transfer_indicators, "accounting_transferlinks")
+transfer_indicators
+################################################################################
+cost_indicators = ["Invest", "OMFix", "OMVar"]
+area = ["global"]
+horizon = ["horizon"]
+
+transfer_indicators = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [cost_indicators, area, horizon, transfer_techs_F, Transfer_year]
+    )
+).sort_index()
+
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "perLinkBuild"] = .0001
+transfer_indicators.loc[idx["Invest","global", "horizon"], "interest"] = 0.06
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "amorTime"] = 40
+transfer_indicators.loc[idx["Invest", "global", "horizon"], "useAnnuity"] = 1
+transfer_indicators.loc[idx["OMFix", "global", "horizon"], "perLinkTotal"] = 0
+transfer_indicators.loc[idx["OMVar", "global", "horizon"], "perFlowAlong"] = 0.0021
+transfer_indicators = transfer_indicators.fillna(0)
+
+m.parameter.add(transfer_indicators, "accounting_transferlinks")
+transfer_indicators
+###########################################################################
 # %% [markdown]
 # ### Sources and sinks
 #
@@ -4577,59 +5681,6 @@ accounting_converteractivity
 # that this profile needs to be matched exactly on an hour-by-hour level.
 
 # %%
-#########################shorter loop#######################################
-# Define islands (same for all years)
-islands = ["CI","FJ","FSM","KB","MI","NU","NE","PU","PNG","SA","SI","TA","TU","VU"]
-  # prefix of columns in 'profiles'
-
-# Define a dictionary: year -> list of (commodity_name, short_name)
-year_commodities = {
-    "2020": [("T_LDV_th", "LDV"), ("T_MDV_th", "MDV"),("T_HDV_th", "HDV"),("T_Bus_th", "Bus"),("T_Two_wheel_th", "Two_wheel"),("T_Marine_th", "Marine"),("T_Aviation_th", "Aviation"),("T_Marine_f_th", "Marinef"), ("Heat_cooking", "HC"),("Heat_industry", "HI"),("DHW_el", "DHWE"),("DHW_LPG", "DHWL")]
-    # "2030": [("Heat_cooking", "HC"), ("Electricity_process", "EP")],
-    # "2040": [("Heat_cooking", "HC"), ("Electricity_household", "EL")],
-}
-
-# Loop through years and commodities
-for year, commodities in year_commodities.items():
-    for commodity, short_name in commodities:
-        # Build column list
-        cols = [f"{short_name}_{i}" for i in islands]
-        
-        # Select demand columns and scale
-        demand_df = profiles[cols].div(1e3).mul(-1)
-        
-        # Transpose
-        demand_df = demand_df.T
-        
-        # Rename index for REMix
-        rename_dict = {f"{short_name}_{i}": f"{i}_data" for i in islands}
-        demand_df = demand_df.rename(index=rename_dict)
-        
-        # Add metadata columns
-        demand_df["years"] = year
-        demand_df["techs"] = "Demand"
-        demand_df["commodity"] = commodity
-        demand_df["type"] = "fixed"
-        
-        # Set multi-index
-        demand_df = demand_df.set_index(["years", "techs", "commodity", "type"], append=True)
-        
-        # Add profile to REMix model
-        m.profile.add(demand_df, "sourcesink_profile")
-        
-        # Create sourcesink_config
-        sourcesink_config = pd.DataFrame(
-            index=pd.MultiIndex.from_product(
-                [m.set.nodesdata, m.set.yearssel, ["Demand"], [commodity]]
-            )
-        )
-        node_indices = [f"{i}_data" for i in islands]
-        sourcesink_config.loc[idx[node_indices, :, :, :], "usesFixedProfile"] = 1
-        sourcesink_config = sourcesink_config.dropna()
-        
-        # Add to model
-        m.parameter.add(sourcesink_config, "sourcesink_config")
-
 ###DEmand data#############################################################
 # "sourcesink_profile"
 demand_R4_R2_CH = profiles[["demand_CI_2020", "demand_FJ_2020","demand_FSM_2020", "demand_KB_2020", "demand_MI_2020","demand_NU_2020","demand_NE_2020","demand_PU_2020","demand_PNG_2020","demand_SA_2020","demand_SI_2020","demand_TA_2020","demand_TU_2020","demand_VU_2020"]]
@@ -4674,501 +5725,501 @@ m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
 
 ##############################################################################
-# demand_R4_R3_CH = profiles[["MDV_CI","MDV_FJ","MDV_FSM","MDV_KB","MDV_MI","MDV_NU","MDV_NE","MDV_PU","MDV_PNG","MDV_SA","MDV_SI","MDV_TA","MDV_TU","MDV_VU"]]
-
-# demand_R4_R3_CH = demand_R4_R3_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R3_CH = demand_R4_R3_CH.T
-
-# demand_R4_R3_CH = demand_R4_R3_CH.rename(
-#     index={"MDV_CI": "CI_data", "MDV_FJ": "FJ_data", "MDV_FSM": "FSM_data", "MDV_KB": "KB_data", "MDV_MI": "MI_data","MDV_NU": "NU_data","MDV_NE": "NE_data","MDV_PU": "PU_data","MDV_PNG": "PNG_data","MDV_SA": "SA_data","MDV_SI": "SI_data","MDV_TA": "TA_data","MDV_TU": "TU_data","MDV_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R3_CH["years"] = "2020"
-# demand_R4_R3_CH["techs"] = "Demand"
-# demand_R4_R3_CH["commodity"] = "T_MDV_th"
-# demand_R4_R3_CH["type"] = "fixed"
-# demand_R4_R3_CH = demand_R4_R3_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R3_CH, "sourcesink_profile")
-# demand_R4_R3_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_MDV_th"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# ########################################################
-
-# demand_R4_R4_CH = profiles[["HDV_CI", "HDV_FJ","HDV_FSM", "HDV_KB", "HDV_MI","HDV_NU","HDV_NE","HDV_PU","HDV_PNG","HDV_SA","HDV_SI","HDV_TA","HDV_TU","HDV_VU"]]
-
-# demand_R4_R4_CH = demand_R4_R4_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R4_CH = demand_R4_R4_CH.T
-
-# demand_R4_R4_CH = demand_R4_R4_CH.rename(
-#     index={"HDV_CI": "CI_data", "HDV_FJ": "FJ_data", "HDV_FSM": "FSM_data", "HDV_KB": "KB_data", "HDV_MI": "MI_data","HDV_NU": "NU_data","HDV_NE": "NE_data","HDV_PU": "PU_data","HDV_PNG": "PNG_data","HDV_SA": "SA_data","HDV_SI": "SI_data","HDV_TA": "TA_data","HDV_TU": "TU_data","HDV_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R4_CH["years"] = "2020"
-# demand_R4_R4_CH["techs"] = "Demand"
-# demand_R4_R4_CH["commodity"] = "T_HDV_th"
-# demand_R4_R4_CH["type"] = "fixed"
-# demand_R4_R4_CH = demand_R4_R4_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R4_CH, "sourcesink_profile")
-# demand_R4_R4_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_HDV_th"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# #############################################################
-
-# demand_R4_R5_CH = profiles[["LDV_CI", "LDV_FJ","LDV_FSM", "LDV_KB", "LDV_MI","LDV_NU","LDV_NE","LDV_PU","LDV_PNG","LDV_SA","LDV_SI","LDV_TA","LDV_TU","LDV_VU"]]
-
-# demand_R4_R5_CH = demand_R4_R5_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R5_CH = demand_R4_R5_CH.T
-
-# demand_R4_R5_CH = demand_R4_R5_CH.rename(
-#     index={"LDV_CI": "CI_data", "LDV_FJ": "FJ_data", "LDV_FSM": "FSM_data", "LDV_KB": "KB_data", "LDV_MI": "MI_data","LDV_NU": "NU_data","LDV_NE": "NE_data","LDV_PU": "PU_data","LDV_PNG": "PNG_data","LDV_SA": "SA_data","LDV_SI": "SI_data","LDV_TA": "TA_data","LDV_TU": "TU_data","LDV_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R5_CH["years"] = "2020"
-# demand_R4_R5_CH["techs"] = "Demand"
-# demand_R4_R5_CH["commodity"] = "T_LDV_th"
-# demand_R4_R5_CH["type"] = "fixed"
-# demand_R4_R5_CH = demand_R4_R5_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R5_CH, "sourcesink_profile")
-# demand_R4_R5_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_LDV_th"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# ############################################################
-# demand_R4_R6_CH = profiles[["Bus_CI", "Bus_FJ","Bus_FSM", "Bus_KB", "Bus_MI","Bus_NU","Bus_NE","Bus_PU","Bus_PNG","Bus_SA","Bus_SI","Bus_TA","Bus_TU","Bus_VU"]]
-
-# demand_R4_R6_CH = demand_R4_R6_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R6_CH = demand_R4_R6_CH.T
-
-# demand_R4_R6_CH = demand_R4_R6_CH.rename(
-#     index={"Bus_CI": "CI_data", "Bus_FJ": "FJ_data", "Bus_FSM": "FSM_data", "Bus_KB": "KB_data", "Bus_MI": "MI_data","Bus_NU": "NU_data","Bus_NE": "NE_data","Bus_PU": "PU_data","Bus_PNG": "PNG_data","Bus_SA": "SA_data","Bus_SI": "SI_data","Bus_TA": "TA_data","Bus_TU": "TU_data","Bus_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R6_CH["years"] = "2020"
-# demand_R4_R6_CH["techs"] = "Demand"
-# demand_R4_R6_CH["commodity"] = "T_Bus_th"
-# demand_R4_R6_CH["type"] = "fixed"
-# demand_R4_R6_CH = demand_R4_R6_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R6_CH, "sourcesink_profile")
-# demand_R4_R6_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Bus_th"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# ############################################################
-# demand_R4_R7_CH = profiles[["Two_wheel_CI", "Two_wheel_FJ","Two_wheel_FSM", "Two_wheel_KB", "Two_wheel_MI","Two_wheel_NU","Two_wheel_NE","Two_wheel_PU","Two_wheel_PNG","Two_wheel_SA","Two_wheel_SI","Two_wheel_TA","Two_wheel_TU","Two_wheel_VU"]]
-
-# demand_R4_R7_CH = demand_R4_R7_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R7_CH = demand_R4_R7_CH.T
-
-# demand_R4_R7_CH = demand_R4_R7_CH.rename(
-#     index={"Two_wheel_CI": "CI_data", "Two_wheel_FJ": "FJ_data", "Two_wheel_FSM": "FSM_data", "Two_wheel_KB": "KB_data", "Two_wheel_MI": "MI_data","Two_wheel_NU": "NU_data","Two_wheel_NE": "NE_data","Two_wheel_PU": "PU_data","Two_wheel_PNG": "PNG_data","Two_wheel_SA": "SA_data","Two_wheel_SI": "SI_data","Two_wheel_TA": "TA_data","Two_wheel_TU": "TU_data","Two_wheel_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R7_CH["years"] = "2020"
-# demand_R4_R7_CH["techs"] = "Demand"
-# demand_R4_R7_CH["commodity"] = "T_Two_wheel_th"
-# demand_R4_R7_CH["type"] = "fixed"
-# demand_R4_R7_CH = demand_R4_R7_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R7_CH, "sourcesink_profile")
-# demand_R4_R7_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Two_wheel_th"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# ############################################################
-# demand_R4_R8_CH = profiles[["Marine_CI", "Marine_FJ","Marine_FSM", "Marine_KB", "Marine_MI","Marine_NU","Marine_NE","Marine_PU","Marine_PNG","Marine_SA","Marine_SI","Marine_TA","Marine_TU","Marine_VU"]]
-
-# demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R8_CH = demand_R4_R8_CH.T
-
-# demand_R4_R8_CH = demand_R4_R8_CH.rename(
-#     index={"Marine_CI": "CI_data", "Marine_FJ": "FJ_data", "Marine_FSM": "FSM_data", "Marine_KB": "KB_data", "Marine_MI": "MI_data","Marine_NU": "NU_data","Marine_NE": "NE_data","Marine_PU": "PU_data","Marine_PNG": "PNG_data","Marine_SA": "SA_data","Marine_SI": "SI_data","Marine_TA": "TA_data","Marine_TU": "TU_data","Marine_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R8_CH["years"] = "2020"
-# demand_R4_R8_CH["techs"] = "Demand"
-# demand_R4_R8_CH["commodity"] = "T_Marine_th"
-# demand_R4_R8_CH["type"] = "fixed"
-# demand_R4_R8_CH = demand_R4_R8_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
-# demand_R4_R8_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_th"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# #############################################################
-# demand_R4_R9_CH = profiles[["Aviation_CI", "Aviation_FJ","Aviation_FSM", "Aviation_KB", "Aviation_MI","Aviation_NU","Aviation_NE","Aviation_PU","Aviation_PNG","Aviation_SA","Aviation_SI","Aviation_TA","Aviation_TU","Aviation_VU"]]
-
-# demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R9_CH = demand_R4_R9_CH.T
-
-# demand_R4_R9_CH = demand_R4_R9_CH.rename(
-#     index={"Aviation_CI": "CI_data", "Aviation_FJ": "FJ_data", "Aviation_FSM": "FSM_data", "Aviation_KB": "KB_data", "Aviation_MI": "MI_data","Aviation_NU": "NU_data","Aviation_NE": "NE_data","Aviation_PU": "PU_data","Aviation_PNG": "PNG_data","Aviation_SA": "SA_data","Aviation_SI": "SI_data","Aviation_TA": "TA_data","Aviation_TU": "TU_data","Aviation_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R9_CH["years"] = "2020"
-# demand_R4_R9_CH["techs"] = "Demand"
-# demand_R4_R9_CH["commodity"] = "T_Aviation_th"
-# demand_R4_R9_CH["type"] = "fixed"
-# demand_R4_R9_CH = demand_R4_R9_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
-# demand_R4_R9_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Aviation_th"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# #################################################################################
-# demand_R4_R9_CH = profiles[["Marinef_CI", "Marinef_FJ","Marinef_FSM", "Marinef_KB", "Marinef_MI","Marinef_NU","Marinef_NE","Marinef_PU","Marinef_PNG","Marinef_SA","Marinef_SI","Marinef_TA","Marinef_TU","Marinef_VU"]]
-
-# demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R9_CH = demand_R4_R9_CH.T
-
-# demand_R4_R9_CH = demand_R4_R9_CH.rename(
-#     index={"Marinef_CI": "CI_data", "Marinef_FJ": "FJ_data", "Marinef_FSM": "FSM_data", "Marinef_KB": "KB_data", "Marinef_MI": "MI_data","Marinef_NU": "NU_data","Marinef_NE": "NE_data","Marinef_PU": "PU_data","Marinef_PNG": "PNG_data","Marinef_SA": "SA_data","Marinef_SI": "SI_data","Marinef_TA": "TA_data","Marinef_TU": "TU_data","Marinef_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R9_CH["years"] = "2020"
-# demand_R4_R9_CH["techs"] = "Demand"
-# demand_R4_R9_CH["commodity"] = "T_Marine_f_th"
-# demand_R4_R9_CH["type"] = "fixed"
-# demand_R4_R9_CH = demand_R4_R9_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
-# demand_R4_R9_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_f_th"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# #################################################################################
-# demand_R4_R10_CH = profiles[["HC_CI", "HC_FJ","HC_FSM", "HC_KB", "HC_MI","HC_NU","HC_NE","HC_PU","HC_PNG","HC_SA","HC_SI","HC_TA","HC_TU","HC_VU"]]
-
-# demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R10_CH = demand_R4_R10_CH.T
-
-# demand_R4_R10_CH = demand_R4_R10_CH.rename(
-#     index={"HC_CI": "CI_data", "HC_FJ": "FJ_data", "HC_FSM": "FSM_data", "HC_KB": "KB_data", "HC_MI": "MI_data","HC_NU": "NU_data","HC_NE": "NE_data","HC_PU": "PU_data","HC_PNG": "PNG_data","HC_SA": "SA_data","HC_SI": "SI_data","HC_TA": "TA_data","HC_TU": "TU_data","HC_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R10_CH["years"] = "2020"
-# demand_R4_R10_CH["techs"] = "Demand"
-# demand_R4_R10_CH["commodity"] = "Heat_cooking"
-# demand_R4_R10_CH["type"] = "fixed"
-# demand_R4_R10_CH = demand_R4_R10_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
-# demand_R4_R10_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Heat_cooking"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# ###########################################################
-# demand_R4_R10_CH = profiles[["HI_CI", "HI_FJ","HI_FSM", "HI_KB", "HI_MI","HI_NU","HI_NE","HI_PU","HI_PNG","HI_SA","HI_SI","HI_TA","HI_TU","HI_VU"]]
-
-# demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R10_CH = demand_R4_R10_CH.T
-
-# demand_R4_R10_CH = demand_R4_R10_CH.rename(
-#     index={"HI_CI": "CI_data", "HI_FJ": "FJ_data", "HI_FSM": "FSM_data", "HI_KB": "KB_data", "HI_MI": "MI_data","HI_NU": "NU_data","HI_NE": "NE_data","HI_PU": "PU_data","HI_PNG": "PNG_data","HI_SA": "SA_data","HI_SI": "SI_data","HI_TA": "TA_data","HI_TU": "TU_data","HI_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R10_CH["years"] = "2020"
-# demand_R4_R10_CH["techs"] = "Demand"
-# demand_R4_R10_CH["commodity"] = "Heat_industry"
-# demand_R4_R10_CH["type"] = "fixed"
-# demand_R4_R10_CH = demand_R4_R10_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
-# demand_R4_R10_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Heat_industry"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# ################################################################
-# demand_R4_R10_CH = profiles[["DHWE_CI", "DHWE_FJ","DHWE_FSM", "DHWE_KB", "DHWE_MI","DHWE_NU","DHWE_NE","DHWE_PU","DHWE_PNG","DHWE_SA","DHWE_SI","DHWE_TA","DHWE_TU","DHWE_VU"]]
-
-# demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R10_CH = demand_R4_R10_CH.T
-
-# demand_R4_R10_CH = demand_R4_R10_CH.rename(
-#     index={"DHWE_CI": "CI_data", "DHWE_FJ": "FJ_data", "DHWE_FSM": "FSM_data", "DHWE_KB": "KB_data", "DHWE_MI": "MI_data","DHWE_NU": "NU_data","DHWE_NE": "NE_data","DHWE_PU": "PU_data","DHWE_PNG": "PNG_data","DHWE_SA": "SA_data","DHWE_SI": "SI_data","DHWE_TA": "TA_data","DHWE_TU": "TU_data","DHWE_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R10_CH["years"] = "2020"
-# demand_R4_R10_CH["techs"] = "Demand"
-# demand_R4_R10_CH["commodity"] = "DHW_el"
-# demand_R4_R10_CH["type"] = "fixed"
-# demand_R4_R10_CH = demand_R4_R10_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
-# demand_R4_R10_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["DHW_el"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
-# #############################################################
-
-# ###########################################################
-# demand_R4_R10_CH = profiles[["DHWL_CI", "DHWL_FJ","DHWL_FSM", "DHWL_KB", "DHWL_MI","DHWL_NU","DHWL_NE","DHWL_PU","DHWL_PNG","DHWL_SA","DHWL_SI","DHWL_TA","DHWL_TU","DHWL_VU"]]
-
-# demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
-# # transpose DataFrame for needed format
-# demand_R4_R10_CH = demand_R4_R10_CH.T
-
-# demand_R4_R10_CH = demand_R4_R10_CH.rename(
-#     index={"DHWL_CI": "CI_data", "DHWL_FJ": "FJ_data", "DHWL_FSM": "FSM_data", "DHWL_KB": "KB_data", "DHWL_MI": "MI_data","DHWL_NU": "NU_data","DHWL_NE": "NE_data","DHWL_PU": "PU_data","DHWL_PNG": "PNG_data","DHWL_SA": "SA_data","DHWL_SI": "SI_data","DHWL_TA": "TA_data","DHWL_TU": "TU_data","DHWL_VU": "VU_data"}
-# )
-
-# # add columns and set them as index
-# demand_R4_R10_CH["years"] = "2020"
-# demand_R4_R10_CH["techs"] = "Demand"
-# demand_R4_R10_CH["commodity"] = "DHW_LPG"
-# demand_R4_R10_CH["type"] = "fixed"
-# demand_R4_R10_CH = demand_R4_R10_CH.set_index(
-#     ["years", "techs", "commodity", "type"], append=True
-# )
-
-# m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
-# demand_R4_R10_CH.iloc[:, 0:8]
-
-# # load the profiles DataFrame, select the demand column
-# # %% [markdown]
-# # Now that we have created the profile, we need to create a config with the
-# # information that the created profile is going to be integrated into the model
-# # as fixed profile.
-
-# # %%
-# # "sourcesink_config" (demand configuration)
-# sourcesink_config = pd.DataFrame(
-#     index=pd.MultiIndex.from_product(
-#         [m.set.nodesdata, m.set.yearssel, ["Demand"], ["DHW_LPG"]]
-#     )
-# )
-# sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
-# sourcesink_config = sourcesink_config.dropna()
-
-# m.parameter.add(sourcesink_config, "sourcesink_config")
-# sourcesink_config
+demand_R4_R3_CH = profiles[["MDV_CI","MDV_FJ","MDV_FSM","MDV_KB","MDV_MI","MDV_NU","MDV_NE","MDV_PU","MDV_PNG","MDV_SA","MDV_SI","MDV_TA","MDV_TU","MDV_VU"]]
+
+demand_R4_R3_CH = demand_R4_R3_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R3_CH = demand_R4_R3_CH.T
+
+demand_R4_R3_CH = demand_R4_R3_CH.rename(
+    index={"MDV_CI": "CI_data", "MDV_FJ": "FJ_data", "MDV_FSM": "FSM_data", "MDV_KB": "KB_data", "MDV_MI": "MI_data","MDV_NU": "NU_data","MDV_NE": "NE_data","MDV_PU": "PU_data","MDV_PNG": "PNG_data","MDV_SA": "SA_data","MDV_SI": "SI_data","MDV_TA": "TA_data","MDV_TU": "TU_data","MDV_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R3_CH["years"] = "2020"
+demand_R4_R3_CH["techs"] = "Demand"
+demand_R4_R3_CH["commodity"] = "T_MDV_th"
+demand_R4_R3_CH["type"] = "fixed"
+demand_R4_R3_CH = demand_R4_R3_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R3_CH, "sourcesink_profile")
+demand_R4_R3_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_MDV_th"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+########################################################
+
+demand_R4_R4_CH = profiles[["HDV_CI", "HDV_FJ","HDV_FSM", "HDV_KB", "HDV_MI","HDV_NU","HDV_NE","HDV_PU","HDV_PNG","HDV_SA","HDV_SI","HDV_TA","HDV_TU","HDV_VU"]]
+
+demand_R4_R4_CH = demand_R4_R4_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R4_CH = demand_R4_R4_CH.T
+
+demand_R4_R4_CH = demand_R4_R4_CH.rename(
+    index={"HDV_CI": "CI_data", "HDV_FJ": "FJ_data", "HDV_FSM": "FSM_data", "HDV_KB": "KB_data", "HDV_MI": "MI_data","HDV_NU": "NU_data","HDV_NE": "NE_data","HDV_PU": "PU_data","HDV_PNG": "PNG_data","HDV_SA": "SA_data","HDV_SI": "SI_data","HDV_TA": "TA_data","HDV_TU": "TU_data","HDV_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R4_CH["years"] = "2020"
+demand_R4_R4_CH["techs"] = "Demand"
+demand_R4_R4_CH["commodity"] = "T_HDV_th"
+demand_R4_R4_CH["type"] = "fixed"
+demand_R4_R4_CH = demand_R4_R4_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R4_CH, "sourcesink_profile")
+demand_R4_R4_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_HDV_th"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+#############################################################
+
+demand_R4_R5_CH = profiles[["LDV_CI", "LDV_FJ","LDV_FSM", "LDV_KB", "LDV_MI","LDV_NU","LDV_NE","LDV_PU","LDV_PNG","LDV_SA","LDV_SI","LDV_TA","LDV_TU","LDV_VU"]]
+
+demand_R4_R5_CH = demand_R4_R5_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R5_CH = demand_R4_R5_CH.T
+
+demand_R4_R5_CH = demand_R4_R5_CH.rename(
+    index={"LDV_CI": "CI_data", "LDV_FJ": "FJ_data", "LDV_FSM": "FSM_data", "LDV_KB": "KB_data", "LDV_MI": "MI_data","LDV_NU": "NU_data","LDV_NE": "NE_data","LDV_PU": "PU_data","LDV_PNG": "PNG_data","LDV_SA": "SA_data","LDV_SI": "SI_data","LDV_TA": "TA_data","LDV_TU": "TU_data","LDV_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R5_CH["years"] = "2020"
+demand_R4_R5_CH["techs"] = "Demand"
+demand_R4_R5_CH["commodity"] = "T_LDV_th"
+demand_R4_R5_CH["type"] = "fixed"
+demand_R4_R5_CH = demand_R4_R5_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R5_CH, "sourcesink_profile")
+demand_R4_R5_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_LDV_th"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+############################################################
+demand_R4_R6_CH = profiles[["Bus_CI", "Bus_FJ","Bus_FSM", "Bus_KB", "Bus_MI","Bus_NU","Bus_NE","Bus_PU","Bus_PNG","Bus_SA","Bus_SI","Bus_TA","Bus_TU","Bus_VU"]]
+
+demand_R4_R6_CH = demand_R4_R6_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R6_CH = demand_R4_R6_CH.T
+
+demand_R4_R6_CH = demand_R4_R6_CH.rename(
+    index={"Bus_CI": "CI_data", "Bus_FJ": "FJ_data", "Bus_FSM": "FSM_data", "Bus_KB": "KB_data", "Bus_MI": "MI_data","Bus_NU": "NU_data","Bus_NE": "NE_data","Bus_PU": "PU_data","Bus_PNG": "PNG_data","Bus_SA": "SA_data","Bus_SI": "SI_data","Bus_TA": "TA_data","Bus_TU": "TU_data","Bus_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R6_CH["years"] = "2020"
+demand_R4_R6_CH["techs"] = "Demand"
+demand_R4_R6_CH["commodity"] = "T_Bus_th"
+demand_R4_R6_CH["type"] = "fixed"
+demand_R4_R6_CH = demand_R4_R6_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R6_CH, "sourcesink_profile")
+demand_R4_R6_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Bus_th"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+############################################################
+demand_R4_R7_CH = profiles[["Two_wheel_CI", "Two_wheel_FJ","Two_wheel_FSM", "Two_wheel_KB", "Two_wheel_MI","Two_wheel_NU","Two_wheel_NE","Two_wheel_PU","Two_wheel_PNG","Two_wheel_SA","Two_wheel_SI","Two_wheel_TA","Two_wheel_TU","Two_wheel_VU"]]
+
+demand_R4_R7_CH = demand_R4_R7_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R7_CH = demand_R4_R7_CH.T
+
+demand_R4_R7_CH = demand_R4_R7_CH.rename(
+    index={"Two_wheel_CI": "CI_data", "Two_wheel_FJ": "FJ_data", "Two_wheel_FSM": "FSM_data", "Two_wheel_KB": "KB_data", "Two_wheel_MI": "MI_data","Two_wheel_NU": "NU_data","Two_wheel_NE": "NE_data","Two_wheel_PU": "PU_data","Two_wheel_PNG": "PNG_data","Two_wheel_SA": "SA_data","Two_wheel_SI": "SI_data","Two_wheel_TA": "TA_data","Two_wheel_TU": "TU_data","Two_wheel_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R7_CH["years"] = "2020"
+demand_R4_R7_CH["techs"] = "Demand"
+demand_R4_R7_CH["commodity"] = "T_Two_wheel_th"
+demand_R4_R7_CH["type"] = "fixed"
+demand_R4_R7_CH = demand_R4_R7_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R7_CH, "sourcesink_profile")
+demand_R4_R7_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Two_wheel_th"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+############################################################
+demand_R4_R8_CH = profiles[["Marine_CI", "Marine_FJ","Marine_FSM", "Marine_KB", "Marine_MI","Marine_NU","Marine_NE","Marine_PU","Marine_PNG","Marine_SA","Marine_SI","Marine_TA","Marine_TU","Marine_VU"]]
+
+demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R8_CH = demand_R4_R8_CH.T
+
+demand_R4_R8_CH = demand_R4_R8_CH.rename(
+    index={"Marine_CI": "CI_data", "Marine_FJ": "FJ_data", "Marine_FSM": "FSM_data", "Marine_KB": "KB_data", "Marine_MI": "MI_data","Marine_NU": "NU_data","Marine_NE": "NE_data","Marine_PU": "PU_data","Marine_PNG": "PNG_data","Marine_SA": "SA_data","Marine_SI": "SI_data","Marine_TA": "TA_data","Marine_TU": "TU_data","Marine_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R8_CH["years"] = "2020"
+demand_R4_R8_CH["techs"] = "Demand"
+demand_R4_R8_CH["commodity"] = "T_Marine_th"
+demand_R4_R8_CH["type"] = "fixed"
+demand_R4_R8_CH = demand_R4_R8_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
+demand_R4_R8_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_th"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+#############################################################
+demand_R4_R9_CH = profiles[["Aviation_CI", "Aviation_FJ","Aviation_FSM", "Aviation_KB", "Aviation_MI","Aviation_NU","Aviation_NE","Aviation_PU","Aviation_PNG","Aviation_SA","Aviation_SI","Aviation_TA","Aviation_TU","Aviation_VU"]]
+
+demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R9_CH = demand_R4_R9_CH.T
+
+demand_R4_R9_CH = demand_R4_R9_CH.rename(
+    index={"Aviation_CI": "CI_data", "Aviation_FJ": "FJ_data", "Aviation_FSM": "FSM_data", "Aviation_KB": "KB_data", "Aviation_MI": "MI_data","Aviation_NU": "NU_data","Aviation_NE": "NE_data","Aviation_PU": "PU_data","Aviation_PNG": "PNG_data","Aviation_SA": "SA_data","Aviation_SI": "SI_data","Aviation_TA": "TA_data","Aviation_TU": "TU_data","Aviation_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R9_CH["years"] = "2020"
+demand_R4_R9_CH["techs"] = "Demand"
+demand_R4_R9_CH["commodity"] = "T_Aviation_th"
+demand_R4_R9_CH["type"] = "fixed"
+demand_R4_R9_CH = demand_R4_R9_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
+demand_R4_R9_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Aviation_th"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+#################################################################################
+demand_R4_R9_CH = profiles[["Marinef_CI", "Marinef_FJ","Marinef_FSM", "Marinef_KB", "Marinef_MI","Marinef_NU","Marinef_NE","Marinef_PU","Marinef_PNG","Marinef_SA","Marinef_SI","Marinef_TA","Marinef_TU","Marinef_VU"]]
+
+demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R9_CH = demand_R4_R9_CH.T
+
+demand_R4_R9_CH = demand_R4_R9_CH.rename(
+    index={"Marinef_CI": "CI_data", "Marinef_FJ": "FJ_data", "Marinef_FSM": "FSM_data", "Marinef_KB": "KB_data", "Marinef_MI": "MI_data","Marinef_NU": "NU_data","Marinef_NE": "NE_data","Marinef_PU": "PU_data","Marinef_PNG": "PNG_data","Marinef_SA": "SA_data","Marinef_SI": "SI_data","Marinef_TA": "TA_data","Marinef_TU": "TU_data","Marinef_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R9_CH["years"] = "2020"
+demand_R4_R9_CH["techs"] = "Demand"
+demand_R4_R9_CH["commodity"] = "T_Marine_f_th"
+demand_R4_R9_CH["type"] = "fixed"
+demand_R4_R9_CH = demand_R4_R9_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R9_CH, "sourcesink_profile")
+demand_R4_R9_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_Marine_f_th"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+#################################################################################
+demand_R4_R10_CH = profiles[["HC_CI", "HC_FJ","HC_FSM", "HC_KB", "HC_MI","HC_NU","HC_NE","HC_PU","HC_PNG","HC_SA","HC_SI","HC_TA","HC_TU","HC_VU"]]
+
+demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R10_CH = demand_R4_R10_CH.T
+
+demand_R4_R10_CH = demand_R4_R10_CH.rename(
+    index={"HC_CI": "CI_data", "HC_FJ": "FJ_data", "HC_FSM": "FSM_data", "HC_KB": "KB_data", "HC_MI": "MI_data","HC_NU": "NU_data","HC_NE": "NE_data","HC_PU": "PU_data","HC_PNG": "PNG_data","HC_SA": "SA_data","HC_SI": "SI_data","HC_TA": "TA_data","HC_TU": "TU_data","HC_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R10_CH["years"] = "2020"
+demand_R4_R10_CH["techs"] = "Demand"
+demand_R4_R10_CH["commodity"] = "Heat_cooking"
+demand_R4_R10_CH["type"] = "fixed"
+demand_R4_R10_CH = demand_R4_R10_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
+demand_R4_R10_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Heat_cooking"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+###########################################################
+demand_R4_R10_CH = profiles[["HI_CI", "HI_FJ","HI_FSM", "HI_KB", "HI_MI","HI_NU","HI_NE","HI_PU","HI_PNG","HI_SA","HI_SI","HI_TA","HI_TU","HI_VU"]]
+
+demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R10_CH = demand_R4_R10_CH.T
+
+demand_R4_R10_CH = demand_R4_R10_CH.rename(
+    index={"HI_CI": "CI_data", "HI_FJ": "FJ_data", "HI_FSM": "FSM_data", "HI_KB": "KB_data", "HI_MI": "MI_data","HI_NU": "NU_data","HI_NE": "NE_data","HI_PU": "PU_data","HI_PNG": "PNG_data","HI_SA": "SA_data","HI_SI": "SI_data","HI_TA": "TA_data","HI_TU": "TU_data","HI_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R10_CH["years"] = "2020"
+demand_R4_R10_CH["techs"] = "Demand"
+demand_R4_R10_CH["commodity"] = "Heat_industry"
+demand_R4_R10_CH["type"] = "fixed"
+demand_R4_R10_CH = demand_R4_R10_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
+demand_R4_R10_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Heat_industry"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+################################################################
+demand_R4_R10_CH = profiles[["DHWE_CI", "DHWE_FJ","DHWE_FSM", "DHWE_KB", "DHWE_MI","DHWE_NU","DHWE_NE","DHWE_PU","DHWE_PNG","DHWE_SA","DHWE_SI","DHWE_TA","DHWE_TU","DHWE_VU"]]
+
+demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R10_CH = demand_R4_R10_CH.T
+
+demand_R4_R10_CH = demand_R4_R10_CH.rename(
+    index={"DHWE_CI": "CI_data", "DHWE_FJ": "FJ_data", "DHWE_FSM": "FSM_data", "DHWE_KB": "KB_data", "DHWE_MI": "MI_data","DHWE_NU": "NU_data","DHWE_NE": "NE_data","DHWE_PU": "PU_data","DHWE_PNG": "PNG_data","DHWE_SA": "SA_data","DHWE_SI": "SI_data","DHWE_TA": "TA_data","DHWE_TU": "TU_data","DHWE_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R10_CH["years"] = "2020"
+demand_R4_R10_CH["techs"] = "Demand"
+demand_R4_R10_CH["commodity"] = "DHW_el"
+demand_R4_R10_CH["type"] = "fixed"
+demand_R4_R10_CH = demand_R4_R10_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
+demand_R4_R10_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["DHW_el"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+#############################################################
+
+###########################################################
+demand_R4_R10_CH = profiles[["DHWL_CI", "DHWL_FJ","DHWL_FSM", "DHWL_KB", "DHWL_MI","DHWL_NU","DHWL_NE","DHWL_PU","DHWL_PNG","DHWL_SA","DHWL_SI","DHWL_TA","DHWL_TU","DHWL_VU"]]
+
+demand_R4_R10_CH = demand_R4_R10_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R10_CH = demand_R4_R10_CH.T
+
+demand_R4_R10_CH = demand_R4_R10_CH.rename(
+    index={"DHWL_CI": "CI_data", "DHWL_FJ": "FJ_data", "DHWL_FSM": "FSM_data", "DHWL_KB": "KB_data", "DHWL_MI": "MI_data","DHWL_NU": "NU_data","DHWL_NE": "NE_data","DHWL_PU": "PU_data","DHWL_PNG": "PNG_data","DHWL_SA": "SA_data","DHWL_SI": "SI_data","DHWL_TA": "TA_data","DHWL_TU": "TU_data","DHWL_VU": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R10_CH["years"] = "2020"
+demand_R4_R10_CH["techs"] = "Demand"
+demand_R4_R10_CH["commodity"] = "DHW_LPG"
+demand_R4_R10_CH["type"] = "fixed"
+demand_R4_R10_CH = demand_R4_R10_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R10_CH, "sourcesink_profile")
+demand_R4_R10_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["DHW_LPG"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
 ##################################2030##########################################
 demand_R4_R2_CH = profiles[["demand_CI_2030", "demand_FJ_2030","demand_FSM_2030", "demand_KB_2030", "demand_MI_2030","demand_NU_2030","demand_NE_2030","demand_PU_2030","demand_PNG_2030","demand_SA_2030","demand_SI_2030","demand_TA_2030","demand_TU_2030","demand_VU_2030"]]
 
@@ -6373,6 +7424,88 @@ sourcesink_config = sourcesink_config.dropna()
 m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
 ###############################################################################
+demand_R4_R8_CH = profiles[["Marine_M_CI_2040", "Marine_M_FJ_2040","Marine_M_FSM_2040", "Marine_M_KB_2040", "Marine_M_MI_2040","Marine_M_NU_2040","Marine_M_NE_2040","Marine_M_PU_2040","Marine_M_PNG_2040","Marine_M_SA_2040","Marine_M_SI_2040","Marine_M_TA_2040","Marine_M_TU_2040","Marine_M_VU_2040"]]
+
+demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R8_CH = demand_R4_R8_CH.T
+
+demand_R4_R8_CH = demand_R4_R8_CH.rename(
+    index={"Marine_M_CI_2040": "CI_data", "Marine_M_FJ_2040": "FJ_data", "Marine_M_FSM_2040": "FSM_data", "Marine_M_KB_2040": "KB_data", "Marine_M_MI_2040": "MI_data","Marine_M_NU_2040": "NU_data","Marine_M_NE_2040": "NE_data","Marine_M_PU_2040": "PU_data","Marine_M_PNG_2040": "PNG_data","Marine_M_SA_2040": "SA_data","Marine_M_SI_2040": "SI_data","Marine_M_TA_2040": "TA_data","Marine_M_TU_2040": "TU_data","Marine_M_VU_2040": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R8_CH["years"] = "2040"
+demand_R4_R8_CH["techs"] = "Demand"
+demand_R4_R8_CH["commodity"] = "Methanol"
+demand_R4_R8_CH["type"] = "fixed"
+demand_R4_R8_CH = demand_R4_R8_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
+demand_R4_R8_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Methanol"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+######################################################################################
+demand_R4_R8_CH = profiles[["Marine_BEV_CI_2040", "Marine_BEV_FJ_2040","Marine_BEV_FSM_2040", "Marine_BEV_KB_2040", "Marine_BEV_MI_2040","Marine_BEV_NU_2040","Marine_BEV_NE_2040","Marine_BEV_PU_2040","Marine_BEV_PNG_2040","Marine_BEV_SA_2040","Marine_BEV_SI_2040","Marine_BEV_TA_2040","Marine_BEV_TU_2040","Marine_BEV_VU_2040"]]
+
+demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R8_CH = demand_R4_R8_CH.T
+
+demand_R4_R8_CH = demand_R4_R8_CH.rename(
+    index={"Marine_BEV_CI_2040": "CI_data", "Marine_BEV_FJ_2040": "FJ_data", "Marine_BEV_FSM_2040": "FSM_data", "Marine_BEV_KB_2040": "KB_data", "Marine_BEV_MI_2040": "MI_data","Marine_BEV_NU_2040": "NU_data","Marine_BEV_NE_2040": "NE_data","Marine_BEV_PU_2040": "PU_data","Marine_BEV_PNG_2040": "PNG_data","Marine_BEV_SA_2040": "SA_data","Marine_BEV_SI_2040": "SI_data","Marine_BEV_TA_2040": "TA_data","Marine_BEV_TU_2040": "TU_data","Marine_BEV_VU_2040": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R8_CH["years"] = "2040"
+demand_R4_R8_CH["techs"] = "Demand"
+demand_R4_R8_CH["commodity"] = "T_ship_el"
+demand_R4_R8_CH["type"] = "fixed"
+demand_R4_R8_CH = demand_R4_R8_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
+demand_R4_R8_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_ship_el"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+####################################################################################
 demand_R4_R9_CH = profiles[["AVIA_TH_CI_2040", "AVIA_TH_FJ_2040","AVIA_TH_FSM_2040", "AVIA_TH_KB_2040", "AVIA_TH_MI_2040","AVIA_TH_NU_2040","AVIA_TH_NE_2040","AVIA_TH_PU_2040","AVIA_TH_PNG_2040","AVIA_TH_SA_2040","AVIA_TH_SI_2040","AVIA_TH_TA_2040","AVIA_TH_TU_2040","AVIA_TH_VU_2040"]]
 
 demand_R4_R9_CH = demand_R4_R9_CH.div(1e3).mul(-1)
@@ -7484,6 +8617,88 @@ sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
+###############################################################
+demand_R4_R8_CH = profiles[["Marine_M_CI_2050", "Marine_M_FJ_2050","Marine_M_FSM_2050", "Marine_M_KB_2050", "Marine_M_MI_2050","Marine_M_NU_2050","Marine_M_NE_2050","Marine_M_PU_2050","Marine_M_PNG_2050","Marine_M_SA_2050","Marine_M_SI_2050","Marine_M_TA_2050","Marine_M_TU_2050","Marine_M_VU_2050"]]
+
+demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R8_CH = demand_R4_R8_CH.T
+
+demand_R4_R8_CH = demand_R4_R8_CH.rename(
+    index={"Marine_M_CI_2050": "CI_data", "Marine_M_FJ_2050": "FJ_data", "Marine_M_FSM_2050": "FSM_data", "Marine_M_KB_2050": "KB_data", "Marine_M_MI_2050": "MI_data","Marine_M_NU_2050": "NU_data","Marine_M_NE_2050": "NE_data","Marine_M_PU_2050": "PU_data","Marine_M_PNG_2050": "PNG_data","Marine_M_SA_2050": "SA_data","Marine_M_SI_2050": "SI_data","Marine_M_TA_2050": "TA_data","Marine_M_TU_2050": "TU_data","Marine_M_VU_2050": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R8_CH["years"] = "2050"
+demand_R4_R8_CH["techs"] = "Demand"
+demand_R4_R8_CH["commodity"] = "Methanol"
+demand_R4_R8_CH["type"] = "fixed"
+demand_R4_R8_CH = demand_R4_R8_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
+demand_R4_R8_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["Methanol"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
+######################################################################################
+demand_R4_R8_CH = profiles[["Marine_BEV_CI_2050", "Marine_BEV_FJ_2050","Marine_BEV_FSM_2050", "Marine_BEV_KB_2050", "Marine_BEV_MI_2050","Marine_BEV_NU_2050","Marine_BEV_NE_2050","Marine_BEV_PU_2050","Marine_BEV_PNG_2050","Marine_BEV_SA_2050","Marine_BEV_SI_2050","Marine_BEV_TA_2050","Marine_BEV_TU_2050","Marine_BEV_VU_2050"]]
+
+demand_R4_R8_CH = demand_R4_R8_CH.div(1e3).mul(-1)
+# transpose DataFrame for needed format
+demand_R4_R8_CH = demand_R4_R8_CH.T
+
+demand_R4_R8_CH = demand_R4_R8_CH.rename(
+    index={"Marine_BEV_CI_2050": "CI_data", "Marine_BEV_FJ_2050": "FJ_data", "Marine_BEV_FSM_2050": "FSM_data", "Marine_BEV_KB_2050": "KB_data", "Marine_BEV_MI_2050": "MI_data","Marine_BEV_NU_2050": "NU_data","Marine_BEV_NE_2050": "NE_data","Marine_BEV_PU_2050": "PU_data","Marine_BEV_PNG_2050": "PNG_data","Marine_BEV_SA_2050": "SA_data","Marine_BEV_SI_2050": "SI_data","Marine_BEV_TA_2050": "TA_data","Marine_BEV_TU_2050": "TU_data","Marine_BEV_VU_2050": "VU_data"}
+)
+
+# add columns and set them as index
+demand_R4_R8_CH["years"] = "2050"
+demand_R4_R8_CH["techs"] = "Demand"
+demand_R4_R8_CH["commodity"] = "T_ship_el"
+demand_R4_R8_CH["type"] = "fixed"
+demand_R4_R8_CH = demand_R4_R8_CH.set_index(
+    ["years", "techs", "commodity", "type"], append=True
+)
+
+m.profile.add(demand_R4_R8_CH, "sourcesink_profile")
+demand_R4_R8_CH.iloc[:, 0:8]
+
+# load the profiles DataFrame, select the demand column
+# %% [markdown]
+# Now that we have created the profile, we need to create a config with the
+# information that the created profile is going to be integrated into the model
+# as fixed profile.
+
+# %%
+# "sourcesink_config" (demand configuration)
+sourcesink_config = pd.DataFrame(
+    index=pd.MultiIndex.from_product(
+        [m.set.nodesdata, m.set.yearssel, ["Demand"], ["T_ship_el"]]
+    )
+)
+sourcesink_config.loc[idx[["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], :, :, :], "usesFixedProfile"] = 1
+sourcesink_config = sourcesink_config.dropna()
+
+m.parameter.add(sourcesink_config, "sourcesink_config")
+sourcesink_config
 # ############################################################
 demand_R4_R9_CH = profiles[["AVIA_TH_CI_2050", "AVIA_TH_FJ_2050","AVIA_TH_FSM_2050", "AVIA_TH_KB_2050", "AVIA_TH_MI_2050","AVIA_TH_NU_2050","AVIA_TH_NE_2050","AVIA_TH_PU_2050","AVIA_TH_PNG_2050","AVIA_TH_SA_2050","AVIA_TH_SI_2050","AVIA_TH_TA_2050","AVIA_TH_TU_2050","AVIA_TH_VU_2050"]]
 
@@ -7969,8 +9184,8 @@ sourcesink_config
 
 
 # User inputs upper limits for Biomass for each node (order matches m.set.nodesdata)
-biomass_limits = [1000000, 1000000, 1000000, 1000000, 1000000,1000000,100000,1000000, 1000000,1000000, 1000000, 1000000,1000000, 1000000] 
-#biomass_limits = [12, 2380, 168, 221, 22,5,4,12100, 1, 295, 1507, 211, 9, 671] 
+# biomass_limits = [1000000, 1000000, 1000000, 1000000, 1000000,1000000,100000,1000000, 1000000,1000000, 1000000, 1000000,1000000, 1000000] 
+biomass_limits = [12, 2380, 168, 221, 22,5,4,12100, 1, 295, 1507, 211, 9, 671] 
 
 #Dictionary####dic - pd df 
 # GW or other units for R1_data, R2_data
@@ -7989,6 +9204,27 @@ for node, limit in zip(m.set.nodesdata, biomass_limits):
 sourcesink_annualSum = sourcesink_annualSum.dropna()
 
 m.parameter.add(sourcesink_annualSum, "sourcesink_annualsum")
+###########################################################
+# Ammonia_limits = [100, 100] 
+
+#Dictionary####dic - pd df 
+# GW or other units for R1_data, R2_data
+# lower_limit = 0  # same for all in this example
+
+# sourcesink_annualSum = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [["FJ_data","PNG_data"], m.set.yearssel, ["FuelImport"], ["Ammonia"]]
+#     )
+# )
+
+# for node, limit in zip(["FJ_data","PNG_data"], Ammonia_limits):
+#     sourcesink_annualSum.loc[idx[node, :, :, :], "upper"] = limit
+#     sourcesink_annualSum.loc[idx[node, :, :, :], "lower"] = lower_limit
+
+# sourcesink_annualSum = sourcesink_annualSum.dropna()
+
+# m.parameter.add(sourcesink_annualSum, "sourcesink_annualsum")
+
 ###############################################################
 
 NG_limits = [1000000, 1000000, 1000000, 1000000, 1000000,1000000,100000,1000000, 1000000,1000000, 1000000, 1000000,1000000, 1000000] 
@@ -8139,6 +9375,18 @@ sourcesink_config = sourcesink_config.dropna()
 
 m.parameter.add(sourcesink_config, "sourcesink_config")
 sourcesink_config
+#################################################################################
+# sourcesink_config = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [m.set.nodesdata, m.set.yearssel, ["FuelImport"], ["Ammonia"]]
+#     )
+# )
+# sourcesink_config.loc[idx[["FJ_data","PNG_data"], :, :, :], "usesUpperSum"] = 1
+# sourcesink_config.loc[idx[["FJ_data","PNG_data"], :, :, :], "usesLowerProfile"] = 1
+# sourcesink_config = sourcesink_config.dropna()
+
+# m.parameter.add(sourcesink_config, "sourcesink_config")
+# sourcesink_config
 ################################################################################
 sourcesink_config = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8244,8 +9492,24 @@ for node, price in zip(m.set.nodesdata, biomass_prices):
 accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
+#########################################################################
+# Ammonia_prices = [0.002, 0.002]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+
+# accounting_sourcesinkFlow = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [["FuelCost"], ["FJ_data", "PNG_data"], ["2040", "2050"], ["FuelImport"], ["Ammonia"]]
+#     )
+# )
+
+# for node, price in zip(["FJ_data", "PNG_data"], Ammonia_prices):
+#     accounting_sourcesinkFlow.loc[idx["FuelCost", node, :, :, :], "perFlow"] = price
+
+# accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
+
+# m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
+
 ########################################################################
-NG_prices = [0.027, 0.027, 0.027, 0.027,0.027, 0.027, 0.027, 0.027, 0.027, 0.027, 0.027, 0.027,0.027, 0.027]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+NG_prices = [0.05, 0.05, 0.05, 0.05,0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,0.05, 0.05]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8260,7 +9524,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 ######################################################################
-HFOO_prices = [0.031, 0.031, 0.031, 0.031,0.031, 0.031, 0.031, 0.031, 0.031, 0.031, 0.031, 0.031,0.031, 0.031]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+HFOO_prices = [0.08, 0.08, 0.08, 0.08,0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08,0.08, 0.08]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8275,7 +9539,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 ########################################################################
-Diesel_prices = [0.095, 0.095, 0.095, 0.095,0.095, 0.095, 0.095, 0.095, 0.095, 0.095, 0.095, 0.095,0.095, 0.095]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+Diesel_prices = [0.09, 0.09, 0.09, 0.09,0.09, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09,0.09, 0.09]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8320,7 +9584,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 #########################################################################
-JetA1_prices = [0.05, 0.05, 0.05, 0.05,0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,0.05, 0.05]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+JetA1_prices = [0.06, 0.06, 0.06, 0.06,0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06,0.06, 0.06]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8335,7 +9599,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 #########################################################################
-MDO_prices = [0.045, 0.045, 0.045, 0.045,0.045, 0.045, 0.045, 0.045, 0.045, 0.045, 0.045, 0.045,0.045, 0.045]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+MDO_prices = [0.08, 0.08, 0.08, 0.08,0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08,0.08, 0.08]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8365,7 +9629,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 ########################################################################
-NG_prices = [0.025, 0.025, 0.025, 0.025,0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025, 0.025,0.025, 0.025]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+NG_prices = [0.05, 0.05, 0.05, 0.05,0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,0.05, 0.05]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8380,7 +9644,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 ######################################################################
-HFOO_prices = [0.029, 0.029, 0.029, 0.029,0.029, 0.029, 0.029, 0.029, 0.029, 0.029, 0.029, 0.029,0.029, 0.029]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+HFOO_prices = [0.08, 0.08, 0.08, 0.08,0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08,0.08, 0.08]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8425,7 +9689,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 #########################################################################
-Gasoline_prices = [0.099, 0.099, 0.099, 0.099,0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099, 0.099,0.099, 0.099]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+Gasoline_prices = [0.105, 0.105, 0.105, 0.105,0.105, 0.105, 0.105, 0.105, 0.105, 0.105, 0.105, 0.105,0.105, 0.105]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8440,7 +9704,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 #########################################################################
-JetA1_prices = [0.047, 0.047, 0.047, 0.047,0.047, 0.047, 0.047, 0.047, 0.047, 0.047, 0.047, 0.047,0.047, 0.047]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+JetA1_prices = [0.06, 0.06, 0.06, 0.06,0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06, 0.06,0.06, 0.06]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8455,7 +9719,7 @@ accounting_sourcesinkFlow = accounting_sourcesinkFlow.dropna()
 
 m.parameter.add(accounting_sourcesinkFlow, "accounting_sourcesinkflow")
 #########################################################################
-MDO_prices = [0.042, 0.042, 0.042, 0.042,0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042, 0.042,0.042, 0.042]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
+MDO_prices = [0.08, 0.08, 0.08, 0.08,0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08, 0.08,0.08, 0.08]  # Mio EUR per GWh_ch CH4 for R1_data, R2_data
 
 accounting_sourcesinkFlow = pd.DataFrame(
     index=pd.MultiIndex.from_product(
@@ -8653,7 +9917,227 @@ import pathlib as pt
 #
 # As an example, we introduce a lithium-ion battery as electricity storage.
 
-# %%
+#Ship storage
+# converter_techParam = pd.DataFrame(
+#     index=pd.MultiIndex.from_product([["Ship_storage"], ["2040", "2050"]])
+# )
+# converter_techParam.loc[idx["Ship_storage", :], "lifeTime"] = 40
+# converter_techParam.loc[idx["Ship_storage", :], "activityUpperLimit"] = 1
+
+# m.parameter.add(converter_techParam, "converter_techparam")
+# converter_techParam
+# # %%
+# # "converter_capacityParam"
+# converter_capacityParam = pd.DataFrame(
+#     index=pd.MultiIndex.from_product([m.set.nodesdata, [ "2040", "2050"], ["Ship_storage"]])
+# )
+# converter_capacityParam.loc[idx[["Z1_data"], :, "Ship_storage"], "unitsUpperLimit"] = (
+#   300  # GW_el Converter upper limit
+# )
+#   # GW_el Converter upper limit
+
+# converter_capacityParam = converter_capacityParam.dropna()
+
+# m.parameter.add(converter_capacityParam, "converter_capacityparam")
+# converter_capacityParam
+# # %% [markdown]
+# # In contrast to the previous modeling of converter units for conventional power plants, we now need to define a
+# # reversible activity. In this example, we can both charge and discharge our lithium-ion battery with the same power
+# # unit. Therefore, we add both activities---`Charge` and `Discharge`---and use the coefficients to model the
+# # corresponding losses.
+# #
+# # We can also use two different converters for charging and discharging. This is necessary when wanting to better
+# # represent the real-world difference between the turbine and optional pumps in hydroelectric power plants for example.
+# # These can then also have different rated powers.
+# #
+# # A storage in REMix per definition has the same input and output commodity. To be able to account for storage losses,
+# # it is necessary to define a dummy commodity (here called `Elec_LiIon`), which is only used inside that one technology.
+# #
+# # In this tutorial, we fill the two activities of our single converter unit for charging and discharging so that each
+# # process has an efficiency of 95 %.
+
+# # %%
+# # "converter_coefficient"
+# converter_coefficient = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [["Ship_storage"], ["2040", "2050"], ["Charge", "Discharge"], ["Methanol", "Methanol_LiIon"]]
+#     )
+# )
+
+# converter_coefficient.loc[
+#     idx["Ship_storage", :, "Charge", "Methanol"], "coefficient"
+# ] = -1  # GW_el
+# converter_coefficient.loc[idx["Ship_storage", :, "Charge", "Methanol_LiIon"], "coefficient"] = (
+#     0.95  # GW_el in LiIon
+# )
+# converter_coefficient.loc[idx["Ship_storage", :, "Discharge", "Methanol"], "coefficient"] = (
+#     1  # GW_el
+# )
+# converter_coefficient.loc[
+#     idx["Ship_storage", :, "Discharge", "Methanol_LiIon"], "coefficient"
+# ] = -1.05  # GW_el in LiIon
+
+
+# # converter_coefficient.loc[
+# #     idx["Battery", :, "build","Elec_LiIon"], "coefficient"
+# # ] = 1  # GW_el in LiIon
+# # converter_coefficient.loc[
+# #     idx["Battery", :,"build", "Elec"], "coefficient"
+# # ] = 1
+# converter_coefficient = converter_coefficient.dropna(how="all")
+
+# m.parameter.add(converter_coefficient, "converter_coefficient")
+# converter_coefficient
+# # %%
+# # "accounting_converterUnits"
+# accounting_converterUnits = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [["Invest", "OMFix"], ["Z1_data"], ["horizon"], ["Ship_storage"], ["2040", "2050"]]
+#     )
+# )
+
+
+
+
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "Ship_storage", "2040"], "perUnitBuild"
+# ] = 150  # million EUR / unit
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "Ship_storage", "2040"], "useAnnuity"
+# ] = 1  # binary yes/no
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "Ship_storage", "2040"], "amorTime"
+# ] = 25  # years
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "Ship_storage", "2040"], "interest"
+# ] = 0.06  # percent/100
+# accounting_converterUnits.loc[
+#     idx["OMFix", "global", "horizon", "Ship_storage", "2040"], "perUnitTotal"
+# ] = 4.5 
+
+# accounting_converterUnits = accounting_converterUnits.fillna(0)
+
+# m.parameter.add(accounting_converterUnits, "accounting_converterunits")
+# accounting_converterUnits
+
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "Ship_storage", "2050"], "perUnitBuild"
+# ] = 150  # million EUR / unit
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "Ship_storage", "2050"], "useAnnuity"
+# ] = 1  # binary yes/no
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "Ship_storage", "2050"], "amorTime"
+# ] = 25  # years
+# accounting_converterUnits.loc[
+#     idx["Invest", "global", "horizon", "Ship_storage", "2050"], "interest"
+# ] = 0.06  # percent/100
+# accounting_converterUnits.loc[
+#     idx["OMFix", "global", "horizon", "Ship_storage", "2050"], "perUnitTotal"
+# ] = 4.5 
+
+# accounting_converterUnits = accounting_converterUnits.fillna(0)
+
+# m.parameter.add(accounting_converterUnits, "accounting_converterunits")
+# accounting_converterUnits
+
+# # %% [markdown]
+# # #### The storage reservoir
+# #
+# # The storage features are always connected to a node and commodity combination
+# # and allow storing the connected commodity freely up to the rated capacity of
+# # the storage reservoir.
+# # We account for storage units in the same manner as for converter units and use
+# # a rated capacity to connect the units to a commodity and size.
+# # Storage technologies and converter technologies have the same name to make it
+# # easier to represent them as the same technology.
+
+# # %%
+# # "storage_techParam"
+# storage_techParam = pd.DataFrame(
+#     index=pd.MultiIndex.from_product([["Ship_storage"], ["2040", "2050"]])
+# )
+# storage_techParam.loc[idx["Ship_storage", :], "lifeTime"] = 40
+# storage_techParam.loc[idx["Ship_storage", :], "levelUpperLimit"] = 1
+
+# m.parameter.add(storage_techParam, "storage_techparam")
+# storage_techParam
+# # %% [markdown]
+# # For the storage size, we need to associate a commodity (here "Elec_LiIon") and
+# # a rated capacity for every storage reservoir unit.
+
+# # %%
+# # "storage_sizeParam"
+# # size of each storage unit
+# storage_sizeParam = pd.DataFrame(
+#     index=pd.MultiIndex.from_product([["Ship_storage"], ["2040", "2050"], ["Methanol_LiIon"]])
+# )
+# storage_sizeParam.loc[idx["Ship_storage", :, "Methanol_LiIon"], "size"] = 1 # GWh_ch/unit
+# storage_sizeParam = storage_sizeParam.dropna()
+
+# m.parameter.add(storage_sizeParam, "storage_sizeparam")
+# storage_sizeParam
+# # %% [markdown]
+# # Now we can set the storage reservoir upper limit to 30 units for a specific
+# # model region, therefore the model can build up to 240 GWh_ch of storage
+# # reservoir (8 GWh_ch / unit * 30 units = 240 GWh_ch).
+
+# # %%
+# # "storage_reservoirParam"
+# # installed storage reservoir units
+# storage_reservoirParam = pd.DataFrame(
+#     index=pd.MultiIndex.from_product([m.set.nodesdata, ["2040", "2050"], ["Ship_storage"]])
+# )
+# storage_reservoirParam.loc[idx[["Z1_data"], :, "Ship_storage"], "unitsUpperLimit"] = (
+#     1000 
+# )# units
+
+# storage_reservoirParam = storage_reservoirParam.dropna()
+
+# m.parameter.add(storage_reservoirParam, "storage_reservoirparam")
+# storage_reservoirParam
+# # %%
+# # "accounting_storageUnits"
+# # accounting for costs of storage
+# accounting_storageUnits = pd.DataFrame(
+#     index=pd.MultiIndex.from_product(
+#         [["Invest", "OMFix"],["Z1_data"], ["2040", "2050"]]
+#     )
+# )
+
+
+# accounting_storageUnits.loc[idx["Invest", :, :, :, :], "perUnitBuild"] = (
+#    90)
+
+# # Since our storage unit can store 8 GWh we need to scale the million EUR/GWh value with 8
+# accounting_storageUnits.loc[idx["Invest", :, :, :, "2040"], "useAnnuity"] = 1
+# accounting_storageUnits.loc[idx["Invest", :, :, :, "2040"], "amorTime"] = 20
+# accounting_storageUnits.loc[idx["Invest", :, :, :, "2040"], "interest"] = 0.06
+# accounting_storageUnits.loc[idx["OMFix", :, :, :, "2040"], "perUnitTotal"] = (
+#   5
+# )
+# accounting_storageUnits = accounting_storageUnits.fillna(0)
+
+# m.parameter.add(accounting_storageUnits, "accounting_storageunits")
+# accounting_storageUnits
+
+# accounting_storageUnits.loc[idx["Invest", :, :, :, :], "perUnitBuild"] = (
+#     72
+# ) 
+
+# # Since our storage unit can store 8 GWh we need to scale the million EUR/GWh value with 8
+# accounting_storageUnits.loc[idx["Invest", :, :, :, "2050"], "useAnnuity"] = 1
+# accounting_storageUnits.loc[idx["Invest", :, :, :, "2050"], "amorTime"] = 20
+# accounting_storageUnits.loc[idx["Invest", :, :, :, "2050"], "interest"] = 0.06
+# accounting_storageUnits.loc[idx["OMFix", :, :, :, "2050"], "perUnitTotal"] = (
+#   5
+# )
+# accounting_storageUnits = accounting_storageUnits.fillna(0)
+
+# m.parameter.add(accounting_storageUnits, "accounting_storageunits")
+# accounting_storageUnits
+
+###########################################################################################################################
 # "converter_techParam"
 converter_techParam = pd.DataFrame(
     index=pd.MultiIndex.from_product([["Battery"], ['2030', "2040", "2050"]])
@@ -8729,7 +10213,7 @@ converter_coefficient
 # "accounting_converterUnits"
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["Battery"], ['2030', "2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["Battery"], ['2030', "2040", "2050"]]
     )
 )
 
@@ -8858,7 +10342,7 @@ storage_reservoirParam
 # accounting for costs of storage
 accounting_storageUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["Battery"], ['2030', "2040", "2050"]]
+        [["Invest", "OMFix"],["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["Battery"], ['2030', "2040", "2050"]]
     )
 )
 
@@ -8968,7 +10452,7 @@ converter_coefficient
 # "accounting_converterUnits"
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["THSS"], ['2030', "2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["THSS"], ['2030', "2040", "2050"]]
     )
 )
 
@@ -9095,7 +10579,7 @@ storage_reservoirParam
 # accounting for costs of storage
 accounting_storageUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["THSS"], ['2030', "2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["THSS"], ['2030', "2040", "2050"]]
     )
 )
 
@@ -9205,7 +10689,7 @@ converter_coefficient
 # "accounting_converterUnits"
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["H20_storage"], ["2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["H20_storage"], ["2040", "2050"]]
     )
 )
 
@@ -9391,7 +10875,7 @@ converter_coefficient
 # "accounting_converterUnits"
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["H2_storage"], ['2030', "2040", "2050"]]
+        [["Invest", "OMFix"],["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["H2_storage"], ['2030', "2040", "2050"]]
     )
 )
 
@@ -9518,7 +11002,7 @@ storage_reservoirParam
 # accounting for costs of storage
 accounting_storageUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["H2_storage"], ['2030', "2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["H2_storage"], ['2030', "2040", "2050"]]
     )
 )
 
@@ -9597,7 +11081,7 @@ converter_coefficient
 # "accounting_converterUnits"
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["Ammonia_storage"], ['2030', "2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["Ammonia_storage"], ['2030', "2040", "2050"]]
     )
 )
 
@@ -9728,7 +11212,7 @@ storage_reservoirParam
 # accounting for costs of storage
 accounting_storageUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["Ammonia_storage"], ['2030', "2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["Ammonia_storage"], ['2030', "2040", "2050"]]
     )
 )
 
@@ -9807,7 +11291,7 @@ converter_coefficient
 # "accounting_converterUnits"
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["Methanol_storage"], ["2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["Methanol_storage"], ["2040", "2050"]]
     )
 )
 
@@ -9918,7 +11402,7 @@ storage_reservoirParam
 # accounting for costs of storage
 accounting_storageUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["Methanol_storage"], ["2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["Methanol_storage"], ["2040", "2050"]]
     )
 )
 
@@ -9996,7 +11480,7 @@ converter_coefficient
 # "accounting_converterUnits"
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["eKerosene_storage"], ["2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["eKerosene_storage"], ["2040", "2050"]]
  )
 )
 
@@ -10106,7 +11590,7 @@ storage_reservoirParam
 # accounting for costs of storage
 accounting_storageUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["eKerosene_storage"], ["2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["eKerosene_storage"], ["2040", "2050"]]
     )
 )
 
@@ -10185,7 +11669,7 @@ converter_coefficient
 # "accounting_converterUnits"
 accounting_converterUnits = pd.DataFrame(
     index=pd.MultiIndex.from_product(
-        [["Invest", "OMFix"], ["global"], ["horizon"], ["co2_storage"], ["2040", "2050"]]
+        [["Invest", "OMFix"], ["CI_data","FJ_data","FSM_data","KB_data","MI_data","NU_data","NE_data","PU_data","PNG_data","SA_data","SI_data","TA_data","TU_data","VU_data"], ["horizon"], ["co2_storage"], ["2040", "2050"]]
  )
 )
 
@@ -10370,7 +11854,7 @@ m.write(fileformat="dat")
 # That's it. We have successfully added a lithium-ion battery as storage
 # technology to our model. We can now start a GAMS optimization run (part b).
 m.run(
-    resultfile="IP_2050_2",
+    resultfile="IP_2050_scaling_5_nodummy",
     lo=3,
     postcalc=1,
     roundts=1,
