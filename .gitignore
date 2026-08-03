@@ -17,9 +17,5 @@ wheels/
 *.opt
 
 
-# Large input datasets
-_input/IP_2040_2050_14_PIC.csv
-Process/data/sourcesink_profile.dat
-*.dat
-*.csv
+
 
