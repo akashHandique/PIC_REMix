@@ -50,12 +50,11 @@ repo's `requirements.txt`. **`gdxpds` needs a GAMS installation** to read `.gdx`
 ## Generated files
 
 - `LCO_results_*.xlsx` — written here by `pic_lco_assessment`.
-- Figures — written to `figures/` / `outputs/` (created automatically).
+- Figures — written under `figures/` (e.g. `figures/S_23/...`, created automatically).
 
 Add these to the main repo's `.gitignore` if you don't want them committed, e.g.:
 
 ```
 visualization/LCO_results_*.xlsx
 visualization/figures/
-visualization/outputs/
 ```

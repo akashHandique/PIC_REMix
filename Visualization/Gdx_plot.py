@@ -786,7 +786,7 @@ if __name__ == "__main__":
     main(args.gdx, args.out)
 ##########################all commodity values are written to an excel###############################
 ######now for plotiing these results###############################################################
-
+# Default — PNG at 300 dpi, saved to figures/
 """
 Pacific Island Countries (PICs) — LCO Results Visualisation
 ============================================================
