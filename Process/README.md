@@ -41,7 +41,7 @@ Two naming conventions recur throughout:
 
 ## 3. Converter glossary, by sector
 
-### 3.1 Power generation
+### 3.1 Power and heat generation
 | Tech | Meaning |
 |---|---|
 | `DG` | Diesel generator |
@@ -54,6 +54,7 @@ Two naming conventions recur throughout:
 | `Geothermal_B` | Geothermal power (existing only) |
 | `Wave_N` | Wave power (new-build only) |
 | `ST_N` | Solar thermal (new-build only) |
+| `HP` | Heat pump |
 
 ### 3.2 Road transport (fossil baseline, `MDV`/`HDV`/`LDV`/`Bus`/`Two_wheel`)
 `MDV`, `HDV`, `LDV` = medium / heavy / light-duty vehicles. Fossil versions
@@ -101,7 +102,6 @@ From 2040, each of these gets two low-carbon variants:
 | `RO` | Reverse osmosis (seawater desalination) |
 | `AEL` | Alkaline electrolyser (hydrogen production) |
 | `DAC` | Direct air capture (of CO2, for e-fuel synthesis) |
-| `HP` | Heat pump |
 | `Ammonia_synthesis` | Hydrogen → ammonia synthesis |
 | `Methanol_synthesis` | Hydrogen + CO2 → methanol synthesis |
 | `FTL` | Fischer–Tropsch liquids (e-kerosene synthesis) |
