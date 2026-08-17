@@ -39,9 +39,15 @@ Two naming conventions recur throughout:
 - **`_B`** = existing / brownfield converter (installed 2020 base capacity).
 - **`_N`** = new-build converter (available for investment from 2030 on).
 
-## 3. Converter glossary, by sector
+## 3. Converter glossary
 
-### 3.1 Power and heat generation
+Converters are grouped below by what they do: turn fuel/resource into
+**power**, turn power/fuel into **heat**, move people/goods (**transport**),
+or turn power into another energy carrier or product (**power-to-X**).
+
+### 3.1 Power generation
+Output commodity is electricity (`Elec`).
+
 | Tech | Meaning |
 |---|---|
 | `DG` | Diesel generator |
@@ -53,50 +59,46 @@ Two naming conventions recur throughout:
 | `Hydro_B` / `Hydro_N` | Hydropower, existing / new |
 | `Geothermal_B` | Geothermal power (existing only) |
 | `Wave_N` | Wave power (new-build only) |
+
+### 3.2 Heat generation
+Output commodity is a heat carrier (space/water heating, cooking heat, or
+industrial process heat).
+
+| Tech | Meaning |
+|---|---|
 | `ST_N` | Solar thermal (new-build only) |
-| `HP` | Heat pump |
-
-### 3.2 Road transport (fossil baseline, `MDV`/`HDV`/`LDV`/`Bus`/`Two_wheel`)
-`MDV`, `HDV`, `LDV` = medium / heavy / light-duty vehicles. Fossil versions
-of these plus `Bus` and `Two_wheel` are fuel-based road transport (diesel or
-gasoline, per the input data) and exist from 2020.
-
-From 2040, each of these gets two low-carbon variants:
-| Suffix | Meaning |
-|---|---|
-| `_el` (e.g. `LDV_el`, `HDV_el`, `MDV_el`, `Two_wheel_el`, `Bus_el`) | Battery-electric version |
-| `_BF` (e.g. `LDV_BF`, `HDV_BF`, `MDV_BF`) | Biofuel-powered version |
-
-### 3.3 Marine and aviation
-| Tech | Meaning |
-|---|---|
-| `Marine` | Fossil (diesel/MDO) marine transport |
-| `HFO` | Heavy-fuel-oil-based marine transport |
-| `Aviation` | Fossil (jet fuel) aviation |
-| `Aviation_el` | Electric aviation (short-range) |
-| `Ship_BEV` | Electric (battery) ships |
-
-### 3.4 Cooking
-| Tech | Meaning |
-|---|---|
+| `HP` | Heat pump (electricity → heat) |
 | `cook_b` | Biomass cooking |
 | `cook_LPG` | LPG-based cooking |
 | `cook_el` | Electric cooking |
-
-### 3.5 Industry
-| Tech | Meaning |
-|---|---|
+| `DW_LPG_converter` | LPG-based domestic water heating |
+| `DW_Electric_converter` | Electric domestic water heating |
 | `Industry` | Diesel-fired industrial boilers |
 | `Industry_EL` | Electric industrial boilers |
-| `Industry_EH` | Placeholder / dummy converter linking industrial electric-heat demand into the model — not a distinct physical technology |
+| `Industry_EH` | Placeholder / dummy converter linking industrial heat demand into the model — not a distinct physical technology |
 
-### 3.6 Domestic hot water (DHW)
+### 3.3 Transport
+Fossil road-transport converters (`MDV`, `HDV`, `LDV` = medium / heavy /
+light-duty vehicles, plus `Bus` and `Two_wheel`) exist from 2020. From
+2040, each gets two low-carbon variants, and marine/aviation transport is
+split into fossil and electric options too.
+
 | Tech | Meaning |
 |---|---|
-| `DW_LPG_converter` | LPG-based water heating |
-| `DW_Electric_converter` | Electric water heating |
+| `MDV`, `HDV`, `LDV`, `Bus`, `Two_wheel` | Fossil (diesel/gasoline) road transport |
+| `_el` variants: `LDV_el`, `HDV_el`, `MDV_el`, `Two_wheel_el`, `Bus_el` | Battery-electric road transport |
+| `_BF` variants: `LDV_BF`, `HDV_BF`, `MDV_BF` | Biofuel-powered road transport |
+| `Marine` | Fossil (diesel/MDO) marine transport |
+| `HFO` | Heavy-fuel-oil-based marine transport |
+| `Ship_BEV` | Electric (battery) ships |
+| `Aviation` | Fossil (jet fuel) aviation |
+| `Aviation_el` | Electric aviation (short-range) |
 
-### 3.7 Water, hydrogen and power-to-X (all new-build, from 2040)
+### 3.4 Power-to-X
+Converters that use electricity (directly or via an intermediate energy
+carrier) to produce water, hydrogen, or a synthetic fuel/feedstock. All
+new-build, available from 2040.
+
 | Tech | Meaning |
 |---|---|
 | `RO` | Reverse osmosis (seawater desalination) |
@@ -107,7 +109,7 @@ From 2040, each of these gets two low-carbon variants:
 | `FTL` | Fischer–Tropsch liquids (e-kerosene synthesis) |
 | `Dummy_Ammonia` / `Dummy_Methanol` | Placeholder converters linking ammonia/methanol into a generic downstream demand commodity (`Dummy_EL`) |
 
-### 3.8 Storage technologies
+### 3.5 Storage technologies
 Registered via `add_storage_tech` (each with a `Charge`/`Discharge` pair):
 `Battery`, `THSS` (thermal short-term storage), `H20_storage`, `H2_storage`,
 `Ammonia_storage`, `Methanol_storage`, `eKerosene_storage`, `co2_storage`.
