@@ -1,16 +1,27 @@
-# REMix Pacific Islands Energy System Model — Scenario S1
+# REMix Pacific Islands Energy System Model — S1 / S2 / S13 / S23
 
-`remix_pacific_model_S1_std.py` builds and runs a multi-node, multi-year
-(2020 / 2030 / 2040 / 2050) myopic capacity-expansion optimisation of the
-Pacific Island energy system on the DLR REMix framework. It covers power,
-land / marine / aviation transport, cooking, industry, domestic hot water,
-water desalination and synthetic-fuel production, together with the storage
-and fuel-supply infrastructure needed to balance them, across 14 Pacific
-data nodes. The objective is minimisation of total discounted system cost.
+This repository contains four scenario variants of the same underlying
+model:
 
-This README explains what the script builds, node by node and sector by
-sector, so a new reader can find their way around the code without having
-to trace every `m.parameter.add(...)` call by hand.
+| Script | Result file | What it adds relative to the S1 baseline |
+|---|---|---|
+| `remix_pacific_model_S1_std.py` | `IP_2050_Final_SS1_minload` | Baseline — no inter-island shipping, no e-fuel imports |
+| `remix_pacific_model_S2_std.py` | `IP_2050_Final_SS2_minload` | + inter-island **shipping links** (ammonia / methanol / e-kerosene) |
+| `remix_pacific_model_S13_std.py` | `IP_2050_Final_SS13_minload` | + **e-fuel imports** (ammonia / methanol / e-kerosene bought in at select nodes) |
+| `remix_pacific_model_S23_std.py` | `IP_2050_Final_SS23_minload` | + shipping links **and** e-fuel imports (S2 + S13 combined) |
+
+All four are multi-node, multi-year (2020 / 2030 / 2040 / 2050) myopic
+capacity-expansion optimisations of the Pacific Island energy system on the
+DLR REMix framework, minimising total discounted system cost. They cover
+power, land / marine / aviation transport, cooking, industry, domestic hot
+water, water desalination and synthetic-fuel production, together with the
+storage and fuel-supply infrastructure needed to balance them, across 14
+Pacific data nodes. **Everything in §1–§5 below (nodes, converters, storage,
+demand) is identical across all four scripts** — they share the same
+model core and only differ in the inter-island trade options described in
+§6. This README explains what the scripts build, sector by sector, so a
+new reader can find their way around the code without tracing every
+`m.parameter.add(...)` call by hand.
 
 ---
 
@@ -24,6 +35,10 @@ to trace every `m.parameter.add(...)` call by hand.
 - Demand and renewable-resource profiles are read from a single input CSV
   (`_input/Copy of IP_2040_2050_14_PIC - Copy.csv`); node labels are
   recovered from each column name via `_region_to_node`.
+- A handful of per-node numeric parameters (2040/2050 electrolyser
+  build-out and one 2050 PV resource cap) are re-calibrated slightly
+  between scenarios — these are scenario-specific inputs, not structural
+  differences, and aren't itemised here.
 
 ## 2. How a converter works in this model
 
@@ -33,7 +48,7 @@ ratios (`converter_coefficient`), subject to a build-out capacity
 (`converter_capacityparam`) and investment/O&M cost
 (`accounting_converterunits`). A converter with no coefficients defined has
 no commodity flow at all — it is a "dead" object that carries cost/capacity
-bookkeeping but can never be dispatched. (See §6.)
+bookkeeping but can never be dispatched. (See §7.)
 
 Two naming conventions recur throughout:
 - **`_B`** = existing / brownfield converter (installed 2020 base capacity).
@@ -44,6 +59,7 @@ Two naming conventions recur throughout:
 Converters are grouped below by what they do: turn fuel/resource into
 **power**, turn power/fuel into **heat**, move people/goods (**transport**),
 or turn power into another energy carrier or product (**power-to-X**).
+This grouping and every converter in it is common to all four scripts.
 
 ### 3.1 Power generation
 Output commodity is electricity (`Elec`).
@@ -114,13 +130,14 @@ Registered via `add_storage_tech` (each with a `Charge`/`Discharge` pair):
 `Battery`, `THSS` (thermal short-term storage), `H20_storage`, `H2_storage`,
 `Ammonia_storage`, `Methanol_storage`, `eKerosene_storage`, `co2_storage`.
 
-## 4. Fuel imports and prices
+## 4. Fuel imports and prices (all scenarios)
 
 Bounded, priced fuel-import sinks/sources are registered for:
 `Biomass, NG, HFOO, Diesel, LPG, Gasoline, JetA1, MDO` (plus a per-node
 biomass availability limit, `BIOMASS_LIMITS`). Prices are flat per
 commodity across all nodes (`CONV_FUEL_PRICES`), fixed for 2020 and again
-across 2030/2040/2050.
+across 2030/2040/2050. This block is identical across all four scripts;
+see §6.2 for the additional e-fuel imports in S13/S23.
 
 ## 5. Demand, emissions accounting
 
@@ -130,28 +147,73 @@ sourcesink entry per node (`add_demand_profile` + `add_demand_config`).
 A CO2 sourcesink annual-sum tracks total system emissions
 (`sourcesink_annualsum` / `sourcesink_config` on `Emission`/`CO2`).
 
-## 6. Known structural gaps (as of this refactor)
+## 6. What differs between scenarios
 
-Two things are worth flagging to anyone extending this script, since they
-affect what the model can actually do versus what the code/docstring
-implies:
+### 6.1 Inter-island shipping links (S2, S23 only)
+S2 and S23 add 22 fixed inter-island transfer links (`Ship__Z_1` …
+`Ship__Z_22`, e.g. FJ↔VU, FJ↔TA, KB↔MI, MI↔FSM, PU↔PNG, …), each carrying
+up to 100 units/year of one of three energy carriers via a dedicated
+"port" converter:
 
-- **`add_transfer_link_costs` is defined but never called.** The module
-  docstring advertises "inter-island ammonia / methanol / e-kerosene
-  shipping links," and two comments (around the 2040 and 2050 converter-cost
-  blocks) say shipping-link costs are "registered" there — but no
-  `accounting_transferlinks` parameters are actually written anywhere in
-  the script. Inter-island shipping is not currently active in this model
-  version.
-- **Four converters are instantiated (tech params, capacity limits, and
-  zero investment cost) but never given a `converter_coefficient`, so they
-  have no commodity input/output and cannot be dispatched.** These are
-  effectively dead in the current script and were excluded from the
-  glossary above. See the prior conversation for the full trace.
+| Carrier | Transfer tech |
+|---|---|
+| Ammonia | `port_A` |
+| Methanol | `port_M` |
+| e-Kerosene | `port_F` |
 
-## 7. Output
+These are available from 2040 and registered via `transfer_linkstartend`,
+`transfer_linksparam`, `transfer_techparam`, `transfer_coefficient`, plus
+build/flow costs from `add_transfer_link_costs`. S1 and S13 do **not**
+build this block at all — inter-island shipping is structurally absent in
+those two scripts, even though the module docstring in every script
+advertises it (see §7).
+
+### 6.2 E-fuel imports (S13, S23 only)
+S13 and S23 additionally allow direct import of `Ammonia`, `Methanol` and
+`eKerosene` (on top of the S1 baseline's fossil-fuel imports in §4) at a
+fixed subset of nodes:
+
+`EFUEL_NODES = [FJ, PNG, VU, TA, SA, SI, CI, NE]`
+
+with an effectively unconstrained annual limit (`1,000,000` units/node) and
+flat per-node prices for 2040/2050:
+
+| Commodity | 2040 price | 2050 price |
+|---|---|---|
+| Ammonia | 0.080 | 0.066 |
+| Methanol | 0.0884 | 0.0735 |
+| e-Kerosene | 0.114 | 0.0971 |
+
+S1 and S2 do **not** register these imports — in those two scripts, the
+only way to meet ammonia/methanol/e-kerosene demand is domestic synthesis
+(`Ammonia_synthesis`, `Methanol_synthesis`, `FTL`) or, for S2, shipping
+from another island.
+
+### 6.3 Summary matrix
+
+| | Shipping links | E-fuel imports |
+|---|---|---|
+| **S1** | — | — |
+| **S2** | ✅ | — |
+| **S13** | — | ✅ |
+| **S23** | ✅ | ✅ |
+
+## 7. Known structural gap common to all four scripts
+
+Four converters are instantiated in every script (tech params, capacity
+limits, and zero investment cost) but never given a
+`converter_coefficient`, so they have no commodity input/output and cannot
+be dispatched. They are effectively dead code and were excluded from the
+glossary in §3. See the prior conversation for the full trace.
+
+(Note: `add_transfer_link_costs` itself is *not* dead — it's defined once
+and actually called, with real effect, in S2/S23 per §6.1. It's only
+unused in S1/S13, where the module docstring's mention of shipping links
+is aspirational rather than active.)
+
+## 8. Output
 
 `m.write(fileformat="dat")` writes the REMix `.dat` input files, and
-`m.run(...)` solves the model (result file `IP_2050_Final_SS1_minload`,
-myopic path optimisation, log level 3, post-calculation and time-series
-rounding enabled).
+`m.run(...)` solves the model (myopic path optimisation, log level 3,
+post-calculation and time-series rounding enabled) to the scenario's
+result file listed in the table at the top of this README.
