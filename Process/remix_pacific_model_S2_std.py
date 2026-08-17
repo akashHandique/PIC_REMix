@@ -466,7 +466,7 @@ m = Instance()
 m.datadir = "./data"
 
 # Load input profile data (hourly resource / demand profiles)
-profiles = pd.read_csv("../_input/Copy of IP_2040_2050_14_PIC - Copy.csv", index_col=0)
+profiles = pd.read_csv("../_input/Hourly_demand_and_resource_profiles.csv", index_col=0)
 
 
 # ============================================================================
