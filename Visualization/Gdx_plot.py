@@ -9,7 +9,7 @@
 #  LAYOUT: this file lives in  <repo>/visualization/  and is run from there.
 #  It reads GAMS results from the repo-root  GDX_results/  folder, i.e. one
 #  level up:  ../GDX_results/  . Override on the command line, e.g.
-#      ...  --gdx ../GDX_results/IP_2050_Final_S23_minload.gdx  --out figures/  --dpi 600
+#      ...  --gdx ../GDX_results/IP_2050_Final_S23.gdx  --out figures/  --dpi 600
 #
 #  The LCO results .xlsx (produced by pic_lco_assessment, read by pic_lco_plots)
 #  is written here inside visualization/.
@@ -60,11 +60,11 @@ log = logging.getLogger(__name__)
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
 
-GDX_PATH = "../GDX_results/IP_2050_Final_S1_minload.gdx"
+GDX_PATH = "../GDX_results/IP_2050_Final_S1.gdx"
 
 data = gdxpds.to_dataframes(GDX_PATH)
 YEARS = ["2020", "2030", "2040", "2050"]
-OUTPUT_PATH = "LCO_results_IP_2050_Final_S23.xlsx"
+OUTPUT_PATH = f"LCO_results_{Path(GDX_PATH).stem}.xlsx"
 ISLANDS = [
     "CI_model", "FJ_model", "FSM_model", "KB_model", "MI_model",
     "NU_model", "NE_model", "PU_model", "PNG_model", "SA_model",
@@ -251,13 +251,6 @@ CAPEX_OPEX_INDICATORS = ["Invest", "OMFix", "OMVar"]
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Symbols loaded: %s", list(data.keys()))
-    return data
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # QUERY HELPERS
@@ -1102,8 +1095,8 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "--file", default="LCO_results_IP_2050_Final_S1.xlsx",
-        help="Path to the LCO Excel results file (default: LCO_results_IP_2050_Final_S1.xlsx)"
+        "--file", default=OUTPUT_PATH,
+        help="Path to the LCO Excel results file (default: the workbook written by pic_lco_assessment)"
     )
     parser.add_argument(
         "--out", default="figures/S_1/",
@@ -1218,7 +1211,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/generation_profiles_minload_S23"
 YEARS      = ["2020", "2030", "2040", "2050"]
 ISLANDS    = [
@@ -1303,13 +1295,6 @@ rcParams.update({
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
-
 
 def extract_hourly_cb(data: dict) -> pd.DataFrame:
     """
@@ -1728,7 +1713,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/battery_soc_minload"
 YEARS      = ["2030", "2040", "2050"]
 ISLANDS    = [
@@ -1785,13 +1769,6 @@ rcParams.update({
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
-
 
 def extract_battery_soc(data: dict) -> pd.DataFrame:
     sl  = data["storage_level_out"]
@@ -2034,7 +2011,6 @@ from matplotlib.colors import LinearSegmentedColormap
 logging.basicConfig(level=logging.INFO, format="%(levelname)-8s %(message)s")
 log = logging.getLogger(__name__)
 
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/thermal_soc_minload"
 YEARS      = ["2030", "2040", "2050"]
 ISLANDS    = [
@@ -2073,13 +2049,6 @@ rcParams.update({
     "savefig.dpi":       200,
     "savefig.facecolor": "white",
 })
-
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
 
 
 def extract_storage_soc(data: dict) -> pd.DataFrame:
@@ -2303,7 +2272,6 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)-8s %(message)s")
 log = logging.getLogger(__name__)
 
 # ── Configuration ─────────────────────────────────────────────────────────────
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/battery_charts"
 
 YEARS = ["2030", "2040", "2050"]
@@ -2644,7 +2612,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH    = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR  = "figures/S_23/hydrogen_storage_minload"
 YEARS       = ["2030", "2040", "2050"]
 ISLANDS     = [
@@ -2700,13 +2667,6 @@ rcParams.update({
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
-
 
 def extract_h2_storage(data: dict) -> pd.DataFrame:
     """
@@ -3004,7 +2964,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH = "../GDX_results/IP_2050_Final_S1_minload.gdx"
 YEARS    = ["2030", "2040", "2050"]
 ISLANDS  = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -3355,7 +3314,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH = "../GDX_results/IP_2050_Final_S1_minload.gdx"
 YEARS    = ["2040", "2050"]
 ISLANDS  = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -3737,7 +3695,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/electrolyzer_activity_minload"
 YEARS      = ["2040", "2050"]
 ISLANDS    = [
@@ -3796,13 +3753,6 @@ rcParams.update({
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
-
 
 def extract_ael_consumption(data: dict) -> pd.DataFrame:
     """
@@ -4082,7 +4032,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/heat_pump_activity_minload"
 YEARS      = ["2040", "2050"]
 ISLANDS    = [
@@ -4141,13 +4090,6 @@ rcParams.update({
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
-
 
 def extract_hp_consumption(data: dict) -> pd.DataFrame:
     """
@@ -4429,7 +4371,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/capacity_overview_minload"
 YEARS      = ["2020", "2030", "2040", "2050"]
 ISLANDS    = [
@@ -4591,13 +4532,6 @@ BAR_WIDTH = 0.6
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PANEL 1 — INSTALLED CAPACITY
@@ -4977,7 +4911,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/heat_generation"
 YEARS      = ["2020","2030", "2040", "2050"]
 ISLANDS    = [
@@ -5065,13 +4998,6 @@ rcParams.update({
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA LOADING
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
-
 
 def extract_heat(data: dict) -> pd.DataFrame:
     """
@@ -5430,7 +5356,6 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/ael_capacity_minload"
 YEARS      = ["2040", "2050"]
 ISLANDS    = [
@@ -5479,11 +5404,6 @@ rcParams.update({
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA
 # ─────────────────────────────────────────────────────────────────────────────
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    return gdxpds.to_dataframes(path)
-
 
 def extract_ael_capacity(data: dict) -> pd.DataFrame:
     cc   = data["converter_caps"]
@@ -5618,7 +5538,6 @@ from matplotlib import rcParams
 logging.basicConfig(level=logging.INFO, format="%(levelname)-8s %(message)s")
 log = logging.getLogger(__name__)
 
-GDX_PATH   = "../GDX_results/IP_2050_Final_S23_minload.gdx"
 OUTPUT_DIR = "figures/S_23/system_cost"
 YEARS      = ["2020", "2030", "2040", "2050"]
 
@@ -5662,13 +5581,6 @@ rcParams.update({
     "savefig.bbox":      "tight",
     "savefig.facecolor": "white",
 })
-
-
-def load_gdx(path: str) -> dict:
-    log.info("Loading GDX: %s", path)
-    data = gdxpds.to_dataframes(path)
-    log.info("Available symbols: %s", sorted(data.keys()))
-    return data
 
 
 def extract_cost_components(data: dict, years: list) -> pd.DataFrame:
