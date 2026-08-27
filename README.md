@@ -2,7 +2,7 @@
 
 A multi-node, multi-year (2020 / 2030 / 2040 / 2050) capacity-expansion
 energy system model for 14 Pacific Island Countries, built on the DLR
-[REMix](https://github.com/dlr-ve/remix) framework and solved with GAMS.
+[REMix](https://dlr-ve.gitlab.io/esy/remix/framework/dev/index.html) framework and solved with GAMS.
 The model co-optimises power, land / marine / aviation transport, cooking,
 industry, domestic hot water, water desalination and synthetic-fuel
 (hydrogen / ammonia / methanol / e-kerosene) production, across four
