@@ -12,29 +12,37 @@ inter-island-trade scenarios, and ships with tooling to plot the results.
 
 ```
 REMix-PIC/
-├── _input/            # Model input data (demand & renewable-resource profiles)
-├── Process/            # The four REMix scenario scripts — start here to run the model
-├── GDX_results/        # GAMS .gdx solver outputs land here after a run
-├── Visualization/       # Post-processing & plotting tools that read the .gdx files
-├── LICENSE              # MIT
+├── _input/          # Model input data (demand & renewable-resource profiles)
+├── Process/         # The four REMix scenario scripts — start here to run the model
+├── Visualization/   # Post-processing & plotting tools that read the .gdx files
+├── LICENSE          # MIT
 └── .gitignore
 ```
 
 Each subfolder has its own README with the full detail; this page is the
 map between them.
 
+`GDX_results/` is **not** tracked in the repository (git does not store
+empty directories). Create it at the repository root before your first
+run — both the model output and the plotting tools expect it there:
+
+```bash
+mkdir GDX_results
+```
+
 ## Workflow
 
 ```
 _input/  →  Process/<scenario>.py  →  GDX_results/*.gdx  →  Visualization/Gdx_plot.py
- (data)        (build + solve)         (solver output)         (LCOE, capacity,
-                                                                  dispatch & SOC plots)
+ (data)        (build + solve)         (solver output)         (LCO, capacity,
+                                                                dispatch & SOC plots)
 ```
 
 1. **`_input/`** — holds the demand and renewable-resource profile CSV
-   (`Copy of IP_2040_2050_14_PIC - Copy.csv`) that every scenario script
+   (`Hourly_demand_and_resource_profiles.csv`) that every scenario script
    reads. Node labels, converter activity profiles, and fixed demand
-   series all come from this one file.
+   series all come from this one file. See
+   [`_input/README.md`](_input/README.md).
 2. **`Process/`** — the model itself: four Python scripts, one per
    scenario, that build the REMix parameter set (nodes, converters,
    storage, fuel imports, demand, and optionally inter-island shipping)
@@ -42,22 +50,21 @@ _input/  →  Process/<scenario>.py  →  GDX_results/*.gdx  →  Visualization/
    [`Process/README.md`](Process/README.md) for the full converter
    glossary and a breakdown of what differs between scenarios.
 3. **`GDX_results/`** — where each scenario's solved `.gdx` output file
-   lands (e.g. `IP_2050_Final_S23_minload.gdx`). See
-   [`GDX_results/README.md`](GDX_results/README.md).
-4. **`Visualization/`** — `Gdx_plot.py`, a set of independent plotting
-   tools that read a `.gdx` from `GDX_results/` and produce LCOE
-   breakdowns, capacity/generation charts, battery and hydrogen
-   state-of-charge heatmaps, and electrolyser activity plots. See
+   lands (e.g. `IP_2050_Final_S23.gdx`). Untracked; create it yourself.
+4. **`Visualization/`** — `Gdx_plot.py`, a toolbox of plotting sections
+   that read one `.gdx` from `GDX_results/` and produce LCO breakdowns,
+   capacity/generation charts, battery and hydrogen state-of-charge
+   heatmaps, and electrolyser activity plots. See
    [`Visualization/README.md`](Visualization/README.md).
 
 ## The four scenarios
 
 | Script | Result file | Inter-island shipping | E-fuel imports |
 |---|---|:---:|:---:|
-| `Process/remix_pacific_model_S1_std.py` | `IP_2050_Final_SS1_minload` | — | — |
-| `Process/remix_pacific_model_S2_std.py` | `IP_2050_Final_SS2_minload` | ✅ | — |
-| `Process/remix_pacific_model_S13_std.py` | `IP_2050_Final_SS13_minload` | — | ✅ |
-| `Process/remix_pacific_model_S23_std.py` | `IP_2050_Final_SS23_minload` | ✅ | ✅ |
+| `Process/remix_pacific_model_S1_std.py` | `IP_2050_Final_S1` | — | — |
+| `Process/remix_pacific_model_S2_std.py` | `IP_2050_Final_S2` | ✅ | — |
+| `Process/remix_pacific_model_S13_std.py` | `IP_2050_Final_S13` | — | ✅ |
+| `Process/remix_pacific_model_S23_std.py` | `IP_2050_Final_S23` | ✅ | ✅ |
 
 S1 is the baseline: all four scripts share the same 14-node model core
 (power generation, heat generation, transport, power-to-X converters, and
@@ -69,7 +76,7 @@ Full detail in [`Process/README.md`](Process/README.md).
 
 - Python 3 with `pandas`, `numpy`, and the `remix.framework` package
   (used by the `Process/` scripts).
-- A licensed **GAMS** installation to actually solve the model and to read
+- A licensed **GAMS** installation to solve the model and to read
   `.gdx` files back out (`gdxpds`, used by `Visualization/Gdx_plot.py`).
 - `matplotlib`, `openpyxl` for plotting/export in `Visualization/`.
 
@@ -79,13 +86,25 @@ for the exact package list each part needs.)
 ## Quick start
 
 ```bash
+mkdir -p GDX_results
+
 cd Process
 python remix_pacific_model_S1_std.py      # build + solve the baseline scenario
-# → writes IP_2050_Final_SS1_minload.gdx into ../GDX_results/
+# → writes IP_2050_Final_S1.gdx
+
+# move/copy the .gdx into GDX_results/ if your GAMS run does not write it there
 
 cd ../Visualization
-python gdx_plot.py ... --gdx ../GDX_results/IP_2050_Final_SS1_minload.gdx
+# set GDX_PATH at the top of Gdx_plot.py to the .gdx you want, then run one section
+python Gdx_plot.py
 ```
+
+Note the capital **G** in `Gdx_plot.py` — the filename is case-sensitive
+on Linux and macOS.
+
+The plotting toolbox reads **one** `.gdx`, chosen by the `GDX_PATH`
+constant at the top of `Gdx_plot.py`. See
+[`Visualization/README.md`](Visualization/README.md) before running it.
 
 ## License
 

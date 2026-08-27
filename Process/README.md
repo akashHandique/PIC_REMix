@@ -1,14 +1,14 @@
 # REMix Pacific Islands Energy System Model — S1 / S2 / S13 / S23
 
-This repository contains four scenario variants of the same underlying
+This folder contains four scenario variants of the same underlying
 model:
 
 | Script | Result file | What it adds relative to the S1 baseline |
 |---|---|---|
-| `remix_pacific_model_S1_std.py` | `IP_2050_Final_SS1_minload` | Baseline — no inter-island shipping, no e-fuel imports |
-| `remix_pacific_model_S2_std.py` | `IP_2050_Final_SS2_minload` | + inter-island **shipping links** (ammonia / methanol / e-kerosene) |
-| `remix_pacific_model_S13_std.py` | `IP_2050_Final_SS13_minload` | + **e-fuel imports** (ammonia / methanol / e-kerosene bought in at select nodes) |
-| `remix_pacific_model_S23_std.py` | `IP_2050_Final_SS23_minload` | + shipping links **and** e-fuel imports (S2 + S13 combined) |
+| `remix_pacific_model_S1_std.py` | `IP_2050_Final_S1` | Baseline — no inter-island shipping, no e-fuel imports |
+| `remix_pacific_model_S2_std.py` | `IP_2050_Final_S2` | + inter-island **shipping links** (ammonia / methanol / e-kerosene) |
+| `remix_pacific_model_S13_std.py` | `IP_2050_Final_S13` | + **e-fuel imports** (ammonia / methanol / e-kerosene bought in at select nodes) |
+| `remix_pacific_model_S23_std.py` | `IP_2050_Final_S23` | + shipping links **and** e-fuel imports (S2 + S13 combined) |
 
 All four are multi-node, multi-year (2020 / 2030 / 2040 / 2050) myopic
 capacity-expansion optimisations of the Pacific Island energy system on the
@@ -33,7 +33,7 @@ new reader can find their way around the code without tracing every
   i.e. each horizon is optimised in sequence, building on the installed
   capacity carried over from the previous one.
 - Demand and renewable-resource profiles are read from a single input CSV
-  (`_input/Copy of IP_2040_2050_14_PIC - Copy.csv`); node labels are
+  (`_input/Hourly_demand_and_resource_profiles.csv`); node labels are
   recovered from each column name via `_region_to_node`.
 - A handful of per-node numeric parameters (2040/2050 electrolyser
   build-out and one 2050 PV resource cap) are re-calibrated slightly
@@ -47,8 +47,7 @@ commodities and turns them into one or more output commodities, at fixed
 ratios (`converter_coefficient`), subject to a build-out capacity
 (`converter_capacityparam`) and investment/O&M cost
 (`accounting_converterunits`). A converter with no coefficients defined has
-no commodity flow at all — it is a "dead" object that carries cost/capacity
-bookkeeping but can never be dispatched. (See §7.)
+no commodity flow at all and can never be dispatched.
 
 Two naming conventions recur throughout:
 - **`_B`** = existing / brownfield converter (installed 2020 base capacity).
@@ -166,7 +165,7 @@ These are available from 2040 and registered via `transfer_linkstartend`,
 build/flow costs from `add_transfer_link_costs`. S1 and S13 do **not**
 build this block at all — inter-island shipping is structurally absent in
 those two scripts, even though the module docstring in every script
-advertises it (see §7).
+advertises it.
 
 ### 6.2 E-fuel imports (S13, S23 only)
 S13 and S23 additionally allow direct import of `Ammonia`, `Methanol` and
@@ -198,20 +197,7 @@ from another island.
 | **S13** | — | ✅ |
 | **S23** | ✅ | ✅ |
 
-## 7. Known structural gap common to all four scripts
-
-Four converters are instantiated in every script (tech params, capacity
-limits, and zero investment cost) but never given a
-`converter_coefficient`, so they have no commodity input/output and cannot
-be dispatched. They are effectively dead code and were excluded from the
-glossary in §3. See the prior conversation for the full trace.
-
-(Note: `add_transfer_link_costs` itself is *not* dead — it's defined once
-and actually called, with real effect, in S2/S23 per §6.1. It's only
-unused in S1/S13, where the module docstring's mention of shipping links
-is aspirational rather than active.)
-
-## 8. Output
+## 7. Output
 
 `m.write(fileformat="dat")` writes the REMix `.dat` input files, and
 `m.run(...)` solves the model (myopic path optimisation, log level 3,

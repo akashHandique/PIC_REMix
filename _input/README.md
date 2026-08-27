@@ -4,13 +4,12 @@ This folder holds the single input file every `Process/remix_pacific_model_*`
 script reads:
 
 ```python
-profiles = pd.read_csv("../_input/Copy of IP_2040_2050_14_PIC - Copy.csv", index_col=0)
+profiles = pd.read_csv("../_input/Hourly_demand_and_resource_profiles.csv", index_col=0)
 ```
 
-`Hourly_demand_and_resource_profiles.csv` (this file) is that same input —
-one hourly time series table covering all 14 Pacific nodes, all four
-converter-activity years, and all four demand years. If you rename it or
-move it, update the `pd.read_csv(...)` path in each of the four scenario
+This is one hourly time-series table covering all 14 Pacific nodes, all
+four converter-activity years, and all four demand years. If you rename it
+or move it, update the `pd.read_csv(...)` path in each of the four scenario
 scripts to match.
 
 ## Shape
@@ -129,6 +128,10 @@ By 2040 each sector splits into its low-carbon variants (see
 | `DHW_E` | `DHW_el` | `DW_Electric_converter` — electric water heating |
 | `DHW_L` | `DHW_LPG` | `DW_LPG_converter` — LPG water heating |
 
+> **Note on `Marine_E` and `AVIA_E`:** these two columns feed the
+> commodities `Dummy_EL` and `eKerosene` directly. Despite the naming,
+> they do not route through any dedicated electric-marine or e-kerosene
+> aviation converter — no such converter exists in the model.
 
 **Transform applied by the script:** for each node/year, the relevant
 columns are selected, divided by 1000 (MWh → GWh), sign-flipped (`* -1`,
