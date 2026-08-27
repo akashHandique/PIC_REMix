@@ -65,6 +65,15 @@ GDX_PATH = "../GDX_results/IP_2050_Final_S1.gdx"
 data = gdxpds.to_dataframes(GDX_PATH)
 YEARS = ["2020", "2030", "2040", "2050"]
 OUTPUT_PATH = f"LCO_results_{Path(GDX_PATH).stem}.xlsx"
+
+# Scenario tag derived from GDX_PATH, e.g. "IP_2050_Final_S23" -> "S_23".
+# Every figure directory below is built from FIG_ROOT, so changing GDX_PATH
+# moves the whole figure tree with it.
+_SCENARIO_TOKEN = Path(GDX_PATH).stem.rsplit("_", 1)[-1]
+SCENARIO = (f"S_{_SCENARIO_TOKEN[1:]}"
+            if _SCENARIO_TOKEN.startswith("S") and _SCENARIO_TOKEN[1:].isdigit()
+            else _SCENARIO_TOKEN)
+FIG_ROOT = f"figures/{SCENARIO}"
 ISLANDS = [
     "CI_model", "FJ_model", "FSM_model", "KB_model", "MI_model",
     "NU_model", "NE_model", "PU_model", "PNG_model", "SA_model",
@@ -1099,7 +1108,7 @@ if __name__ == "__main__":
         help="Path to the LCO Excel results file (default: the workbook written by pic_lco_assessment)"
     )
     parser.add_argument(
-        "--out", default="figures/S_1/",
+        "--out", default=f"{FIG_ROOT}/",
         help="Output directory for figures (default: figures/S_1/)"
     )
     parser.add_argument(
@@ -1211,7 +1220,7 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-OUTPUT_DIR = "figures/S_23/generation_profiles_minload_S23"
+OUTPUT_DIR = f"{FIG_ROOT}/generation_profiles"
 YEARS      = ["2020", "2030", "2040", "2050"]
 ISLANDS    = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -1713,7 +1722,7 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-OUTPUT_DIR = "figures/S_23/battery_soc_minload"
+OUTPUT_DIR = f"{FIG_ROOT}/battery_soc"
 YEARS      = ["2030", "2040", "2050"]
 ISLANDS    = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -2011,7 +2020,7 @@ from matplotlib.colors import LinearSegmentedColormap
 logging.basicConfig(level=logging.INFO, format="%(levelname)-8s %(message)s")
 log = logging.getLogger(__name__)
 
-OUTPUT_DIR = "figures/S_23/thermal_soc_minload"
+OUTPUT_DIR = f"{FIG_ROOT}/thermal_soc"
 YEARS      = ["2030", "2040", "2050"]
 ISLANDS    = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -2272,7 +2281,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)-8s %(message)s")
 log = logging.getLogger(__name__)
 
 # ── Configuration ─────────────────────────────────────────────────────────────
-OUTPUT_DIR = "figures/S_23/battery_charts"
+OUTPUT_DIR = f"{FIG_ROOT}/battery_charts"
 
 YEARS = ["2030", "2040", "2050"]
 
@@ -2612,7 +2621,7 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-OUTPUT_DIR  = "figures/S_23/hydrogen_storage_minload"
+OUTPUT_DIR  = f"{FIG_ROOT}/hydrogen_storage"
 YEARS       = ["2030", "2040", "2050"]
 ISLANDS     = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -2942,9 +2951,9 @@ Source
 
 Output
 ------
-  figures/S_23/ammonia_storage_minload/   CI_model.png ...
-  figures/S_23/methanol_storage_minload/  ...
-  figures/S_23/ekerosene_storage_minload/ ...
+  figures/S_23/ammonia_storage/   CI_model.png ...
+  figures/S_23/methanol_storage/  ...
+  figures/S_23/ekerosene_storage/ ...
 """
 
 import argparse
@@ -2980,7 +2989,7 @@ FUEL_STORAGES = [
         "name":      "Ammonia",
         "tech":      "Ammonia_storage",
         "commodity": "Ammonia_T",
-        "out_dir":   "figures/S_1/ammonia_storage_minload",
+        "out_dir":   f"{FIG_ROOT}/ammonia_storage",
         "unit":      "GWh",
         "cmap":      LinearSegmentedColormap.from_list(
                          "ammonia_storage",
@@ -2991,7 +3000,7 @@ FUEL_STORAGES = [
         "name":      "Methanol",
         "tech":      "Methanol_storage",
         "commodity": "Methanol_T",
-        "out_dir":   "figures/S_1/methanol_storage_minload",
+        "out_dir":   f"{FIG_ROOT}/methanol_storage",
         "unit":      "GWh",
         "cmap":      LinearSegmentedColormap.from_list(
                          "methanol_storage",
@@ -3002,7 +3011,7 @@ FUEL_STORAGES = [
         "name":      "eKerosene",
         "tech":      "eKerosene_storage",
         "commodity": "eKerosene_T",
-        "out_dir":   "figures/S_1/ekerosene_storage_minload",
+        "out_dir":   f"{FIG_ROOT}/ekerosene_storage",
         "unit":      "GWh",
         "cmap":      LinearSegmentedColormap.from_list(
                          "ekerosene_storage",
@@ -3292,9 +3301,9 @@ One figure per island per converter -> 1 x 2 row (2040 | 2050).
 
 Output
 ------
-  figures/S_1/ammonia_synthesis_activity_minload/   CI_model.png ...
-  figures/S_1/methanol_synthesis_activity_minload/  ...
-  figures/S_1/ekerosene_synthesis_activity_minload/ ...
+  figures/S_1/ammonia_synthesis_activity/   CI_model.png ...
+  figures/S_1/methanol_synthesis_activity/  ...
+  figures/S_1/ekerosene_synthesis_activity/ ...
 """
 
 import argparse
@@ -3340,7 +3349,7 @@ CONVERTERS = [
         "tech":       "Ammonia_synthesis",
         "commodity":  "Ammonia",
         "flow":       "out",
-        "out_dir":    "figures/S_1/ammonia_synthesis_activity_minload",
+        "out_dir":    f"{FIG_ROOT}/ammonia_synthesis_activity",
         "cmap":       CMAP_AMMONIA,
         "cbar_label": "Ammonia synthesis activity (%)",
     },
@@ -3349,7 +3358,7 @@ CONVERTERS = [
         "tech":       "Methanol_synthesis",
         "commodity":  "Methanol",
         "flow":       "out",
-        "out_dir":    "figures/S_1/methanol_synthesis_activity_minload",
+        "out_dir":    f"{FIG_ROOT}/methanol_synthesis_activity",
         "cmap":       CMAP_METHANOL,
         "cbar_label": "Methanol synthesis activity (%)",
     },
@@ -3358,7 +3367,7 @@ CONVERTERS = [
         "tech":       "FTL",
         "commodity":  "eKerosene",
         "flow":       "out",
-        "out_dir":    "figures/S_1/ekerosene_synthesis_activity_minload",
+        "out_dir":    f"{FIG_ROOT}/ekerosene_synthesis_activity",
         "cmap":       CMAP_EKEROSENE,
         "cbar_label": "eKerosene synthesis activity (%)",
     },
@@ -3695,7 +3704,7 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-OUTPUT_DIR = "figures/S_23/electrolyzer_activity_minload"
+OUTPUT_DIR = f"{FIG_ROOT}/electrolyzer_activity"
 YEARS      = ["2040", "2050"]
 ISLANDS    = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -4032,7 +4041,7 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # DEFAULTS
 # ─────────────────────────────────────────────────────────────────────────────
-OUTPUT_DIR = "figures/S_23/heat_pump_activity_minload"
+OUTPUT_DIR = f"{FIG_ROOT}/heat_pump_activity"
 YEARS      = ["2040", "2050"]
 ISLANDS    = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -4371,7 +4380,7 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-OUTPUT_DIR = "figures/S_23/capacity_overview_minload"
+OUTPUT_DIR = f"{FIG_ROOT}/capacity_overview"
 YEARS      = ["2020", "2030", "2040", "2050"]
 ISLANDS    = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -4911,7 +4920,7 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-OUTPUT_DIR = "figures/S_23/heat_generation"
+OUTPUT_DIR = f"{FIG_ROOT}/heat_generation"
 YEARS      = ["2020","2030", "2040", "2050"]
 ISLANDS    = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -5324,7 +5333,7 @@ all 14 islands across 2040 and 2050.
 
 Output
 ------
-  figures/S_23/ael_capacity_minload/
+  figures/S_23/ael_capacity/
       ael_capacity_overview.png
 """
 
@@ -5356,7 +5365,7 @@ log = logging.getLogger(__name__)
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
-OUTPUT_DIR = "figures/S_23/ael_capacity_minload"
+OUTPUT_DIR = f"{FIG_ROOT}/ael_capacity"
 YEARS      = ["2040", "2050"]
 ISLANDS    = [
     "CI_model", "FJ_model", "FSM_model", "KB_model",  "MI_model",
@@ -5538,7 +5547,7 @@ from matplotlib import rcParams
 logging.basicConfig(level=logging.INFO, format="%(levelname)-8s %(message)s")
 log = logging.getLogger(__name__)
 
-OUTPUT_DIR = "figures/S_23/system_cost"
+OUTPUT_DIR = f"{FIG_ROOT}/system_cost"
 YEARS      = ["2020", "2030", "2040", "2050"]
 
 COST_COMPONENTS = ["Invest", "OMFix", "OMVar", "FuelCost"]
