@@ -1823,6 +1823,7 @@ m.write(fileformat="dat")
 
 m.run(
     resultfile="IP_2050_Final_S13",
+    resultdir="../GDX_results",
     lo=3,
     postcalc=1,
     roundts=1,
